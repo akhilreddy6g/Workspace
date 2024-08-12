@@ -1,3 +1,5 @@
+/* Navbar styling start */
+
 .navbar{
     border-radius: 0;
     background-color: grey;
@@ -17,8 +19,8 @@
 }
 
 #menulogo{
-    width: 2.5vw;
-    height: 3vh;
+    width: 2.2vw;
+    height: 4vh;
     margin: 5px;
 }
 
@@ -39,3 +41,5 @@
 #titlelink:hover{
     color: white;
 }
+
+/* Navbar styling end */
