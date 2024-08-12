@@ -17,15 +17,15 @@
 }
 
 #menulogo{
-    width: 2vw;
+    width: 2.5vw;
     height: 3vh;
-    margin: 0;
+    margin: 5px;
 }
 
-#timelogo{
-    width: 4vw;
-    height: 4vh;
-    margin: 0;
+#dailyactlogo{
+    width: 2vw;
+    height: 3.5vh;
+    margin: 5px;
 }
 
 #titlename{
