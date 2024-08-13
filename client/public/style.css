@@ -65,21 +65,20 @@
     width:200px;
     height:50px;
     margin-top: 0;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 18px;
+    padding-right: 18px;
     border-radius: 5px;
-}
-
-.featureTitle:hover{
-    background-color: rgb(207, 206, 206);
-    color: whitesmoke;
-    text-shadow: 1px 1px 2px black;
 }
 
 .featureTitle{
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     font-size: 18px;
     font-weight: bold;
+}
+
+.featureTitle:hover{
+    color:white;
+    text-shadow: 1px 1px 10px black;
 }
 
 .featureContainer{
