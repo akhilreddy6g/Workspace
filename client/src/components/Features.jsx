@@ -1,8 +1,12 @@
-import React from "react";
+import React, {useContext} from "react";
 import Feature from "./Feature";
+import { truthHook } from "./App";
+import { Navigate } from "./Navigate";
 
 export default function Features(){
-    return <div className="featureContainer">
+    let {data} = useContext(truthHook);
+    return ( data && ( <div className="featureContainer">
+    <Navigate id="0" elementName="activityManager" title="Navigate" src="src/assets/transfer.png"></Navigate>
     <Feature id="1" featureName="currentSchedule" title="Current Schedule"></Feature>
     <Feature id="2" featureName="dailyActivities" title="Daily Activities"></Feature>
     <Feature id="3" featureName="quickActivitySession" title="Quick Session"></Feature>
@@ -10,5 +14,6 @@ export default function Features(){
     <Feature id="5" featureName="missedActivities" title="Missed Activities"></Feature>
     <Feature id="6" featureName="planAhead" title="Plan Ahead"></Feature>
     <Feature id="7" featureName="setYourDay" title="Set Your Day"></Feature>
-    </div>;
+    </div>)
+    );
 }

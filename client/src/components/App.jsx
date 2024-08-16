@@ -1,16 +1,16 @@
-import React from 'react';
+import React,{createContext, useState} from 'react';
 import Header from './Header';
 import Features from './Features';
 import Background from './FeatureBackground';
+export const truthHook = createContext();
 
-function App() {
+export default function App() {
+  const [data,changeData] = useState(true);
   return (
-    <>
+    <truthHook.Provider value={{data,changeData}}>
      <Header></Header>
      <Background></Background>
      <Features></Features>
-    </>
-  )
+    </truthHook.Provider>
+  );
 }
-
-export default App
