@@ -1,14 +1,33 @@
-import React,{createContext, useState} from 'react';
+import React,{createContext, useReducer} from 'react';
 import Header from './Header';
 import Features from './Features';
-export const truthHook = createContext();
+import Setday from './Setday';
+export const featuresTabHook = createContext();
 
 export default function App() {
-  const [data,changeData] = useState(true);
+  function changeStateInfo(state, action){
+    switch (action.type) {
+      case "changeFthState":
+        return {
+          fthState: !state.fthState,
+          stdState: state.stdState
+        };
+      case "changeStdState":
+        return {
+          fthState: state.fthState,
+          stdState: !state.stdState
+        };
+      default:
+        break;
+    };
+  };
+
+  const [state, takeAction] = useReducer(changeStateInfo, {fthState:true, stdState:false});
   return (
-    <truthHook.Provider value={{data,changeData}}>
+    <featuresTabHook.Provider value={{state, takeAction, changeStateInfo}}>
      <Header></Header>
      <Features></Features>
-    </truthHook.Provider>
+     <Setday></Setday>
+    </featuresTabHook.Provider>
   );
 }
