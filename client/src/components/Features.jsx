@@ -5,7 +5,8 @@ import { Navigate } from "./Navigate";
 
 export default function Features(){
     let {data} = useContext(truthHook);
-    return ( data && ( <div className="featureContainer">
+    return (<div className="featureContainer" style={{left: data? "0px": "-200px"}}>
+        <div className="background">
     <Navigate id="0" elementName="activityManager" title="Navigate" src="src/assets/transfer.png"></Navigate>
     <Feature id="1" featureName="currentSchedule" title="Current Schedule"></Feature>
     <Feature id="2" featureName="dailyActivities" title="Daily Activities"></Feature>
@@ -13,7 +14,6 @@ export default function Features(){
     <Feature id="4" featureName="streakNProgress" title="Streak and Progress"></Feature>
     <Feature id="5" featureName="missedActivities" title="Missed Activities"></Feature>
     <Feature id="6" featureName="planAhead" title="Plan Ahead"></Feature>
-    <Feature id="7" featureName="setYourDay" title="Set Your Day"></Feature>
-    </div>)
-    );
+    <Feature id="7" featureName="setYourDay" title="Set Your Day"></Feature></div>
+    </div>);
 }

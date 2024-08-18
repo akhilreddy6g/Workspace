@@ -1,14 +1,18 @@
 /* Navbar styling start */
 
+html{
+    height: 200vh;
+}
+
 .navbar{
     border-radius: 0;
     background-color: grey;
-    min-height: 10px;
+    position: fixed;
 }
 
 .container-fluid{
-    height: 8vh;
-    min-height: 50px;
+    height: 61.5px;
+    width: 100vw;
     display: flex;
     align-items: center;
 }
@@ -32,8 +36,8 @@
 }
 
 #titlename{
-    font-size: 40px;
-    text-shadow: 1px 1px 0.5px black;
+    font-size: 45px;
+    text-shadow: 1px 1px 4px black;
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 #titlelink{
@@ -53,6 +57,7 @@
     font-weight: 0;
     margin-top: 20px;
     display: flex;
+    padding-top: 5px;
     padding-left: 15px;
     padding-bottom: 5px;
 }
@@ -80,14 +85,11 @@
 }
 
 .background{
-    width:200px;
+    width: 200px;
     height: 100vh;
     overflow: auto;
-    padding-left: 20px;
-    padding-right: 20px;
     background-color: rgb(207, 206, 206);
-    position: absolute;
-    top: 8vh;
+    position: fixed;
     z-index: -1;
 }
 
@@ -114,8 +116,10 @@
 }
 
 .featureContainer{
+    width: 200px;
     position: absolute;
-    top: 55px;
+    top: 50px;
+    transition: 150ms linear;
 }
 
 /* Features/Feature End */
