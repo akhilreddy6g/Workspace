@@ -1,7 +1,7 @@
 /* Navbar styling start */
 
 html{
-    height: 200vh;
+    height: 100vh;
 }
 
 .navbar{
@@ -24,8 +24,8 @@ html{
 }
 
 .logo{
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
     min-height: 25px;
     min-width: 25px;
     margin: 5px;
@@ -123,3 +123,59 @@ html{
 }
 
 /* Features/Feature End */
+
+/* Setday Feature Styling Start */
+
+.setDay{
+    position: absolute;
+    height: 250px;
+    width: 250px;
+    top: calc(50% - 125px);
+    left: calc(50% - 110px);
+    background-color: grey;
+    z-index: 5;
+    border: 1px solid black;
+}
+
+.toolBar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 1px solid black;
+    align-items: center;
+}
+
+.overLay{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(179, 179, 179, 0.5);
+    pointer-events: auto;
+    z-index: 2;
+}
+
+.closeSetDayButton{
+    height: 20px;
+    width: 20px;
+    background-color: grey;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0px;
+    margin-right: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.661);
+    color: white;
+
+}
+
+.setDayContext{
+    font-size: 15px;
+    color: white;
+    padding-left: 5px;
+    padding-top:2px;
+}
+
+.closeSetDayButton:hover{
+    background-color: rgb(79, 74, 74);
+}
+/* Setday Feature Styling End */
