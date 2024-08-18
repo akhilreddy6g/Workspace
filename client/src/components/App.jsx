@@ -1,7 +1,6 @@
 import React,{createContext, useState} from 'react';
 import Header from './Header';
 import Features from './Features';
-import Background from './FeatureBackground';
 export const truthHook = createContext();
 
 export default function App() {
@@ -9,7 +8,6 @@ export default function App() {
   return (
     <truthHook.Provider value={{data,changeData}}>
      <Header></Header>
-     <Background></Background>
      <Features></Features>
     </truthHook.Provider>
   );
