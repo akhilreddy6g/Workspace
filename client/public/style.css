@@ -132,7 +132,7 @@ html{
     width: 250px;
     top: calc(50% - 125px);
     left: calc(50% - 110px);
-    background-color: grey;
+    background-color: rgb(207, 206, 206);
     z-index: 5;
     border: 1px solid black;
 }
@@ -143,6 +143,7 @@ html{
     justify-content: space-between;
     border-bottom: 1px solid black;
     align-items: center;
+    background-color: grey;
 }
 
 .overLay{
@@ -157,15 +158,20 @@ html{
 .closeSetDayButton{
     height: 20px;
     width: 20px;
-    background-color: grey;
+    background-color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-top: 0px;
     margin-right: 5px;
     border: 1px solid rgba(0, 0, 0, 0.661);
-    color: white;
+    color: black;
 
+}
+
+.closeSetDayButton:hover{
+    background-color: rgba(53, 50, 50, 0.501);
+    color: white;
 }
 
 .setDayContext{
@@ -173,9 +179,66 @@ html{
     color: white;
     padding-left: 5px;
     padding-top:2px;
+    font-weight: bolder;
 }
 
-.closeSetDayButton:hover{
-    background-color: rgb(79, 74, 74);
+
+/* Form Styling Start */
+
+.sessionSetup{
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    padding-top: 15px;
+    background-color: rgb(207, 206, 206);
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
 }
+
+#sessCount, #sessBreakTime{
+    width: 50px;
+}
+
+.sessionFormInput{
+    border: 1px solid black;
+    padding-bottom: 5px;
+    text-align: center;
+}
+
+.sessionFormLabel{
+    padding-bottom: 5px;
+    padding-left: 30px;
+    color: black;
+}
+
+#startTime{
+    padding-right: 24px;
+}
+
+#endTime{
+    padding-right: 30px;
+}
+
+#sessions{
+    padding-right: 38px
+}
+
+#breakTime{
+    padding-right: 18px;
+}
+
+#submitSessionButton{
+    margin-left: 90px;
+    margin-top: 20px;
+    background-color: white;
+    border:  1px solid black;
+}
+
+#submitSessionButton:hover{
+    background-color: rgba(53, 50, 50, 0.693);
+    color: white;
+}
+
+/* Form Styling End */
+
+
 /* Setday Feature Styling End */

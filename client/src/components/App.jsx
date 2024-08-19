@@ -1,7 +1,7 @@
 import React,{createContext, useReducer} from 'react';
 import Header from './Header';
 import Features from './Features';
-import Setday from './Setday';
+import Setyourday from './Setyourday';
 export const featuresTabHook = createContext();
 
 export default function App() {
@@ -27,7 +27,7 @@ export default function App() {
     <featuresTabHook.Provider value={{state, takeAction, changeStateInfo}}>
      <Header></Header>
      <Features></Features>
-     <Setday></Setday>
+     <Setyourday></Setyourday>
     </featuresTabHook.Provider>
   );
 }
