@@ -10,21 +10,39 @@ export default function App() {
       case "changeFthState":
         return {
           fthState: !state.fthState,
-          stdState: state.stdState
+          stdState: state.stdState,
+          darkMode: state.darkMode
         };
       case "changeStdState":
         return {
           fthState: state.fthState,
-          stdState: !state.stdState
+          stdState: !state.stdState,
+          darkMode: state.darkMode
         };
+      case "changeBgState":
+        return {
+          fthState: state.fthState,
+          stdState: state.stdState,
+          darkMode: !state.darkMode
+        }
       default:
+        return state;
         break;
     };
   };
 
-  const [state, takeAction] = useReducer(changeStateInfo, {fthState:true, stdState:false});
+  function dayStatus(){
+    const time = new Date().getHours();
+    if(time>=19){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  const [state, takeAction] = useReducer(changeStateInfo, {fthState:true, stdState:false, darkMode: dayStatus()});
   return (
-    <featuresTabHook.Provider value={{state, takeAction, changeStateInfo}}>
+    <featuresTabHook.Provider value={{state, takeAction}}>
      <Header></Header>
      <Features></Features>
      <Setyourday></Setyourday>

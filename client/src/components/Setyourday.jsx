@@ -3,7 +3,7 @@ import { featuresTabHook } from "./App";
 import Sessionsetup from "./Sessionsetup";
 
 export default function Setyourday(){
-    const {state, takeAction, changeStateInfo} = useContext(featuresTabHook);
+    const {state, takeAction} = useContext(featuresTabHook);
      return state.stdState &&
      <div className="overLay">
         <div className="setDay">
