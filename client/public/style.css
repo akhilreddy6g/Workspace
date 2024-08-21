@@ -10,6 +10,16 @@ html{
     position: fixed;
 }
 
+/* Navbar Darkmode Start*/
+
+.navdarkMode{
+    border-bottom: 1px solid grey;
+    background-color: rgb(48,48,48);
+    color: white;
+}
+
+/* Navbar Darkmode End*/
+
 .container-fluid{
     height: 61.5px;
     width: 100vw;
@@ -43,9 +53,9 @@ html{
     color: white;
 }
 
-/* Navbar styling end */
+/* Navbar styling end*/
 
-/* Features/Feature Start */
+/* Features/Feature Start*/
 
 .background{
     width: 200px;
@@ -56,6 +66,16 @@ html{
     z-index: -1;
     margin-top: 13px;
 }
+
+/* Features Background Dark Mode Start*/
+
+.backgdarkMode{
+    border-right: 1px solid grey;
+    background-color: rgb(48,48,48) !important;
+    color: white;
+}
+
+/* Features Background Dark Mode End*/
 
 .userPic{
     width: 50px;
@@ -89,6 +109,11 @@ html{
 
 .feature:hover{
     color: black;
+    background-color: rgba(168, 158, 158, 0.501);
+}
+
+.featuredarkMode:hover{
+    color: white;
     background-color: rgba(168, 158, 158, 0.501);
 }
 
@@ -223,6 +248,5 @@ html{
 }
 
 /* Form Styling End */
-
 
 /* Setday Feature Styling End */
