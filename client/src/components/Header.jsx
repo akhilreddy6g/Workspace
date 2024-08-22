@@ -1,5 +1,5 @@
-import React, {useContext, useEffect} from "react";
-import { featuresTabHook } from "./App";
+import {useContext} from "react";
+import featuresTabHook from "./Noncomponents";
 
 export default function Header(){
   const {state, takeAction} = useContext(featuresTabHook);

@@ -1,5 +1,5 @@
-import React,{useContext} from "react";
-import { featuresTabHook } from "./App";
+import {useContext} from "react";
+import featuresTabHook from "./Noncomponents";
 import Sessionsetup from "./Sessionsetup";
 
 export default function Setyourday(){

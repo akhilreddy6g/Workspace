@@ -250,3 +250,28 @@ html{
 /* Form Styling End */
 
 /* Setday Feature Styling End */
+
+/* Schedule Start */
+
+.scheduleDisclaimer{
+    height : 60px;
+    position: relative;
+    top: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: -10;
+}
+
+.scheduleContext{
+    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    background-color: rgb(255, 255, 144);
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 20px;
+    position: fixed;
+    z-index: -10;
+    border-radius: 5px;
+}
+
+/* Schedule End */

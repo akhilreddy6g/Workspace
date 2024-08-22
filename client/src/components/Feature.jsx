@@ -1,11 +1,27 @@
-import React, {useContext} from "react";
-import { featuresTabHook } from "./App";
+import {useContext} from "react";
+import PropTypes from 'prop-types';
+import featuresTabHook from "./Noncomponents";
 
-export default function Feature(props){
-    const {state, takeAction} = useContext(featuresTabHook);
+function Feature(props){
+    const {takeAction} = useContext(featuresTabHook);
     return (<div name={props.featureName} id={"feature"+props.id} className="feature" onClick={() => {
-        if(props.show==='sd'){
-            takeAction({type:"changeStdState"});
-    }
-}}><p className="featureTitle">{props.title}</p></div>);
-}
+        switch (props.show) {
+            case "cs":
+                takeAction({type:"changeScheduleState"});
+                break;
+            case "syd":
+                takeAction({type:"changeStdState"});
+                break;
+            default:
+                break;
+        };
+}}><p className="featureTitle">{props.title}</p></div>);};
+
+Feature.propTypes = {
+    featureName: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
+    show: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired
+};
+
+export default Feature;
