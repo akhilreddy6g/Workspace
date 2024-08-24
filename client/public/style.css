@@ -139,7 +139,7 @@ html{
     height: 250px;
     width: 250px;
     top: calc(50% - 125px);
-    left: calc(50% - 110px);
+    left: calc(50% - 125px);
     background-color: rgb(207, 206, 206);
     z-index: 5;
     border: 1px solid black;
@@ -254,24 +254,63 @@ html{
 /* Schedule Start */
 
 .scheduleDisclaimer{
-    height : 60px;
+    width: 80vw;
+    height: 30px;
+    background-color: rgb(255, 255, 144);
     position: relative;
-    top: 55px;
+    top: 85px;
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    z-index: -10;
+    padding: 0;
+    font-size: 20px;
+    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    border-radius: 10px;
+    transition: 150ms linear;
 }
 
 .scheduleContext{
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    background-color: rgb(255, 255, 144);
-    padding-left: 10px;
-    padding-right: 10px;
-    font-size: 20px;
-    position: fixed;
-    z-index: -10;
-    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding-top: 10px;
 }
 
 /* Schedule End */
+
+/* Daily Activities Start */
+
+.dailyActivity{
+    /* height: 60px; */
+    width: 80vw;
+    position: relative;
+    top: 55px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    background-color: rgb(255, 255, 144);
+    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 20px;
+    border-radius: 10px;
+    transition: 150ms linear;
+}
+
+/* Daily Activities End */
+
+/* Add activity start */
+
+.addActivity{
+    width: 80vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 93vh;
+    font-size: 20px;
+    transition: 150ms linear;
+    background-color:rgb(255, 255, 144);
+    border-radius: 10px;
+}
+
+/* Add activity end */
