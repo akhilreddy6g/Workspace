@@ -1,6 +1,6 @@
 import {useContext} from "react";
 import Feature from "./Feature";
-import featuresTabHook from "./Noncomponents";
+import featuresTabHook from "../Noncomponents";
 import Userprofile from "./Userprofile";
 
 export default function Features(){

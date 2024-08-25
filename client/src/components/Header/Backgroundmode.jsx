@@ -1,5 +1,5 @@
 import {useContext, useEffect} from "react";
-import featuresTabHook from "./Noncomponents";
+import featuresTabHook from "../Noncomponents";
 
 export default function Backgroundmode(){
     const {state} = useContext(featuresTabHook);

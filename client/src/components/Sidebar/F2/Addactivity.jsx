@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import featuresTabHook from "../Noncomponents";
+import featuresTabHook from "../../Noncomponents";
 
 export default function Addactivity(){
     const {state, takeAction} = useContext(featuresTabHook);

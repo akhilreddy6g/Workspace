@@ -1,4 +1,4 @@
-import featuresTabHook from "../Noncomponents";
+import featuresTabHook from "../../Noncomponents";
 import { useContext } from "react";
 
 export default function Dailyactivities(props){
