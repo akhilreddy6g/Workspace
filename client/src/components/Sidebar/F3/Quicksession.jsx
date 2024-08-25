@@ -1,5 +1,5 @@
 import {useContext} from "react";
-import featuresTabHook from "./Noncomponents";
+import featuresTabHook from "../Noncomponents";
 import Quicksessionsetup from "./Quicksessionsetup";
 
 export default function Quicksession(){

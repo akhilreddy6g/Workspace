@@ -1,13 +1,13 @@
 import {useReducer} from 'react';
 import Header from './Header';
 import Features from './Features';
-import Setyourday from './Setyourday';
-import Currentschedule from './Currentschedule';
+import Setyourday from './F7/Setyourday';
+import Currentschedule from './F1/Currentschedule';
 import Backgroundmode from './Backgroundmode';
 import featuresTabHook,{dayStatus} from './Noncomponents';
-import Dailyactivities from './Dailyactivities';
-import Addactivity from './Addactivity';
-import Quicksession from './Quicksession';
+import Dailyactivities from './F2/Dailyactivities';
+import Addactivity from './F2/Addactivity';
+import Quicksession from './F3/Quicksession';
 
 export default function App() {
   function changeStateInfo(state, action){

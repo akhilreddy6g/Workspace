@@ -1,6 +1,6 @@
 import {useContext} from "react";
 import PropTypes from 'prop-types';
-import featuresTabHook from "./Noncomponents";
+import featuresTabHook from "../Noncomponents";
 
 Feature.propTypes = {
     featureName: PropTypes.string.isRequired,
