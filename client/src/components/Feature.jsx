@@ -22,6 +22,8 @@ function Feature(props){
             case "syd":
                 takeAction({type:"changeStdState"});
                 break;
+            case "qa":
+                takeAction({type:"changeQuickSessState"});
             default:
                 break;
         };

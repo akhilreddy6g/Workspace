@@ -7,6 +7,7 @@ import Backgroundmode from './Backgroundmode';
 import featuresTabHook,{dayStatus} from './Noncomponents';
 import Dailyactivities from './Dailyactivities';
 import Addactivity from './Addactivity';
+import Quicksession from './Quicksession';
 
 export default function App() {
   function changeStateInfo(state, action){
@@ -17,7 +18,8 @@ export default function App() {
           stdState: state.stdState,
           darkMode: state.darkMode,
           schedulestate: state.schedulestate,
-          dailyactstate: state.dailyactstate
+          dailyactstate: state.dailyactstate,
+          qastate: state.qastate
         };
       case "changeStdState":
         return {
@@ -25,7 +27,8 @@ export default function App() {
           stdState: !state.stdState,
           darkMode: state.darkMode,
           schedulestate: false,
-          dailyactstate: false
+          dailyactstate: false,
+          qastate: false
         };
       case "changeBgState":
         return {
@@ -33,7 +36,8 @@ export default function App() {
           stdState: state.stdState,
           darkMode: !state.darkMode,
           schedulestate: state.schedulestate,
-          dailyactstate: state.dailyactstate
+          dailyactstate: state.dailyactstate,
+          qastate: state.qastate
         }
       case "changeScheduleState":
         return {
@@ -41,7 +45,8 @@ export default function App() {
           stdState: false,
           darkMode: state.darkMode,
           schedulestate: true,
-          dailyactstate: false
+          dailyactstate: false,
+          qastate: false
         }
       case "changeDailyActState":
         return {
@@ -49,19 +54,31 @@ export default function App() {
           stdState: false,
           darkMode: state.darkMode,
           schedulestate: false,
-          dailyactstate: true
+          dailyactstate: true,
+          qastate: false
+        }
+
+      case "changeQuickSessState":
+        return {
+          fthState: state.fthState,
+          stdState: false,
+          darkMode: state.darkMode,
+          schedulestate: false,
+          dailyactstate: false,
+          qastate: !state.qastate
         }
       default:
         return state;
     };
   };
 
-  const [state, takeAction] = useReducer(changeStateInfo, {fthState:true, stdState:false, darkMode: dayStatus(), schedulestate: false, dailyactstate:false});
+  const [state, takeAction] = useReducer(changeStateInfo, {fthState:true, stdState:false, darkMode: dayStatus(), schedulestate: false, dailyactstate:false, qastate:false});
   return (
     <featuresTabHook.Provider value={{state, takeAction}}>
      <Header></Header>
      <Features></Features>
      <Setyourday></Setyourday>
+     <Quicksession></Quicksession>
      <Currentschedule></Currentschedule>
      <Dailyactivities></Dailyactivities>
      <Addactivity></Addactivity>

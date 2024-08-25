@@ -140,7 +140,7 @@ html{
     width: 250px;
     top: calc(50% - 125px);
     left: calc(50% - 125px);
-    background-color: rgb(207, 206, 206);
+    background-color: grey;
     z-index: 5;
     border: 1px solid black;
     border-radius: 25px;
@@ -200,7 +200,7 @@ html{
 .sessionSetup{
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     padding-top: 15px;
-    background-color: rgb(207, 206, 206);
+    background-color: grey;
 }
 
 #sessCount, #sessBreakTime{
@@ -216,7 +216,7 @@ html{
 .sessionFormLabel{
     padding-bottom: 5px;
     padding-left: 30px;
-    color: black;
+    color: white;
 }
 
 #startTime{
@@ -314,3 +314,18 @@ html{
 }
 
 /* Add activity end */
+
+/* Quick Session start */
+
+.setQuickSess{
+    position: absolute;
+    height: 220px;
+    width: 250px;
+    top: calc(50% - 125px);
+    left: calc(50% - 125px);
+    background-color: gray;
+    z-index: 5;
+    border: 1px solid black;
+    border-radius: 25px;
+}
+/* Quick Session end */
