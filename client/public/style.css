@@ -75,6 +75,26 @@ html{
     color: white;
 }
 
+.selectFeature{
+    background-color :rgb(255, 255, 144);
+    color: black;
+}
+
+.selectFeature:hover{
+    background-color :rgb(255, 255, 144) !important;
+    color: black !important;;
+}
+
+.featureInDark{
+    background-color :rgb(48,48,48);
+    color: white;
+}
+
+.featureNormal{
+    background-color :rgb(207, 206, 206);
+    color: black;
+}
+
 /* Features Background Dark Mode End*/
 
 .userPic{

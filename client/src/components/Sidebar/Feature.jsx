@@ -1,4 +1,4 @@
-import {useContext} from "react";
+import {useContext, useRef, useEffect, useState} from "react";
 import PropTypes from 'prop-types';
 import featuresTabHook from "../Noncomponents";
 
@@ -10,8 +10,27 @@ Feature.propTypes = {
 };
 
 function Feature(props){
-    const {takeAction} = useContext(featuresTabHook);
-    return (<div name={props.featureName} id={"feature"+props.id} className="feature" onClick={() => {
+    const {state,takeAction} = useContext(featuresTabHook);
+    const [last, changelast] = useState({val:""});
+    const buttonRef = useRef(null)
+    useEffect(()=> {
+        if(last.val){
+            const feature = last.val;
+            const features = document.querySelectorAll(".feature");
+            features.forEach(element => {
+                if(element.id!=feature){
+                    console.log("id",element.id);
+                    element.classList.remove("selectFeature");
+                }
+            });
+
+        };
+    }, [last]);
+
+    return (<div name={props.featureName} id={"feature"+props.id} className="feature" ref = {buttonRef} onClick={() => {
+        buttonRef.current.classList.add("selectFeature");
+        const feature = "feature"+props.id;
+        changelast({val:feature});
         switch (props.show) {
             case "cs":
                 takeAction({type:"changeScheduleState"});
