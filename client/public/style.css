@@ -78,11 +78,13 @@ html{
 .selectFeature{
     background-color :rgb(255, 255, 144);
     color: black;
+    border: 0.2px solid black;
 }
 
 .selectFeature:hover{
     background-color :rgb(255, 255, 144) !important;
-    color: black !important;;
+    color: black !important;
+    border: 0.2px solid black !important;
 }
 
 .featureInDark{
@@ -121,6 +123,7 @@ html{
     margin-top: 0;
     padding-left: 20px;
     padding-right: 20px;
+    border-radius: 10px;
 }
 
 #feature1{
@@ -310,30 +313,88 @@ html{
     justify-content: space-around;
     align-items: center;
     background-color: rgb(255, 255, 144);
+    border: 0.2px solid black;
     font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     font-size: 20px;
     border-radius: 10px;
     transition: 150ms linear;
 }
 
-/* Daily Activities End */
+/* Form Styling Start */
 
-/* Add activity start */
+.addActivityBar{
+    position: fixed;
+    top: 92vh;
+    transition: 150ms linear;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.actFormElement{
+    text-align: center;
+    background-color:rgb(255, 255, 144);
+    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 18px;
+    border: 0;
+    color: black;
+    width: 11vw;
+    border: 0.2px solid black;
+    box-shadow: 0px 0px 2px black;
+}
+
+.actFormElement::placeholder{
+    color: black;
+    text-shadow: 1px black;
+}
+
+.actFormElement:focus{
+    border: 2px groove rgb(210, 34, 34);
+    outline: none;
+    box-shadow: 0px 0px 2px rgb(210, 34, 34);
+}
+
+#priorityDropdown{
+    height: 28px;
+}
+
+.activityForm{
+    gap: 10px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    color: black;
+}
+
+ .submitActivity{
+    border-radius: 50%;
+    font-size: 18px;
+    width: 30px;
+    padding-bottom: 3px;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    background-color: rgb(48,48,48);
+    border: 0;
+}
+
+.submitActivity:hover{
+    color: black;
+    background-color: darkgreen;
+}
+
+/* Form Styling End */
 
 .addActivity{
     width: 80vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    top: 93vh;
-    font-size: 20px;
-    transition: 150ms linear;
     background-color:rgb(255, 255, 144);
     border-radius: 10px;
+    border: 0.2px solid black;
 }
 
-/* Add activity end */
+/* Daily Activities End */
 
 /* Quick Session start */
 

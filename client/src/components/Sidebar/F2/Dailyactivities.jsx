@@ -6,6 +6,7 @@ export default function Dailyactivities(props){
     return state.dailyactstate && <div className="dailyActivity" style={{left: state.fthState? "17vw" : "10vw"}}>
       <div className="activityBar">Activity</div>
       <div className="activityBar">Timeframe</div>
+      <div className="activityBar">Priority</div>
       <div className="activityBar">Status</div>
     </div>
 }
