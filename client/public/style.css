@@ -342,7 +342,8 @@ html{
     text-align: center;
     background-color:rgb(255, 255, 144);
     font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    font-size: 18px;
+    height: 30px;
+    font-size: 14px;
     border: 0;
     color: black;
     width: 11vw;
@@ -351,8 +352,9 @@ html{
 }
 
 .actFormElement::placeholder{
-    color: black;
+    color: grey;
     text-shadow: 1px black;
+    text-align: center;
 }
 
 .actFormElement:focus{
@@ -383,7 +385,7 @@ html{
     text-align: center;
     color: white;
     font-weight: bold;
-    background-color: rgb(48,48,48);
+    background-color: grey;
     border: 0;
 }
 

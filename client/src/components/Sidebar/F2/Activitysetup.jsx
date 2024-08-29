@@ -7,8 +7,8 @@ export default function Activitysetup(){
     return (<><Headingpopup></Headingpopup>
             <div className="addActivity">
                 <form className="activityForm" action="http://localhost:3000/" method="post">
-                    <input type="text" id="activityName" name="info" className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}}/>
-                    <input type="text" id="activityDesc" name="desc" className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}}/>
+                    <input type="text" id="activityName" name="info" className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}} placeholder="Upto 40 char"/>
+                    <input type="text" id="activityDesc" name="desc" className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}} placeholder="Upto 200 Char"/>
                     <select name="priority" id="priorityDropdown" className="actFormElement">
                         <option value="0"></option>
                         <option value="1">1</option>
@@ -24,6 +24,6 @@ export default function Activitysetup(){
                     </select>
                     <input type="time" id="activityTime" name="startTime"  className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}}/>
                     <input type="time" id="activityTime" name="endTime"  className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}}/>
-                    <button type="submit" className="submitActivity" style={{backgroundColor: state.darkMode? "rgb(48,48,48)": "grey" }}>+</button>
+                    <button type="submit" className="submitActivity">+</button>
                 </form>
             </div></>);};
