@@ -304,7 +304,6 @@ html{
 /* Daily Activities Start */
 
 .dailyActivity{
-    /* height: 60px; */
     width: 80vw;
     position: relative;
     top: 55px;
@@ -322,13 +321,20 @@ html{
 
 /* Form Styling Start */
 
+.addActivity{
+    width: 80vw;
+    background-color:rgb(255, 255, 144);
+    border-radius: 10px;
+    border: 0.2px solid black;
+}
+
 .addActivityBar{
     position: fixed;
-    top: 92vh;
-    transition: 150ms linear;
+    top: 90vh;
+    bottom: 20vh;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    transition: 150ms linear;
 }
 
 .actFormElement{
@@ -349,9 +355,9 @@ html{
 }
 
 .actFormElement:focus{
-    border: 2px groove rgb(210, 34, 34);
+    border: 1px groove black;
     outline: none;
-    box-shadow: 0px 0px 2px rgb(210, 34, 34);
+    box-shadow: 0px 0px 3px rgb(0, 0, 0);
 }
 
 #priorityDropdown{
@@ -368,7 +374,7 @@ html{
     color: black;
 }
 
- .submitActivity{
+.submitActivity{
     border-radius: 50%;
     font-size: 18px;
     width: 30px;
@@ -387,12 +393,30 @@ html{
 
 /* Form Styling End */
 
-.addActivity{
-    width: 80vw;
-    background-color:rgb(255, 255, 144);
-    border-radius: 10px;
-    border: 0.2px solid black;
+/* Heading pop up start */
+
+.headingPopUp{
+    width: 6.5vw;
+    height: 15px;
+    background-color: grey;
+    clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+    font-size: 10px;
+    text-align: center;
+    color: white;
 }
+
+.popUpBar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    transition: 150ms linear;
+    position: relative;
+    bottom: 0.2px;
+    right: 2.8vw;
+    z-index: -1;
+}
+
+/* Heading pop up end */
 
 /* Daily Activities End */
 

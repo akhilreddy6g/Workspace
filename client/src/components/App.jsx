@@ -19,7 +19,8 @@ export default function App() {
           darkMode: state.darkMode,
           schedulestate: state.schedulestate,
           dailyactstate: state.dailyactstate,
-          qastate: state.qastate
+          qastate: state.qastate,
+          activityHeading: state.activityHeading
         };
       case "changeStdState":
         return {
@@ -28,7 +29,8 @@ export default function App() {
           darkMode: state.darkMode,
           schedulestate: false,
           dailyactstate: false,
-          qastate: false
+          qastate: false,
+          activityHeading: false
         };
       case "changeBgState":
         return {
@@ -37,7 +39,8 @@ export default function App() {
           darkMode: !state.darkMode,
           schedulestate: state.schedulestate,
           dailyactstate: state.dailyactstate,
-          qastate: state.qastate
+          qastate: state.qastate,
+          activityHeading: state.activityHeading
         }
       case "changeScheduleState":
         return {
@@ -46,7 +49,8 @@ export default function App() {
           darkMode: state.darkMode,
           schedulestate: true,
           dailyactstate: false,
-          qastate: false
+          qastate: false,
+          activityHeading: false
         }
       case "changeDailyActState":
         return {
@@ -55,7 +59,8 @@ export default function App() {
           darkMode: state.darkMode,
           schedulestate: false,
           dailyactstate: true,
-          qastate: false
+          qastate: false,
+          activityHeading: false
         }
 
       case "changeQuickSessState":
@@ -65,14 +70,26 @@ export default function App() {
           darkMode: state.darkMode,
           schedulestate: false,
           dailyactstate: false,
-          qastate: !state.qastate
+          qastate: !state.qastate,
+          activityHeading:false
+        }
+
+      case "changeActivityHeading":
+        return {
+          fthState: state.fthState,
+          stdState: false,
+          darkMode: state.darkMode,
+          schedulestate: false,
+          dailyactstate: true,
+          qastate: false,
+          activityHeading: true
         }
       default:
         return state;
     };
   };
 
-  const [state, takeAction] = useReducer(changeStateInfo, {fthState:true, stdState:false, darkMode: dayStatus(), schedulestate: false, dailyactstate:false, qastate:false});
+  const [state, takeAction] = useReducer(changeStateInfo, {fthState:true, stdState:false, darkMode: dayStatus(), schedulestate: false, dailyactstate:false, qastate:false, activityHeading:false});
   return (
     <featuresTabHook.Provider value={{state, takeAction}}>
      <Header></Header>
