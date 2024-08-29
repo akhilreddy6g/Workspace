@@ -3,7 +3,7 @@ import { useContext } from "react";
 
 export default function Headingpopup(props){
     const {state} = useContext(featuresTabHook);
-    return <div className="popUpBar" style={{top: state.activityHeading? "0px" : "15px"}}> 
+    return <div className="popUpBar"> 
         <div className="headingPopUp">Activity</div>
         <div className="headingPopUp">Description</div>
         <div className="headingPopUp">Priority</div>

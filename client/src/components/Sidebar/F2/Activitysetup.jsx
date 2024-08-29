@@ -6,11 +6,11 @@ export default function Activitysetup(){
     const {state, takeAction} = useContext(featuresTabHook);
     return (<><Headingpopup></Headingpopup>
             <div className="addActivity">
-                <form className="activityForm">
-                    <input type="text" id="activityName" name="info" className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}} placeholder="Activity Name"/>
-                    <input type="text" id="activityDesc" name="desc" className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}} placeholder="Description"/>
+                <form className="activityForm" action="http://localhost:3000/" method="post">
+                    <input type="text" id="activityName" name="info" className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}}/>
+                    <input type="text" id="activityDesc" name="desc" className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}}/>
                     <select name="priority" id="priorityDropdown" className="actFormElement">
-                        <option value="priority">Priority</option>
+                        <option value="0"></option>
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -22,8 +22,8 @@ export default function Activitysetup(){
                         <option value="9">9</option>
                         <option value="10">10</option>
                     </select>
-                    <input type="time" id="activityTime" name="startTime"  className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}} placeholder="Timeframe"/>
-                    <input type="time" id="activityTime" name="endTime"  className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}} placeholder="Timeframe"/>
-                    <button type="button" className="submitActivity" style={{backgroundColor: state.darkMode? "rgb(48,48,48)": "grey" }}>+</button>
+                    <input type="time" id="activityTime" name="startTime"  className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}}/>
+                    <input type="time" id="activityTime" name="endTime"  className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}}/>
+                    <button type="submit" className="submitActivity" style={{backgroundColor: state.darkMode? "rgb(48,48,48)": "grey" }}>+</button>
                 </form>
             </div></>);};

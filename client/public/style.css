@@ -280,6 +280,7 @@ html{
     width: 80vw;
     height: 30px;
     background-color: rgb(255, 255, 144);
+    border: 0.2px solid black;
     position: relative;
     top: 85px;
     display: flex;
