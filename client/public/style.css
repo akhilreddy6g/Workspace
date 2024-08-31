@@ -329,6 +329,14 @@ html{
     border: 0.2px solid black;
 }
 
+.activity{
+    background-color: rgb(207, 206, 206);
+}
+
+.soloActivityBar{
+    background-color: rgb(207, 206, 206);
+}
+
 .addActivityBar{
     position: fixed;
     top: 90vh;
@@ -378,20 +386,17 @@ html{
 }
 
 .submitActivity{
-    border-radius: 50%;
-    font-size: 18px;
-    width: 30px;
-    padding-bottom: 3px;
+    border-radius: 5px;
+    font-size: 12px;
     text-align: center;
     color: white;
     font-weight: bold;
-    background-color: grey;
+    background-color: teal;
     border: 0;
 }
 
 .submitActivity:hover{
     color: black;
-    background-color: darkgreen;
 }
 
 /* Form Styling End */
@@ -401,7 +406,7 @@ html{
 .headingPopUp{
     width: 6.5vw;
     height: 15px;
-    background-color: grey;
+    background-color: teal;
     clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
     font-size: 10px;
     text-align: center;
