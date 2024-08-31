@@ -2,6 +2,7 @@ import express from "express";
 import pg from "pg";
 import axios from "axios";
 import bodyParser from "body-parser";
+import cors from "cors";
 
 const app = express();
 const db = new pg.Client({
@@ -15,9 +16,8 @@ const db = new pg.Client({
 db.connect();
 
 const port = 3000;
-
+app.use(cors());
 app.use(bodyParser.urlencoded({extended:true}));
-
 app.get("/", async (req,res)=>{
     try {
         const data = await db.query('SELECT * FROM activities');
@@ -37,14 +37,12 @@ app.post("/", async (req, res)=>{
         await db.query(
             "INSERT INTO activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time) VALUES ($1, $2, $3, $4, $5)", 
             [actnName, actDescr, priority, startTime, endTime]);
-        res.redirect("http://localhost:5173/");
+        // res.redirect("http://localhost:5173/");
     } catch (error) {
         res.json("Something went wrong", error);
 
     }
 })
-
-app.patch
 
 app.listen(port, () => {
     console.log(`Listening at port ${port}`);
