@@ -11,7 +11,7 @@ const db = new pg.Client({
     password: '1234',
     database: 'workspace',
     port: '5432'
-})
+});
 
 db.connect();
 
@@ -34,16 +34,18 @@ app.post("/", async (req, res)=>{
     const startTime = req.body.startTime;
     const endTime = req.body.endTime;
     try {
-        await db.query(
+        if (actnName.length == 0 || startTime.length==0 || endTime.length==0){
+            res.redirect("http://localhost:5173/daily-activities");
+        } else{
+            await db.query(
             "INSERT INTO activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time) VALUES ($1, $2, $3, $4, $5)", 
             [actnName, actDescr, priority, startTime, endTime]);
-        // res.redirect("http://localhost:5173/");
+            res.redirect("http://localhost:5173/daily-activities");};
     } catch (error) {
-        res.json("Something went wrong", error);
-
-    }
-})
+        res.json(`Something went wrong: ${error}`);
+    };
+});
 
 app.listen(port, () => {
     console.log(`Listening at port ${port}`);
-})
+});
