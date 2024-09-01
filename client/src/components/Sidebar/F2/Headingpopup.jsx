@@ -9,4 +9,4 @@ export default function Headingpopup(props){
         <div className="headingPopUp">Priority *</div>
         <div className="headingPopUp">Start Time *</div>
         <div className="headingPopUp">End Time *</div>
-    </div>}
+    </div>};

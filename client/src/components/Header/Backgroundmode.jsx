@@ -6,7 +6,7 @@ export default function Backgroundmode(){
     useEffect (() => {
         const navbars = document.querySelectorAll(".navbar");
         const background = document.querySelectorAll(".background");
-        const feature = document.querySelectorAll(".feature")
+        const feature = document.querySelectorAll(".feature");
         if(state.darkMode){
           document.body.style.backgroundColor = "rgb(48,48,48)";
           document.querySelector("#profilepic").setAttribute("src", "src/assets/white-user.svg");

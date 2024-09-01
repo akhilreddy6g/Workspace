@@ -10,12 +10,13 @@ export default function Dailyactivities(){
     async function alterData(){
       const res = await axios.get("http://localhost:3000/");
       changeData(res.data);
+      if(res.data.length>0){
+        takeAction({type:"changeZeroActivity", payload:false});
+      } else if(data.length==0){
+        takeAction({type:"changeZeroActivity", payload:true});
+      };
     };
     
-    useEffect(() => {
-      alterData();
-    });
-
     function activityMapping(object){
       return <Activity
       id = {object.activity_id} 
@@ -26,13 +27,17 @@ export default function Dailyactivities(){
       priority={object.activity_priority}/>
     };
 
-    return state.dailyactstate && <><div className="dailyActivity" style={{left: state.fthState? "17vw" : "10vw", marginBottom: "3vh"}}>
+    useEffect(() => {
+      alterData();
+    },[state.dailyactstate]);
+
+    return <>
+    <div className="dailyActivity" style={{left: state.fthState? "17vw" : "10vw", marginBottom: "3vh"}}>
       <div className="activityBar" style={{paddingLeft:"1vw", width:"25vw"}}>Activity</div>
       <div className="activityBar" style={{width:"10vw"}}>Timeframe</div>
       <div className="activityBar" style={{width:"10vw"}}>Priority</div>
       <div className="activityBar" style={{width:"10vw"}}>Status </div>
     </div>
-    <div>
-      {data.map(activityMapping)}
-    </div></>
+    {data.map(activityMapping)}
+    </>
 }

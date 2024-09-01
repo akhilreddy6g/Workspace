@@ -307,7 +307,7 @@ html{
 .dailyActivity{
     width: 80vw;
     position: relative;
-    top: 55px;
+    top: 85px;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
@@ -442,3 +442,21 @@ html{
     border-radius: 25px;
 }
 /* Quick Session end */
+
+/* Others start */
+
+#root{
+    position: relative;
+    z-index: -1;
+}
+
+/* Others end */
+
+/* Native Html Elements Start */
+
+body{
+    position: relative;
+    z-index: -1;
+}
+
+/* Native Html Elements End */

@@ -7,8 +7,8 @@ export default function Activitysetup(){
     return (<><Headingpopup></Headingpopup>
             <div className="addActivity">
                 <form className="activityForm" action="http://localhost:3000/" method="post">
-                    <input type="text" id="activityName" name="info" className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}} placeholder="Upto 40 char"/>
-                    <input type="text" id="activityDesc" name="desc" className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}} placeholder="Upto 200 Char"/>
+                    <input type="text" id="activityName" name="info" className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"});}} placeholder="Upto 40 char"/>
+                    <input type="text" id="activityDesc" name="desc" className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"});}} placeholder="Upto 200 Char"/>
                     <select name="priority" id="priorityDropdown" className="actFormElement">
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -21,8 +21,8 @@ export default function Activitysetup(){
                         <option value="9">9</option>
                         <option value="10">10</option>
                     </select>
-                    <input type="time" id="activityTime" name="startTime"  className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}}/>
-                    <input type="time" id="activityTime" name="endTime"  className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"})}}/>
+                    <input type="time" id="activityTime" name="startTime"  className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"});}}/>
+                    <input type="time" id="activityTime" name="endTime"  className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"});}}/>
                     <button type="submit" className="submitActivity">Add</button>
                 </form>
             </div></>);};
