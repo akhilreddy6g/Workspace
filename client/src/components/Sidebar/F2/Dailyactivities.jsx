@@ -33,10 +33,11 @@ export default function Dailyactivities(){
 
     return <>
     <div className="dailyActivity" style={{left: state.fthState? "17vw" : "10vw", marginBottom: "3vh"}}>
-      <div className="activityBar" style={{paddingLeft:"1vw", width:"25vw"}}>Activity</div>
-      <div className="activityBar" style={{width:"10vw"}}>Timeframe</div>
-      <div className="activityBar" style={{width:"10vw"}}>Priority</div>
-      <div className="activityBar" style={{width:"10vw"}}>Status </div>
+      <div className="activityBar" style={{width:"2vw", paddingLeft:"2vw"}}></div>
+      <div className="activityBar" style={{width:"30vw",  marginLeft:"5vw"}}>Activity</div>
+      <div className="activityBar" style={{width:"10vw",  marginLeft:"5vw"}}>Timeframe</div>
+      <div className="activityBar" style={{width:"10vw",  paddingLeft:"4vw"}}>Priority</div>
+      <div className="activityBar" style={{width:"10vw",  paddingLeft:"5vw"}}>Status </div>
     </div>
     {data.map(activityMapping)}
     </>
