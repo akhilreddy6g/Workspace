@@ -32,13 +32,14 @@ export default function Dailyactivities(){
     },[state.dailyactstate]);
 
     return <>
-    <div className="dailyActivity" style={{left: state.fthState? "17vw" : "10vw", marginBottom: "3vh"}}>
+    <div className="scrollHide" style={{left: state.fthState? "16vw" : "9vw", backgroundColor: state.darkMode? "rgb(48,48,48)" : "white"}}></div>
+    <div className="dailyActivity" style={{left: state.fthState? "17vw" : "10vw"}}>
       <div className="activityBar" style={{width:"2vw", paddingLeft:"2vw"}}></div>
       <div className="activityBar" style={{width:"30vw",  marginLeft:"5vw"}}>Activity</div>
       <div className="activityBar" style={{width:"10vw",  marginLeft:"5vw"}}>Timeframe</div>
       <div className="activityBar" style={{width:"10vw",  paddingLeft:"4vw"}}>Priority</div>
       <div className="activityBar" style={{width:"10vw",  paddingLeft:"5vw"}}>Status </div>
     </div>
-    {data.map(activityMapping)}
+    <div className="activityContainer" style={{left: state.fthState? "17vw" : "10vw"}}>{data.map(activityMapping)}</div>
     </>
 }

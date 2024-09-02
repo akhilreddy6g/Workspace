@@ -332,7 +332,6 @@ html{
     background-color: rgba(206, 206, 207, 0);
     width: 80vw;
     position: relative;
-    top: 135px;
     display: flex;
     flex-direction: row;
     font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
@@ -341,22 +340,21 @@ html{
     transition: 150ms linear;
 }
 
-.soloActivityBar::-webkit-scrollbar{
-    width: 50px;
-}
-
-.soloActivityBar::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-}
-   
-.soloActivityBar::-webkit-scrollbar-thumb {
-    background-color: bisque;
-    outline: 1px solid slategrey;
+.activityContainer{
+    background-color: rgba(206, 206, 207, 0);
+    height: 150vh;
+    width: 80vw;
+    top: 133px;
+    position: relative;
+    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    border-radius: 10px;
+    transition: 150ms linear;
+    z-index: -1;
 }
 
 .addActivityBar{
     position: fixed;
-    top: 90vh;
+    top: 91vh;
     bottom: 20vh;
     display: flex;
     flex-direction: column;
@@ -453,6 +451,25 @@ html{
     right: 2.8vw;
     z-index: -1;
 }
+
+.scrollHide{ 
+    height: 65px; 
+    width: 82vw; 
+    position: fixed; 
+    top: 63.5px; 
+    border-radius: 0; 
+    transition: left 150ms linear;
+}
+
+.scrollHideBottom{ 
+    height: 100vh; 
+    width: 82vw; 
+    position: fixed; 
+    top: 90.50vh;
+    border-radius: 0;
+    transition: left 150ms linear;
+}
+
 
 /* Heading pop up end */
 
