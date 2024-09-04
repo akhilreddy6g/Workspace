@@ -18,7 +18,8 @@ export default function App() {
           dailyactstate: state.dailyactstate,
           qastate: state.qastate,
           activityHeading: state.activityHeading,
-          zeroActivity: state.zeroActivity
+          activityData: state.activityData,
+          updateActivity:false,
         };
       case "changeStdState":
         return {
@@ -29,7 +30,8 @@ export default function App() {
           dailyactstate: false,
           qastate: false,
           activityHeading: false,
-          zeroActivity: state.zeroActivity
+          activityData: state.activityData,
+          updateActivity:false,
         };
       case "changeBgState":
         return {
@@ -40,7 +42,8 @@ export default function App() {
           dailyactstate: state.dailyactstate,
           qastate: state.qastate,
           activityHeading: state.activityHeading,
-          zeroActivity: state.zeroActivity
+          activityData: state.activityData,
+          updateActivity:false,
         };
       case "changeScheduleState":
         return {
@@ -51,7 +54,8 @@ export default function App() {
           dailyactstate: false,
           qastate: false,
           activityHeading: false,
-          zeroActivity: state.zeroActivity
+          activityData: state.activityData,
+          updateActivity:false,
         };
       case "changeDailyActState":
         return {
@@ -62,7 +66,8 @@ export default function App() {
           dailyactstate: true,
           qastate: false,
           activityHeading: false,
-          zeroActivity: state.zeroActivity
+          activityData: state.activityData,
+          updateActivity:false,
         };
       case "changeQuickSessState":
         return {
@@ -73,7 +78,8 @@ export default function App() {
           dailyactstate: false,
           qastate: !state.qastate,
           activityHeading:false,
-          zeroActivity: state.zeroActivity
+          activityData: state.activityData,
+          updateActivity:false,
         };
       case "changeActivityHeading":
         return {
@@ -84,9 +90,10 @@ export default function App() {
           dailyactstate: true,
           qastate: false,
           activityHeading: true,
-          zeroActivity: state.zeroActivity
+          activityData: state.activityData,
+          updateActivity:false,
         };
-      case "changeZeroActivity":
+      case "changeActivityData":
         return{
           fthState: state.fthState,
           stdState: false,
@@ -95,14 +102,37 @@ export default function App() {
           dailyactstate: true,
           qastate: false,
           activityHeading: true,
-          zeroActivity: action.payload? true : false
+          activityData: action.payload,
+          updateActivity: state.updateActivity,
+        };
+      case "changeActivityState":
+        return{
+          fthState: state.fthState,
+          stdState: false,
+          darkMode: state.darkMode,
+          schedulestate: false,
+          dailyactstate: true,
+          qastate: false,
+          activityHeading: true,
+          activityData: state.activityData,
+          updateActivity: !state.updateActivity,
         };
       default:
         return state;
     };
   };
 
-  const [state, takeAction] = useReducer(changeStateInfo, {fthState:true, stdState:false, darkMode: dayStatus(), schedulestate: false, dailyactstate:false, qastate:false, activityHeading:false, zeroActivity:true});
+  const [state, takeAction] = useReducer(changeStateInfo, {
+    fthState:true, 
+    stdState:false, 
+    darkMode: dayStatus(), 
+    schedulestate: false, 
+    dailyactstate:false, 
+    qastate:false, 
+    activityHeading:false,
+    activityData:[], 
+    updateActivity:false,
+  });
   return (
     <Router>
     <featuresTabHook.Provider value={{state, takeAction}}>

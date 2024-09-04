@@ -1,24 +1,21 @@
 import featuresTabHook from "../../Noncomponents";
 import Activity from "./Activity";
-import { useContext, useEffect, useState} from "react";
+import { useContext, useEffect} from "react";
 import axios from "axios";
 
 export default function Dailyactivities(){
     const {state, takeAction} = useContext(featuresTabHook);
-    const [data, changeData] = useState([]);
-
+    const data = state.activityData;
     async function alterData(){
       const res = await axios.get("http://localhost:3000/");
-      changeData(res.data);
-      if(res.data.length>0){
-        takeAction({type:"changeZeroActivity", payload:false});
-      } else if(data.length==0){
-        takeAction({type:"changeZeroActivity", payload:true});
+      if(res.data.length!=data.length){
+        takeAction({type:"changeActivityData", payload: res.data})
       };
     };
     
-    function activityMapping(object){
+    function activityMapping(object, index){
       return <Activity
+      sno = {index+1}
       id = {object.activity_id} 
       key = {object.activity_id}
       activity={object.activity_name} 
@@ -29,7 +26,8 @@ export default function Dailyactivities(){
 
     useEffect(() => {
       alterData();
-    },[state.dailyactstate]);
+      console.log("data", data);
+    },[state.updateActivity]);
 
     return <>
     <div className="scrollHide" style={{left: state.fthState? "16vw" : "9vw", backgroundColor: state.darkMode? "rgb(48,48,48)" : "white"}}></div>

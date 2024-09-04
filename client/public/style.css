@@ -414,14 +414,6 @@ html{
     color: black;
 }
 
-.modifyIcon{
-    border-radius: 50%;
-    height: 23px;
-    display: flex;
-    align-items: center;
-    margin-top: 3px;
-}
-
 .asset{
     width: 25px;
     height: 18px;

@@ -1,12 +1,36 @@
 import featuresTabHook from "../../Noncomponents";
 import { useContext} from "react";
 import Headingpopup from "./Headingpopup";
+import axios from "axios";
 
 export default function Activitysetup(){
     const {state, takeAction} = useContext(featuresTabHook);
+    const submitAddActivity = async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = {
+            actnName:formData.get("info"),
+            actDescr:formData.get("desc"),
+            priority:formData.get("priority"),
+            startTime:formData.get("startTime"),
+            endTime:formData.get("endTime")
+        };
+        try {
+            await axios({
+                method: 'post',
+                url: 'http://localhost:3000/add-activity',
+                headers: {'Content-Type' : 'application/json'},
+                data: {data}
+            });
+            console.log("yes yesy yes");
+            takeAction({type:"changeActivityState"});
+        } catch (error) {
+            console.log("Something went wrong", error);
+        };
+    };
     return (<><Headingpopup></Headingpopup>
             <div className="addActivity">
-                <form className="activityForm" action="http://localhost:3000/" method="post">
+                <form className="activityForm" onSubmit={submitAddActivity}>
                     <input type="text" id="activityName" name="info" className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"});}} placeholder="Upto 40 char"/>
                     <input type="text" id="activityDesc" name="desc" className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"});}} placeholder="Upto 200 Char"/>
                     <select name="priority" id="priorityDropdown" className="actFormElement">
