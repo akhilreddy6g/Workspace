@@ -17,9 +17,9 @@ export default function App() {
           schedulestate: state.schedulestate,
           dailyactstate: state.dailyactstate,
           qastate: state.qastate,
-          activityHeading: state.activityHeading,
           activityData: state.activityData,
-          updateActivity:false,
+          updateActivity: false,
+          editActivity: state.editActivity,
         };
       case "changeStdState":
         return {
@@ -29,9 +29,9 @@ export default function App() {
           schedulestate: false,
           dailyactstate: false,
           qastate: false,
-          activityHeading: false,
           activityData: state.activityData,
           updateActivity:false,
+          editActivity: state.editActivity,
         };
       case "changeBgState":
         return {
@@ -41,9 +41,9 @@ export default function App() {
           schedulestate: state.schedulestate,
           dailyactstate: state.dailyactstate,
           qastate: state.qastate,
-          activityHeading: state.activityHeading,
           activityData: state.activityData,
-          updateActivity:false,
+          updateActivity: false,
+          editActivity: false,
         };
       case "changeScheduleState":
         return {
@@ -53,9 +53,9 @@ export default function App() {
           schedulestate: true,
           dailyactstate: false,
           qastate: false,
-          activityHeading: false,
           activityData: state.activityData,
           updateActivity:false,
+          editActivity: state.editActivity,
         };
       case "changeDailyActState":
         return {
@@ -65,9 +65,9 @@ export default function App() {
           schedulestate: false,
           dailyactstate: true,
           qastate: false,
-          activityHeading: false,
           activityData: state.activityData,
           updateActivity:false,
+          editActivity: state.editActivity,
         };
       case "changeQuickSessState":
         return {
@@ -77,21 +77,9 @@ export default function App() {
           schedulestate: false,
           dailyactstate: false,
           qastate: !state.qastate,
-          activityHeading:false,
           activityData: state.activityData,
           updateActivity:false,
-        };
-      case "changeActivityHeading":
-        return {
-          fthState: state.fthState,
-          stdState: false,
-          darkMode: state.darkMode,
-          schedulestate: false,
-          dailyactstate: true,
-          qastate: false,
-          activityHeading: true,
-          activityData: state.activityData,
-          updateActivity:false,
+          editActivity: state.editActivity,
         };
       case "changeActivityData":
         return{
@@ -101,9 +89,9 @@ export default function App() {
           schedulestate: false,
           dailyactstate: true,
           qastate: false,
-          activityHeading: true,
           activityData: action.payload,
           updateActivity: state.updateActivity,
+          editActivity: state.editActivity,
         };
       case "changeActivityState":
         return{
@@ -113,9 +101,21 @@ export default function App() {
           schedulestate: false,
           dailyactstate: true,
           qastate: false,
-          activityHeading: true,
           activityData: state.activityData,
           updateActivity: !state.updateActivity,
+          editActivity: false,
+        };
+      case "changeEditActivityState":
+        return{
+          fthState: state.fthState,
+          stdState: false,
+          darkMode: state.darkMode,
+          schedulestate: false,
+          dailyactstate: true,
+          qastate: false,
+          activityData: state.activityData,
+          updateActivity: state.updateActivity,
+          editActivity: !state.editActivity,
         };
       default:
         return state;
@@ -129,9 +129,9 @@ export default function App() {
     schedulestate: false, 
     dailyactstate:false, 
     qastate:false, 
-    activityHeading:false,
     activityData:[], 
     updateActivity:false,
+    editActivity:false,
   });
   return (
     <Router>

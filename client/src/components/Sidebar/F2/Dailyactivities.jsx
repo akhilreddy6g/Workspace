@@ -5,12 +5,11 @@ import axios from "axios";
 
 export default function Dailyactivities(){
     const {state, takeAction} = useContext(featuresTabHook);
-    const data = state.activityData;
+    var data = state.activityData;
     async function alterData(){
       const res = await axios.get("http://localhost:3000/");
-      if(res.data.length!=data.length){
-        takeAction({type:"changeActivityData", payload: res.data})
-      };
+      takeAction({type:"changeActivityData", payload: res.data})
+      console.log("data in alterData, after change", data);
     };
     
     function activityMapping(object, index){
@@ -26,7 +25,8 @@ export default function Dailyactivities(){
 
     useEffect(() => {
       alterData();
-      console.log("data", data);
+      console.log("data in useEffect", data);
+      console.log("state data inside useEffect", state.activityData);
     },[state.updateActivity]);
 
     return <>
@@ -34,10 +34,12 @@ export default function Dailyactivities(){
     <div className="dailyActivity" style={{left: state.fthState? "17vw" : "10vw"}}>
       <div className="activityBar" style={{width:"2vw", paddingLeft:"2vw"}}></div>
       <div className="activityBar" style={{width:"30vw",  marginLeft:"5vw"}}>Activity</div>
-      <div className="activityBar" style={{width:"10vw",  marginLeft:"5vw"}}>Timeframe</div>
-      <div className="activityBar" style={{width:"10vw",  paddingLeft:"4vw"}}>Priority</div>
-      <div className="activityBar" style={{width:"10vw",  paddingLeft:"5vw"}}>Status </div>
+      <div className="activityBar" style={{width:"5vw",  marginLeft:"2.5vw"}}>Start</div>
+      <div className="activityBar" style={{width:"5vw",  marginLeft:"2.5vw"}}>End</div>
+      <div className="activityBar" style={{width:"5vw",  marginLeft:"2.5vw"}}>Priority</div>
+      <div className="activityBar" style={{width:"5vw",  marginLeft:"2.5vw"}}>Status </div>
+      <div className="activityBar" style={{width:"5vw",  marginLeft:"2vw"}}>Filter</div>
     </div>
-    <div className="activityContainer" style={{left: state.fthState? "17vw" : "10vw"}}>{data.map(activityMapping)}</div>
+    <div className="activityContainer" id="actContainer" style={{left: state.fthState? "17vw" : "10vw"}}>{data.map(activityMapping)}</div>
     </>
 }

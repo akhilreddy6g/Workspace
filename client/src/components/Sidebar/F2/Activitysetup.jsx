@@ -9,7 +9,7 @@ export default function Activitysetup(){
         event.preventDefault();
         const formData = new FormData(event.target);
         const data = {
-            actnName:formData.get("info"),
+            actName:formData.get("info"),
             actDescr:formData.get("desc"),
             priority:formData.get("priority"),
             startTime:formData.get("startTime"),
@@ -22,7 +22,6 @@ export default function Activitysetup(){
                 headers: {'Content-Type' : 'application/json'},
                 data: {data}
             });
-            console.log("yes yesy yes");
             takeAction({type:"changeActivityState"});
         } catch (error) {
             console.log("Something went wrong", error);
@@ -31,8 +30,8 @@ export default function Activitysetup(){
     return (<><Headingpopup></Headingpopup>
             <div className="addActivity">
                 <form className="activityForm" onSubmit={submitAddActivity}>
-                    <input type="text" id="activityName" name="info" className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"});}} placeholder="Upto 40 char"/>
-                    <input type="text" id="activityDesc" name="desc" className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"});}} placeholder="Upto 200 Char"/>
+                    <input type="text" id="activityName" name="info" className="actFormElement"  placeholder="Upto 40 char"/>
+                    <input type="text" id="activityDesc" name="desc" className="actFormElement" placeholder="Upto 200 Char"/>
                     <select name="priority" id="priorityDropdown" className="actFormElement">
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -45,8 +44,8 @@ export default function Activitysetup(){
                         <option value="9">9</option>
                         <option value="10">10</option>
                     </select>
-                    <input type="time" id="activityTime" name="startTime"  className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"});}}/>
-                    <input type="time" id="activityTime" name="endTime"  className="actFormElement" onClick={() => {takeAction({type:"changeActivityHeading"});}}/>
+                    <input type="time" id="activityTime" name="startTime"  className="actFormElement"/>
+                    <input type="time" id="activityTime" name="endTime"  className="actFormElement"/>
                     <button type="submit" className="submitActivity">Add</button>
                 </form>
             </div></>);};

@@ -352,6 +352,11 @@ html{
     z-index: -1;
 }
 
+.activityContent{
+    margin:0;
+    font-size:"20px";
+}
+
 .addActivityBar{
     position: fixed;
     top: 91vh;
@@ -462,8 +467,21 @@ html{
     transition: left 150ms linear;
 }
 
-
 /* Heading pop up end */
+
+.overLayInitial{
+    position:fixed;
+    top: 0;
+    left: 0;
+}
+
+.changeOverLay{
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(179, 179, 179, 0);
+    pointer-events: auto;
+    z-index: 5;
+}
 
 /* Daily Activities End */
 
@@ -495,7 +513,7 @@ html{
 
 body{
     position: relative;
-    z-index: -1;
+    z-index: 5;
 }
 
 /* Native Html Elements End */
