@@ -25,7 +25,17 @@ app.get("/", async (req,res)=>{
         const data = await db.query('SELECT * FROM activities');
         res.json(data.rows);
     } catch (error) {
-        res.json(`Something went wrong: ${error}`);
+        res.status(404).json({ message: `Unsuccessful in retrieving the data`});
+    };
+});
+
+app.get("/activity/:id", async (req,res)=>{
+    const id = req.params.id;
+    try {
+        const data = await db.query("SELECT * FROM activities WHERE activity_id = $1", [id]);
+        res.json(data.rows);
+    } catch (error) {
+        res.status(404).json({ message: `Unsuccessful in retrieving the activity with id ${id}`});
     };
 });
 
@@ -62,26 +72,17 @@ app.patch("/edit-activity", async(req, res)=>{
     console.log("req.data............................................................", req.body);
     const {actName, actStart, actEnd, actPriority, id} = req.body.data;
     console.log("actName, priority, start, end, id :", actName, actStart, actEnd, actPriority, id);
-    var activityName = actName.slice(0, 50);
-    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
-    if(actName.length>0 && actStart.length>0 && actEnd.length>0 && timeRegex.test(actStart) && timeRegex.test(actEnd) && !isNaN(actPriority) && actPriority.trim() !== '') {
-        try {
-            console.log("entered inside");
-            var priority = actPriority
-            if(priority>10){priority = 10}
-            if(priority<0){priority = 0}
-            await db.query("UPDATE activities SET activity_name = $1, activity_priority = $2, activity_start_time = $3, activity_end_time = $4 WHERE activity_id = $5", [activityName, priority, actStart, actEnd, id]);
-            res.status(200).json({ message: `Successfully updated the activity with id ${id}`});
-            console.log("successfully updated the record");
-        } catch (error) {
-            console.log("unsuccessful in updating the record:", error);
-            res.json({ message: `Unsuccessful in updating the activity with id ${id}: ${error}`});
-        }
-    } else {
-        console.log("unsuccessful in updating the record, please enter the inputs in correct format");
-        res.json({ message: `Unsuccessful in updating the activity with id ${id}`});
+    try {
+        console.log("entered inside");
+        await db.query("UPDATE activities SET activity_name = $1, activity_priority = $2, activity_start_time = $3, activity_end_time = $4 WHERE activity_id = $5", [actName, actPriority, actStart, actEnd, id]);
+        res.status(200).json({ message: `Successfully updated the activity with id ${id}`});
+        console.log("successfully updated the record");
+    } catch (error) {
+        console.log("unsuccessful in updating the record:", error);
+        res.json({ message: `Unsuccessful in updating the activity with id ${id}: ${error}`});
     }
-});
+    }
+    );
 
 app.listen(port, () => {
     console.log(`Listening at port ${port}`);
