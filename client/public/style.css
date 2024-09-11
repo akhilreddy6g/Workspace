@@ -1,8 +1,17 @@
-/* Navbar styling start */
+/* Native Html Elements Start */
 
 html{
     height: 100vh;
 }
+
+body{
+    position: relative;
+    z-index: 5;
+}
+
+/* Native Html Elements End */
+
+/* Navbar styling start */
 
 .navbar{
     border-radius: 0;
@@ -10,7 +19,7 @@ html{
     position: fixed;
 }
 
-/* Navbar Darkmode Start*/
+/* Navbar Darkmode Start */
 
 .navdarkMode{
     border-bottom: 1px solid grey;
@@ -18,7 +27,7 @@ html{
     color: white;
 }
 
-/* Navbar Darkmode End*/
+/* Navbar Darkmode End */
 
 .container-fluid{
     height: 61.5px;
@@ -46,16 +55,18 @@ html{
     text-shadow: 1px 1px 4px black;
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
+
 #titlelink{
     color: white;
 }
+
 #titlelink:hover{
     color: white;
 }
 
-/* Navbar styling end*/
+/* Navbar styling end */
 
-/* Features/Feature Start*/
+/* Features/Feature Start */
 
 .background{
     width: 200px;
@@ -67,12 +78,9 @@ html{
     margin-top: 13px;
 }
 
-/* Features Background Dark Mode Start*/
-
-.backgdarkMode{
-    border-right: 1px solid grey;
-    background-color: rgb(48,48,48) !important;
-    color: white;
+.featureNormal{
+    background-color :rgb(207, 206, 206);
+    color: black;
 }
 
 .selectFeature{
@@ -86,18 +94,6 @@ html{
     color: black !important;
     border: 0.2px solid black !important;
 }
-
-.featureInDark{
-    background-color :rgb(48,48,48);
-    color: white;
-}
-
-.featureNormal{
-    background-color :rgb(207, 206, 206);
-    color: black;
-}
-
-/* Features Background Dark Mode End*/
 
 .userPic{
     width: 50px;
@@ -126,18 +122,13 @@ html{
     border-radius: 10px;
 }
 
-#feature1{
-    margin-top: 20px;
-}
-
 .feature:hover{
     color: black;
     background-color: rgba(168, 158, 158, 0.501);
 }
 
-.featuredarkMode:hover{
-    color: white;
-    background-color: rgba(168, 158, 158, 0.501);
+#feature1{
+    margin-top: 20px;
 }
 
 .featureTitle{
@@ -153,7 +144,306 @@ html{
     transition: 150ms linear;
 }
 
+/* Features Dark Mode Start */
+
+.backgdarkMode{
+    border-right: 1px solid grey;
+    background-color: rgb(48,48,48) !important;
+    color: white;
+}
+
+.featureInDark{
+    background-color :rgb(48,48,48);
+    color: white;
+}
+
+.featuredarkMode:hover{
+    color: white;
+    background-color: rgba(168, 158, 158, 0.501);
+}
+
+/* Features Dark Mode End */
+
 /* Features/Feature End */
+
+/* Disclaimer Start */
+
+.disclaimerContainer{
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: calc(50% - 100px);
+    left: calc(50% - 100px);
+    background-color: rgb(48,48,48);
+    z-index: 10;
+    border: 1px solid black;
+    border-radius: 25px;
+    color: white;
+}
+
+.criticalOps{
+    display: flex;
+    justify-content: space-evenly;
+    position: relative;
+}
+
+.yesButton{
+    background-color: green !important;
+    border: 0;
+}
+
+.noButton{
+    background-color: red !important;
+    border: 0;
+}
+
+#staticDisclaimer{
+    position: relative;
+    left: 20px;
+    top: 5px;
+}
+
+.disclaimerTitle{
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid black;
+}
+
+.disclaimerContent{
+    display: flex;
+    justify-content: center;
+}
+
+.disclaimerAction{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+/* Disclaimer End */
+
+/* Schedule Start */
+
+.scheduleDisclaimer{
+    width: 80vw;
+    height: 30px;
+    background-color: rgb(255, 255, 144);
+    border: 0.2px solid black;
+    position: relative;
+    top: 85px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 20px;
+    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    border-radius: 10px;
+    transition: 150ms linear;
+}
+
+.scheduleContext{
+    display: flex;
+    align-items: center;
+    padding-top: 10px;
+}
+
+/* Schedule End */
+
+/* Daily Activities Start */
+
+.scrollHide{ 
+    height: 65px; 
+    width: 82vw; 
+    position: fixed; 
+    top: 63.5px; 
+    border-radius: 0; 
+    transition: left 150ms linear;
+}
+
+.dailyActivity{
+    width: 80vw;
+    position: fixed;
+    top: 85px;
+    display: flex;
+    flex-direction: row;
+    background-color: rgb(255, 255, 144);
+    border: 0.2px solid black;
+    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 20px;
+    border-radius: 10px;
+    transition: 150ms linear;
+}
+
+.activityContainer{
+    background-color: rgba(206, 206, 207, 0);
+    height: 150vh;
+    width: 80vw;
+    top: 133px;
+    position: relative;
+    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    border-radius: 10px;
+    transition: 150ms linear;
+    z-index: -1;
+}
+
+.soloActivityBar{
+    background-color: rgba(206, 206, 207, 0);
+    width: 80vw;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 20px;
+    border-radius: 10px;
+    transition: 150ms linear;
+}
+
+.activityContent{
+    margin:0;
+    font-size:"20px";
+}
+
+.asset{
+    width: 25px;
+    height: 18px;
+}
+
+.addActivityBar{
+    position: fixed;
+    top: 91vh;
+    bottom: 20vh;
+    display: flex;
+    flex-direction: column;
+    transition: 150ms linear;
+}
+
+.headingPopUp{
+    width: 6.5vw;
+    height: 15px;
+    background-color: teal;
+    clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+    font-size: 10px;
+    text-align: center;
+    color: white;
+}
+
+.popUpBar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    transition: 150ms linear;
+    position: relative;
+    bottom: 0.2px;
+    right: 2.8vw;
+    z-index: -1;
+}
+
+.addActivity{
+    width: 80vw;
+    background-color:rgb(255, 255, 144);
+    border-radius: 10px;
+    border: 0.2px solid black;
+}
+
+/* Form Styling Start */
+
+.activityForm{
+    gap: 10px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    color: black;
+}
+
+.actFormElement{
+    text-align: center;
+    background-color:rgb(255, 255, 144);
+    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    height: 30px;
+    font-size: 14px;
+    border: 0;
+    color: black;
+    width: 11vw;
+    border: 0.2px solid black;
+    box-shadow: 0px 0px 2px black;
+}
+
+.actFormElement::placeholder{
+    color: grey;
+    text-shadow: 1px black;
+    text-align: center;
+}
+
+.actFormElement:focus{
+    border: 1px groove black;
+    outline: none;
+    box-shadow: 0px 0px 3px rgb(0, 0, 0);
+}
+
+#priorityDropdown{
+    height: 28px;
+}
+
+.submitActivity{
+    border-radius: 5px;
+    font-size: 12px;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    background-color: teal;
+    border: 0;
+}
+
+.submitActivity:hover{
+    color: black;
+}
+
+/* Form Styling End */
+
+.scrollHideBottom{ 
+    height: 100vh; 
+    width: 82vw; 
+    position: fixed; 
+    top: 90.50vh;
+    border-radius: 0;
+    transition: left 150ms linear;
+}
+
+.overLayInitial{
+    position:fixed;
+    top: 0;
+    left: 0;
+}
+
+.changeOverLay{
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(179, 179, 179, 0);
+    pointer-events: auto;
+    z-index: 5;
+}
+
+/* Daily Activities End */
+
+/* Quick Session start */
+
+.setQuickSess{
+    position: absolute;
+    height: 220px;
+    width: 250px;
+    top: calc(50% - 125px);
+    left: calc(50% - 125px);
+    background-color: gray;
+    z-index: 5;
+    border: 1px solid black;
+    border-radius: 25px;
+}
+/* Quick Session end */
 
 /* Setday Feature Styling Start */
 
@@ -274,232 +564,6 @@ html{
 
 /* Setday Feature Styling End */
 
-/* Schedule Start */
-
-.scheduleDisclaimer{
-    width: 80vw;
-    height: 30px;
-    background-color: rgb(255, 255, 144);
-    border: 0.2px solid black;
-    position: relative;
-    top: 85px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    font-size: 20px;
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    border-radius: 10px;
-    transition: 150ms linear;
-}
-
-.scheduleContext{
-    display: flex;
-    align-items: center;
-    padding-top: 10px;
-}
-
-/* Schedule End */
-
-/* Daily Activities Start */
-
-.dailyActivity{
-    width: 80vw;
-    position: fixed;
-    top: 85px;
-    display: flex;
-    flex-direction: row;
-    background-color: rgb(255, 255, 144);
-    border: 0.2px solid black;
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    font-size: 20px;
-    border-radius: 10px;
-    transition: 150ms linear;
-}
-
-/* Form Styling Start */
-
-.addActivity{
-    width: 80vw;
-    background-color:rgb(255, 255, 144);
-    border-radius: 10px;
-    border: 0.2px solid black;
-}
-
-
-.soloActivityBar{
-    background-color: rgba(206, 206, 207, 0);
-    width: 80vw;
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    font-size: 20px;
-    border-radius: 10px;
-    transition: 150ms linear;
-}
-
-.activityContainer{
-    background-color: rgba(206, 206, 207, 0);
-    height: 150vh;
-    width: 80vw;
-    top: 133px;
-    position: relative;
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    border-radius: 10px;
-    transition: 150ms linear;
-    z-index: -1;
-}
-
-.activityContent{
-    margin:0;
-    font-size:"20px";
-}
-
-.addActivityBar{
-    position: fixed;
-    top: 91vh;
-    bottom: 20vh;
-    display: flex;
-    flex-direction: column;
-    transition: 150ms linear;
-}
-
-.actFormElement{
-    text-align: center;
-    background-color:rgb(255, 255, 144);
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    height: 30px;
-    font-size: 14px;
-    border: 0;
-    color: black;
-    width: 11vw;
-    border: 0.2px solid black;
-    box-shadow: 0px 0px 2px black;
-}
-
-.actFormElement::placeholder{
-    color: grey;
-    text-shadow: 1px black;
-    text-align: center;
-}
-
-.actFormElement:focus{
-    border: 1px groove black;
-    outline: none;
-    box-shadow: 0px 0px 3px rgb(0, 0, 0);
-}
-
-#priorityDropdown{
-    height: 28px;
-}
-
-.activityForm{
-    gap: 10px;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    color: black;
-}
-
-.submitActivity{
-    border-radius: 5px;
-    font-size: 12px;
-    text-align: center;
-    color: white;
-    font-weight: bold;
-    background-color: teal;
-    border: 0;
-}
-
-.submitActivity:hover{
-    color: black;
-}
-
-.asset{
-    width: 25px;
-    height: 18px;
-}
-
-/* Form Styling End */
-
-/* Heading pop up start */
-
-.headingPopUp{
-    width: 6.5vw;
-    height: 15px;
-    background-color: teal;
-    clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
-    font-size: 10px;
-    text-align: center;
-    color: white;
-}
-
-.popUpBar{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    transition: 150ms linear;
-    position: relative;
-    bottom: 0.2px;
-    right: 2.8vw;
-    z-index: -1;
-}
-
-.scrollHide{ 
-    height: 65px; 
-    width: 82vw; 
-    position: fixed; 
-    top: 63.5px; 
-    border-radius: 0; 
-    transition: left 150ms linear;
-}
-
-.scrollHideBottom{ 
-    height: 100vh; 
-    width: 82vw; 
-    position: fixed; 
-    top: 90.50vh;
-    border-radius: 0;
-    transition: left 150ms linear;
-}
-
-/* Heading pop up end */
-
-.overLayInitial{
-    position:fixed;
-    top: 0;
-    left: 0;
-}
-
-.changeOverLay{
-    height: 100vh;
-    width: 100vw;
-    background-color: rgba(179, 179, 179, 0);
-    pointer-events: auto;
-    z-index: 5;
-}
-
-/* Daily Activities End */
-
-/* Quick Session start */
-
-.setQuickSess{
-    position: absolute;
-    height: 220px;
-    width: 250px;
-    top: calc(50% - 125px);
-    left: calc(50% - 125px);
-    background-color: gray;
-    z-index: 5;
-    border: 1px solid black;
-    border-radius: 25px;
-}
-/* Quick Session end */
-
 /* Others start */
 
 #root{
@@ -508,12 +572,3 @@ html{
 }
 
 /* Others end */
-
-/* Native Html Elements Start */
-
-body{
-    position: relative;
-    z-index: 5;
-}
-
-/* Native Html Elements End */

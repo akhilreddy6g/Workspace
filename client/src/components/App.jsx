@@ -20,6 +20,9 @@ export default function App() {
           activityData: state.activityData,
           updateActivity: false,
           editActivity: state.editActivity,
+          disclaimerState: state.disclaimerState,
+          disclaimerButtons:false,
+          resolve: state.resolve
         };
       case "changeStdState":
         return {
@@ -32,6 +35,9 @@ export default function App() {
           activityData: state.activityData,
           updateActivity:false,
           editActivity: state.editActivity,
+          disclaimerState: state.disclaimerState,
+          disclaimerButtons:false,
+          resolve: state.resolve
         };
       case "changeBgState":
         return {
@@ -44,6 +50,9 @@ export default function App() {
           activityData: state.activityData,
           updateActivity: false,
           editActivity: false,
+          disclaimerState: state.disclaimerState,
+          disclaimerButtons:false,
+          resolve: state.resolve
         };
       case "changeScheduleState":
         return {
@@ -56,6 +65,9 @@ export default function App() {
           activityData: state.activityData,
           updateActivity:false,
           editActivity: state.editActivity,
+          disclaimerState: state.disclaimerState,
+          disclaimerButtons:false,
+          resolve: state.resolve
         };
       case "changeDailyActState":
         return {
@@ -68,6 +80,9 @@ export default function App() {
           activityData: state.activityData,
           updateActivity:false,
           editActivity: state.editActivity,
+          disclaimerState: state.disclaimerState,
+          disclaimerButtons:false,
+          resolve: state.resolve
         };
       case "changeQuickSessState":
         return {
@@ -80,6 +95,9 @@ export default function App() {
           activityData: state.activityData,
           updateActivity:false,
           editActivity: state.editActivity,
+          disclaimerState: state.disclaimerState,
+          disclaimerButtons:false,
+          resolve: state.resolve
         };
       case "changeActivityData":
         return{
@@ -92,6 +110,9 @@ export default function App() {
           activityData: action.payload,
           updateActivity: state.updateActivity,
           editActivity: state.editActivity,
+          disclaimerState: state.disclaimerState,
+          disclaimerButtons:false,
+          resolve: state.resolve
         };
       case "changeActivityState":
         return{
@@ -102,8 +123,11 @@ export default function App() {
           dailyactstate: true,
           qastate: false,
           activityData: state.activityData,
-          updateActivity: !state.updateActivity,
+          updateActivity: action.payload,
           editActivity: false,
+          disclaimerState: state.disclaimerState,
+          disclaimerButtons: state.disclaimerButtons,
+          resolve: state.resolve
         };
       case "changeEditActivityState":
         return{
@@ -116,7 +140,55 @@ export default function App() {
           activityData: state.activityData,
           updateActivity: state.updateActivity,
           editActivity: !state.editActivity,
+          disclaimerState: state.disclaimerState,
+          disclaimerButtons:false,
+          resolve: state.resolve
         };
+      case "changeDisclaimerState":
+        return{
+          fthState: state.fthState,
+          stdState: false,
+          darkMode: state.darkMode,
+          schedulestate: false,
+          dailyactstate: true,
+          qastate: false,
+          activityData: state.activityData,
+          updateActivity: state.updateActivity,
+          editActivity: !state.editActivity,
+          disclaimerState: action.payload,
+          disclaimerButtons: state.disclaimerButtons,
+          resolve: state.resolve
+        }
+      case "changeDisclaimerButtons":
+        return {
+          fthState: state.fthState,
+          stdState: false,
+          darkMode: state.darkMode,
+          schedulestate: false,
+          dailyactstate: true,
+          qastate: false,
+          activityData: state.activityData,
+          updateActivity: state.updateActivity,
+          editActivity: !state.editActivity,
+          disclaimerState: state.disclaimerState,
+          disclaimerButtons: !state.disclaimerButtons,
+          resolve: state.resolve
+        }
+       case "setResolve":
+        return {
+          fthState: state.fthState,
+          stdState: false,
+          darkMode: state.darkMode,
+          schedulestate: false,
+          dailyactstate: true,
+          qastate: false,
+          activityData: state.activityData,
+          updateActivity: state.updateActivity,
+          editActivity: !state.editActivity,
+          disclaimerState: state.disclaimerState,
+          disclaimerButtons: state.disclaimerButtons,
+          resolve: action.payload
+        }
       default:
         return state;
     };
@@ -132,6 +204,9 @@ export default function App() {
     activityData:[], 
     updateActivity:false,
     editActivity:false,
+    disclaimerState:false,
+    disclaimerButtons:false, 
+    resolve: null
   });
   return (
     <Router>

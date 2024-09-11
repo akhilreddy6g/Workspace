@@ -1,6 +1,7 @@
 import featuresTabHook from "../../Noncomponents";
 import {useContext, useState} from "react";
 import axios from "axios";
+import Disclaimer from "../../Disclaimer";
 
 export default function Activity(props){
     const {state, takeAction} = useContext(featuresTabHook);
@@ -108,6 +109,12 @@ export default function Activity(props){
     };
 
     async function deleteActivity(event, id){
+      event.preventDefault();
+      const userResponse = await new Promise((resolve) => {
+        takeAction({ type: "changeDisclaimerState", payload: true });
+        takeAction({ type: "changeDisclaimerButtons" });
+        takeAction({ type: "setResolve", payload: resolve });
+      });
       document.getElementById(`activity ${id}`).style.backgroundColor = "rgb(255, 255, 255, 0)";
       document.querySelector(".overLayInitial").classList.remove("changeOverLay");
       document.body.style.overflow = "auto";
@@ -123,13 +130,17 @@ export default function Activity(props){
       document.querySelectorAll(".scrollHideBottom").forEach(element => {element.style.zIndex = "auto";});
       document.querySelectorAll(".scrollHide").forEach(element => {element.style.zIndex = "auto";});
       document.querySelectorAll(".addActivityBar").forEach(element => {element.style.zIndex = "auto";});
-      event.preventDefault();
-      try {
-        await axios.delete(`http://localhost:3000/delete-activity/${id}`);
-        takeAction({type:"changeActivityState"});
-      } catch (error) {
-        console.log("Something went wrong", error);
-      };
+      console.log("updateActivity State:", state.updateActivity);
+      if(userResponse){
+        try {
+          await axios.delete(`http://localhost:3000/delete-activity/${id}`);
+        } catch (error) {
+          console.log("Something went wrong", error);
+        };
+      } else {
+        console.log("Activity deletion was canceled by user.");
+      }
+      takeAction({type:"changeActivityState", payload:false});
     };
 
     return<><div className="soloActivityBar" id={"activity "+props.id} style={{color: state.darkMode? "white" : "black", border: state.darkMode? "0.2px solid white" : "0.2px solid black"}}>
@@ -145,5 +156,7 @@ export default function Activity(props){
       <button type="button" className="modifyIcon" id="deleteButton" onClick={(event) => {deleteActivity(event, props.id)}} style={{all: "unset", cursor: "pointer", backgroundColor:"red",display:"flex",alignItems:"center",height:"24px",width:"25px",borderRadius:"50%", marginTop:"2px", marginLeft:"2vw"}}>
         <img id="deleteButton" className="asset" src="src/assets/trash.svg" alt="delete" />
       </button>
-      </div></>
+      </div>
+      {<Disclaimer message="Do you want to delete the activity?"></Disclaimer>}
+      </>
 };
