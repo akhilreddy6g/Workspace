@@ -1,10 +1,10 @@
 import {useReducer} from 'react';
 import Header from './Header/Header';
 import Features from './Sidebar/Features';
-import Backgroundmode from './Header/Backgroundmode';
 import featuresTabHook,{dayStatus} from './Noncomponents';
 import { BrowserRouter as Router} from 'react-router-dom';
 import Approuter from './Sidebar/Approuter';
+import Deletedisclaimer from './Sidebar/F2/Deletedisclaimer';
 
 export default function App() {
   function changeStateInfo(state, action){
@@ -213,7 +213,7 @@ export default function App() {
     <featuresTabHook.Provider value={{state, takeAction}}>
      <Header></Header>
      <Features></Features>
-     <Backgroundmode></Backgroundmode>
+     <Deletedisclaimer></Deletedisclaimer>
      <Approuter></Approuter>
     </featuresTabHook.Provider>
     </Router>

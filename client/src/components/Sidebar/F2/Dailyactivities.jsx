@@ -9,7 +9,6 @@ export default function Dailyactivities(){
     async function alterData(){
       const res = await axios.get("http://localhost:3000/");
       takeAction({type:"changeActivityData", payload: res.data})
-      console.log("data in alterData, after change", data);
     };
     
     function activityMapping(object, index){
@@ -25,21 +24,19 @@ export default function Dailyactivities(){
 
     useEffect(() => {
       alterData();
-      console.log("data in useEffect", data);
-      console.log("state data inside useEffect", state.activityData);
     },[state.updateActivity]);
 
     return <>
-    <div className="scrollHide" style={{left: state.fthState? "16vw" : "9vw", backgroundColor: state.darkMode? "rgb(48,48,48)" : "white"}}></div>
-    <div className="dailyActivity" style={{left: state.fthState? "17vw" : "10vw"}}>
-      <div className="activityBar" style={{width:"2vw", paddingLeft:"2vw"}}></div>
-      <div className="activityBar" style={{width:"30vw",  marginLeft:"5vw"}}>Activity</div>
-      <div className="activityBar" style={{width:"5vw",  marginLeft:"2.5vw"}}>Start</div>
-      <div className="activityBar" style={{width:"5vw",  marginLeft:"2.5vw"}}>End</div>
-      <div className="activityBar" style={{width:"5vw",  marginLeft:"2.5vw"}}>Priority</div>
-      <div className="activityBar" style={{width:"5vw",  marginLeft:"2.5vw"}}>Status </div>
-      <div className="activityBar" style={{width:"5vw",  marginLeft:"2vw"}}>Filter</div>
+    <div className={`scrollHide ${state.fthState? "scrollHideBottom1" : "scrollHideBottom2" } ${state.darkMode? "scrollHideBottomDark" : "scrollHideBottomNormal"}`}></div>
+    <div className={`dailyActivity ${state.fthState? "dailyActivity1" : "dailyActivity2"}`}>
+      <div className="activityBar abid"></div>
+      <div className="activityBar aba">Activity</div>
+      <div className="activityBar ab">Start</div>
+      <div className="activityBar ab">End</div>
+      <div className="activityBar ab">Priority</div>
+      <div className="activityBar ab">Status </div>
+      <div className="activityBar abf">Filter</div>
     </div>
-    <div className="activityContainer" id="actContainer" style={{left: state.fthState? "17vw" : "10vw"}}>{data.map(activityMapping)}</div>
+    <div className={`activityContainer ${state.fthState? "activityContainer1" : "activityContainer2"}`} id="actContainer">{data.map(activityMapping)}</div>
     </>
 }

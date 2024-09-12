@@ -17,7 +17,7 @@ export default function Disclaimer(props){
         state.resolve(false);
     }
     return ( state.disclaimerState &&
-        <div className="disclaimerContainer" style={{height: state.disclaimerButtons? "150px": "100px", width: state.disclaimerButtons? "300px":"200px"}}>
+        <div className={`disclaimerContainer ${state.disclaimerButtons? "disclaimerContainer1" : "disclaimerContainer2"}`}>
             {state.disclaimerButtons && 
             <div className="disclaimerTitle">
                 <p id="staticDisclaimer">Disclaimer</p>
@@ -27,7 +27,7 @@ export default function Disclaimer(props){
                 {props.message}
             </p>
             {state.disclaimerButtons && 
-            <div className="criticalOps" style={{width: state.disclaimerButtons? "300px":"200px"}}>
+            <div className={`criticalOps ${state.disclaimerButtons? "criticalOps1" : "criticalOps2"}`}>
                 <button className="criticalButton yesButton" onClick={(event) => {deleteActivity(event)}}>yes</button>
                 <button className="criticalButton noButton" onClick={(event) => {preventDeleteActivity(event)}}>no</button>
             </div>}

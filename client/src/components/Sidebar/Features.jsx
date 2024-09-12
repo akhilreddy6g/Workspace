@@ -5,8 +5,8 @@ import Userprofile from "./Userprofile";
 
 export default function Features(){
     let {state} = useContext(featuresTabHook);
-    return (<div className="featureContainer" style={{left: state.fthState? "0px": "-200px"}}>
-        <div className="background">
+    return (<div className={`featureContainer ${state.fthState? "featureContainer1" : "featureContainer2"}`}>
+        <div className={`background ${state.darkMode && "backgdarkMode"}`}>
     <Userprofile id="0" title="userPicture" src="src/assets/user.svg"></Userprofile>
     <Feature id="1" featureName="currentSchedule" title="Current Schedule" show="cs" path="/current-schedule"></Feature>
     <Feature id="2" featureName="dailyActivities" title="Daily Activities" show="da" path="/daily-activities"></Feature>

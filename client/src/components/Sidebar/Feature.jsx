@@ -15,7 +15,6 @@ export default function Feature(props){
     const [last, changelast] = useState({val:""});
     const buttonRef = useRef(null);
     const navigate = useNavigate();
-
     useEffect(()=> {
         if(last.val){
             const feature = last.val;
@@ -32,7 +31,7 @@ export default function Feature(props){
     const handleNavigation = () => {
     navigate(props.path);};
 
-    return (<div name={props.featureName} id={"feature"+props.id} className="feature" ref = {buttonRef} onClick={() => {
+    return (<div name={props.featureName} id={"feature"+props.id} className={`feature ${state.darkMode && "featuredarkMode"}`} ref = {buttonRef} onClick={() => {
         buttonRef.current.classList.add("selectFeature");
         const feature = "feature"+props.id;
         changelast({val:feature});

@@ -110,6 +110,14 @@ body{
     justify-content: center;
 }
 
+.profilepic1{
+    border: 1px solid grey
+}
+
+.profilepic2{
+    border: 1px solid black
+}
+
 .feature{
     display: flex;
     align-items: center;
@@ -144,6 +152,14 @@ body{
     transition: 150ms linear;
 }
 
+.featureContainer1{
+    left: 0px;
+}
+
+.featureContainer2{
+    left: -200px;
+}
+
 /* Features Dark Mode Start */
 
 .backgdarkMode{
@@ -175,16 +191,34 @@ body{
     top: calc(50% - 100px);
     left: calc(50% - 100px);
     background-color: rgb(48,48,48);
-    z-index: 10;
+    z-index: 10 !important;
     border: 1px solid black;
     border-radius: 25px;
     color: white;
+}
+
+.disclaimerContainer1{
+    height: 150px;
+    width: 300px ;
+}
+
+.disclaimerContainer2{
+    height: 100px;
+    width: 200px;
 }
 
 .criticalOps{
     display: flex;
     justify-content: space-evenly;
     position: relative;
+}
+
+.criticalOps1{
+    width: 300px;
+}
+
+.criticalOps2{
+    width: 200px;
 }
 
 .yesButton{
@@ -244,6 +278,14 @@ body{
     transition: 150ms linear;
 }
 
+.scheduleDisclaimer1{
+    left: 17vw;
+}
+
+.scheduleDisclaimer2{
+    left: 10vw;
+}
+
 .scheduleContext{
     display: flex;
     align-items: center;
@@ -263,6 +305,31 @@ body{
     transition: left 150ms linear;
 }
 
+.abid{
+    width:2vw; 
+    padding-left:2vw
+}
+
+.aba{
+    width:30vw;
+    margin-left:5vw
+}
+
+.ab{
+    width:5vw;  
+    margin-left:2.5vw
+}
+
+.abf{
+    width:5vw;  
+    margin-left:2vw
+}
+
+
+
+
+
+
 .dailyActivity{
     width: 80vw;
     position: fixed;
@@ -277,6 +344,14 @@ body{
     transition: 150ms linear;
 }
 
+.dailyActivity1{
+    left: 17vw;
+}
+
+.dailyActivity2{
+    left: 10vw;
+}
+
 .activityContainer{
     background-color: rgba(206, 206, 207, 0);
     height: 150vh;
@@ -287,6 +362,14 @@ body{
     border-radius: 10px;
     transition: 150ms linear;
     z-index: -1;
+}
+
+.activityContainer1{
+    left: 17vw;
+}
+
+.activityContainer2{
+    left: 10vw;
 }
 
 .soloActivityBar{
@@ -300,6 +383,43 @@ body{
     border-radius: 10px;
     transition: 150ms linear;
 }
+
+.soloActivityBarDark{
+    color: white;
+    border: 0.2px solid white;
+}
+
+.soloActivityBarNormal{
+    color: black;
+    border: 0.2px solid black;
+}
+
+#editButton{
+    all: unset;
+    cursor: pointer;
+    background-color: green;
+    display: flex;
+    align-items: center;
+    height: 24px;
+    width: 25px;
+    border-radius: 50%;
+    margin-top: 2px;
+    margin-left: 2vw;
+  }
+
+#deleteButton{
+    all: unset;
+    cursor: pointer;
+    background-color: red;
+    display: flex;
+    align-items: center;
+    height: 24px;
+    width: 25px;
+    border-radius: 50%;
+    margin-top: 2px;
+    margin-left: 2vw;
+}
+  
 
 .activityContent{
     margin:0;
@@ -316,8 +436,17 @@ body{
     top: 91vh;
     bottom: 20vh;
     display: flex;
+    margin-bottom: 3vh;
     flex-direction: column;
     transition: 150ms linear;
+}
+
+.addActivityBar1{
+    left: 17vw;
+}
+
+.addActivityBar2{
+    left: 10vw;
 }
 
 .headingPopUp{
@@ -414,6 +543,22 @@ body{
     transition: left 150ms linear;
 }
 
+.scrollHideBottom1{
+    left: 16vw;
+}
+
+.scrollHideBottom2{
+    left: 9vw;
+}
+
+.scrollHideBottomNormal{
+    background-color: white;
+}
+
+.scrollHideBottomDark{
+    background-color: rbg(48,48,48);
+}
+
 .overLayInitial{
     position:fixed;
     top: 0;
@@ -443,6 +588,11 @@ body{
     border: 1px solid black;
     border-radius: 25px;
 }
+
+.setQuickSess1{
+    background-color: rgb(48,48,48);
+}
+
 /* Quick Session end */
 
 /* Setday Feature Styling Start */
@@ -459,6 +609,14 @@ body{
     border-radius: 25px;
 }
 
+.setDay1{
+    background-color: rgb(48,48,48);
+}
+
+.setDay2{
+    background-color: grey;
+}
+
 .toolBar{
     display: flex;
     flex-direction: row;
@@ -468,6 +626,10 @@ body{
     background-color: grey;
     border-top-left-radius: 25px;
     border-top-right-radius: 25px;
+}
+
+.toolBar1{
+    background-color: rgb(48,48,48);
 }
 
 .overLay{
@@ -500,13 +662,13 @@ body{
 }
 
 .setDayContext{
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     font-size: 15px;
     color: white;
     padding-left: 15px;
-    padding-top:2px;
+    padding-top: 5px;
     font-weight: bolder;
 }
-
 
 /* Form Styling Start */
 
@@ -514,6 +676,10 @@ body{
     font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     padding-top: 15px;
     background-color: grey;
+}
+
+.sessionSetup1{
+    background-color: rgb(48, 48, 48);
 }
 
 #sessCount, #sessBreakTime{
@@ -569,6 +735,21 @@ body{
 #root{
     position: relative;
     z-index: -1;
+}
+
+.mainBackground{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+}
+
+.mainBackground1{
+    background-color: rgb(48,48,48);
+}
+
+.mainBackground2{
+    background-color: white;
 }
 
 /* Others end */

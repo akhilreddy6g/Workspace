@@ -6,9 +6,9 @@ export default function Quicksession(){
     const {state, takeAction} = useContext(featuresTabHook);
      return state.qastate &&
      <div className="overLay">
-        <div className="setQuickSess" style={{backgroundColor: state.darkMode && "rgb(48,48,48)"}}>
-            <div className="toolBar" style={{backgroundColor: state.darkMode && "rgb(48,48,48)"}}>
-                <p className="setDayContext setQuickSessContext" style={{fontFamily:"Cambria, Cochin, Georgia, Times, 'Times New Roman', serif",paddingTop:"5px"}}>Setup Quick Session</p>
+        <div className={`setQuickSess ${state.darkMode && "setQuickSess1"}`}>
+            <div className={`toolBar ${state.darkMode && "toolBar1"}`}>
+                <p className="setDayContext setQuickSessContext">Setup Quick Session</p>
                 <button className="closeSetDayButton" onClick={() => {takeAction({type:"changeQuickSessState"});}}>x</button>
             </div>
             <Quicksessionsetup></Quicksessionsetup>
