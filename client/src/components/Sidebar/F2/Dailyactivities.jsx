@@ -27,16 +27,6 @@ export default function Dailyactivities(){
     },[state.updateActivity]);
 
     return <>
-    <div className={`scrollHide ${state.fthState? "scrollHideBottom1" : "scrollHideBottom2" } ${state.darkMode? "scrollHideBottomDark" : "scrollHideBottomNormal"}`}></div>
-    <div className={`dailyActivity ${state.fthState? "dailyActivity1" : "dailyActivity2"}`}>
-      <div className="activityBar abid"></div>
-      <div className="activityBar aba">Activity</div>
-      <div className="activityBar ab">Start</div>
-      <div className="activityBar ab">End</div>
-      <div className="activityBar ab">Priority</div>
-      <div className="activityBar ab">Status </div>
-      <div className="activityBar abf">Filter</div>
-    </div>
-    <div className={`activityContainer ${state.fthState? "activityContainer1" : "activityContainer2"}`} id="actContainer">{data.map(activityMapping)}</div>
+    <div className={`activityContainer ${state.fthState? "activityContainer1" : "activityContainer2"} ${state.editActivity && "activityContainer3"}`} id="actContainer">{data.map(activityMapping)}</div>
     </>
 }

@@ -154,7 +154,7 @@ export default function App() {
           qastate: false,
           activityData: state.activityData,
           updateActivity: state.updateActivity,
-          editActivity: !state.editActivity,
+          editActivity: state.editActivity,
           disclaimerState: action.payload,
           disclaimerButtons: state.disclaimerButtons,
           resolve: state.resolve
@@ -169,7 +169,7 @@ export default function App() {
           qastate: false,
           activityData: state.activityData,
           updateActivity: state.updateActivity,
-          editActivity: !state.editActivity,
+          editActivity: state.editActivity,
           disclaimerState: state.disclaimerState,
           disclaimerButtons: !state.disclaimerButtons,
           resolve: state.resolve
@@ -184,7 +184,7 @@ export default function App() {
           qastate: false,
           activityData: state.activityData,
           updateActivity: state.updateActivity,
-          editActivity: !state.editActivity,
+          editActivity: state.editActivity,
           disclaimerState: state.disclaimerState,
           disclaimerButtons: state.disclaimerButtons,
           resolve: action.payload

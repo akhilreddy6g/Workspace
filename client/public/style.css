@@ -17,6 +17,7 @@ body{
     border-radius: 0;
     background-color: grey;
     position: fixed;
+    z-index: 2;
 }
 
 /* Navbar Darkmode Start */
@@ -325,11 +326,6 @@ body{
     margin-left:2vw
 }
 
-
-
-
-
-
 .dailyActivity{
     width: 80vw;
     position: fixed;
@@ -371,6 +367,11 @@ body{
 .activityContainer2{
     left: 10vw;
 }
+
+.activityContainer3{
+    z-index: auto;
+}
+
 
 .soloActivityBar{
     background-color: rgba(206, 206, 207, 0);
@@ -556,7 +557,7 @@ body{
 }
 
 .scrollHideBottomDark{
-    background-color: rbg(48,48,48);
+    background-color: rgb(48,48,48);
 }
 
 .overLayInitial{
@@ -633,6 +634,15 @@ body{
 }
 
 .overLay{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(179, 179, 179, 0.5);
+    pointer-events: auto;
+    z-index: 2;
+}
+
+.overLay1{
     position: fixed;
     width: 100vw;
     height: 100vh;
