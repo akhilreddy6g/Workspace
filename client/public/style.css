@@ -9,6 +9,16 @@ body{
     z-index: 5;
 }
 
+legend{
+    color: red;
+    font-size: 20px;
+}
+
+label{
+    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    padding-left: 15px;
+}
+
 /* Native Html Elements End */
 
 /* Navbar styling start */
@@ -323,7 +333,9 @@ body{
 
 .abf{
     width:5vw;  
-    margin-left:2vw
+    margin-left:2vw;
+    display: flex;
+    align-items: center;
 }
 
 .dailyActivity{
@@ -346,6 +358,36 @@ body{
 
 .dailyActivity2{
     left: 10vw;
+}
+
+.filterContainer{
+    display: flex;
+    flex-direction: column;
+    height: 80px;
+    width: 100px;
+    position: fixed;
+    left: 86vw;
+    top: 120px;
+    border-radius: 10px;
+    border: 1px solid grey;
+    z-index: 10;
+}
+
+.filterField{
+    border: 2px solid red;
+}
+
+.filterLabel{
+    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.filterInput{
+    height: 10px;
+    padding-top: 2px;
+}
+
+input[type=radio] {
+    margin-left: 10px;
 }
 
 .activityContainer{
@@ -432,6 +474,13 @@ body{
     height: 18px;
 }
 
+.asset1{
+    width: 5vw;
+    height: 25px;
+    background-color: orange;
+    box-shadow: 0 0 2px black;
+}
+
 .addActivityBar{
     position: fixed;
     top: 91vh;
@@ -449,6 +498,8 @@ body{
 .addActivityBar2{
     left: 10vw;
 }
+
+
 
 .headingPopUp{
     width: 6.5vw;

@@ -22,7 +22,7 @@ export default function Activitysetup(){
                 headers: {'Content-Type' : 'application/json'},
                 data: {data}
             });
-            takeAction({type:"changeActivityState"});
+            takeAction({type:"changeActivityState", payload:!state.updateActivity});
         } catch (error) {
             console.log("Something went wrong", error);
         };
@@ -44,8 +44,8 @@ export default function Activitysetup(){
                         <option value="9">9</option>
                         <option value="10">10</option>
                     </select>
-                    <input type="time" id="activityTime" name="startTime"  className="actFormElement"/>
-                    <input type="time" id="activityTime" name="endTime"  className="actFormElement"/>
+                    <input type="time" id="startTime" name="startTime"  className="actFormElement"/>
+                    <input type="time" id="endTime" name="endTime"  className="actFormElement"/>
                     <button type="submit" className="submitActivity">Add</button>
                 </form>
             </div></>);};

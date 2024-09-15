@@ -22,12 +22,22 @@ app.use(express.json());
 
 app.get("/", async (req,res)=>{
     try {
-        const data = await db.query('SELECT * FROM activities');
+        const data = await db.query('SELECT * FROM activities ORDER BY activity_start_time');
         res.json(data.rows);
     } catch (error) {
         res.status(404).json({ message: `Unsuccessful in retrieving the data`});
     };
 });
+
+app.get("/activities/:filter", async(req, res)=>{
+    const filter = req.params.filter;
+    try {
+        const data = await db.query(`SELECT * FROM activities ORDER BY ${filter}`);
+        res.json(data.rows);
+    } catch (error) {
+        res.status(404).json({ message: `Unsuccessful in retrieving the data`});
+    };
+})
 
 app.get("/activity/:id", async (req,res)=>{
     const id = req.params.id;
@@ -48,7 +58,7 @@ app.post("/add-activity", async (req, res)=>{
         console.log("Successfully added the activity");
         res.status(200).json({ message: `Successfully inserted the activity the activity`});
     } catch (error) {
-        res.json(`Something went wrong: ${error}`);
+        res.status(404).json(`Something went wrong: ${error}`);
     };
 });
 
