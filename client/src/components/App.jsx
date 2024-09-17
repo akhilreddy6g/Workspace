@@ -15,6 +15,7 @@ export default function App() {
           stdState: state.stdState,
           darkMode: state.darkMode,
           schedulestate: state.schedulestate,
+          addCurrentDayActivity: state.addCurrentDayActivity,
           dailyactstate: state.dailyactstate,
           qastate: state.qastate,
           activityData: state.activityData,
@@ -31,6 +32,7 @@ export default function App() {
           stdState: !state.stdState,
           darkMode: state.darkMode,
           schedulestate: false,
+          addCurrentDayActivity: false,
           dailyactstate: false,
           qastate: false,
           activityData: state.activityData,
@@ -47,6 +49,7 @@ export default function App() {
           stdState: state.stdState,
           darkMode: !state.darkMode,
           schedulestate: state.schedulestate,
+          addCurrentDayActivity: state.addCurrentDayActivity,
           dailyactstate: state.dailyactstate,
           qastate: state.qastate,
           activityData: state.activityData,
@@ -63,6 +66,7 @@ export default function App() {
           stdState: false,
           darkMode: state.darkMode,
           schedulestate: true,
+          addCurrentDayActivity: state.addCurrentDayActivity,
           dailyactstate: false,
           qastate: false,
           activityData: state.activityData,
@@ -73,12 +77,30 @@ export default function App() {
           resolve: state.resolve,
           filterButton : state.filterButton 
         };
+      case "changeCurrentDayState":
+        return {
+          fthState: state.fthState,
+          stdState: false,
+          darkMode: state.darkMode,
+          schedulestate: true,
+          addCurrentDayActivity: action.payload,
+          dailyactstate: false,
+          qastate: false,
+          activityData: state.activityData,
+          updateActivity:false,
+          editActivity: state.editActivity,
+          disclaimerState: state.disclaimerState,
+          disclaimerButtons:false,
+          resolve: state.resolve,
+          filterButton : state.filterButton 
+        }
       case "changeDailyActState":
         return {
           fthState: state.fthState,
           stdState: false,
           darkMode: state.darkMode,
           schedulestate: false,
+          addCurrentDayActivity: false,
           dailyactstate: true,
           qastate: false,
           activityData: state.activityData,
@@ -95,6 +117,7 @@ export default function App() {
           stdState: false,
           darkMode: state.darkMode,
           schedulestate: false,
+          addCurrentDayActivity: false,
           dailyactstate: false,
           qastate: !state.qastate,
           activityData: state.activityData,
@@ -111,6 +134,7 @@ export default function App() {
           stdState: false,
           darkMode: state.darkMode,
           schedulestate: false,
+          addCurrentDayActivity: state.addCurrentDayActivity,
           dailyactstate: true,
           qastate: false,
           activityData: action.payload,
@@ -127,6 +151,7 @@ export default function App() {
           stdState: false,
           darkMode: state.darkMode,
           schedulestate: false,
+          addCurrentDayActivity: state.addCurrentDayActivity,
           dailyactstate: true,
           qastate: false,
           activityData: state.activityData,
@@ -143,6 +168,7 @@ export default function App() {
           stdState: false,
           darkMode: state.darkMode,
           schedulestate: false,
+          addCurrentDayActivity: false,
           dailyactstate: true,
           qastate: false,
           activityData: state.activityData,
@@ -159,6 +185,7 @@ export default function App() {
           stdState: false,
           darkMode: state.darkMode,
           schedulestate: false,
+          addCurrentDayActivity: false,
           dailyactstate: true,
           qastate: false,
           activityData: state.activityData,
@@ -175,6 +202,7 @@ export default function App() {
           stdState: false,
           darkMode: state.darkMode,
           schedulestate: false,
+          addCurrentDayActivity: false,
           dailyactstate: true,
           qastate: false,
           activityData: state.activityData,
@@ -191,6 +219,7 @@ export default function App() {
           stdState: false,
           darkMode: state.darkMode,
           schedulestate: false,
+          addCurrentDayActivity: false,
           dailyactstate: true,
           qastate: false,
           activityData: state.activityData,
@@ -207,6 +236,7 @@ export default function App() {
           stdState: false,
           darkMode: state.darkMode,
           schedulestate: false,
+          addCurrentDayActivity: false,
           dailyactstate: true,
           qastate: false,
           activityData: state.activityData,
@@ -227,6 +257,7 @@ export default function App() {
     stdState:false, 
     darkMode: dayStatus(), 
     schedulestate: false, 
+    addCurrentDayActivity: false,
     dailyactstate:false, 
     qastate:false, 
     activityData:[], 
@@ -235,8 +266,9 @@ export default function App() {
     disclaimerState:false,
     disclaimerButtons:false, 
     resolve: null,
-    filterButton : false 
+    filterButton : false
   });
+  
   return (
     <Router>
     <featuresTabHook.Provider value={{state, takeAction}}>

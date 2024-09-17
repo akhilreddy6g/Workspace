@@ -13,14 +13,13 @@ export default function Filtercheckbox(){
             try {
                 const res = await axios.get(`http://localhost:3000/activities/${event.target.value}`);
                 takeAction({type:"changeActivityData", payload: res.data});
-                // takeAction({type:"changeActivityState", payload:!state.updateActivity});
             } catch (error) {
                 console.log("Something went wrong", error);
             };
         };
     }
     return ( state.filterButton &&
-        <div className={`filterContainer ${state.darkMode? "navdarkMode" : "featureNormal"}`}>
+        <div className={`filterContainer ${state.darkMode? "navdarkMode" : "featureNormal"} ${state.fthState? "filterContainer1" : "filterContainer2"}`}>
         <div>
             <input className="filterInput" type="radio" id="start" name="sortby" value="activity_start_time" onClick={alterFilter}/>
             <label className="filterLabel" htmlFor="startTime">Start</label>

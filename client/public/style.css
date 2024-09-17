@@ -271,6 +271,12 @@ label{
 
 /* Schedule Start */
 
+.dateTimeDisplay{
+    position: absolute;
+    left: 81vw;
+    width: 200px;
+}
+
 .scheduleDisclaimer{
     width: 80vw;
     height: 30px;
@@ -301,6 +307,129 @@ label{
     display: flex;
     align-items: center;
     padding-top: 10px;
+}
+
+.activityListHView{
+    width: 80vw;
+    position: fixed;
+    top: 85px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 20px;
+    overflow-x: auto; 
+    padding-bottom: 5px;
+    transition: 150ms linear;
+}
+
+.activityListHView::-webkit-scrollbar {
+    width: 0;
+    height: 0; 
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.activityListHView:hover::-webkit-scrollbar {
+    width: "auto"; 
+    height: 8px;
+}
+
+.activityListHView::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.activitiesInCurrentSchedule{
+    background-color:rgb(255, 255, 144);
+    border-radius: 10px;
+    border: 0.2px solid black;
+}
+
+.activityName {
+    border-bottom: 0.5px solid black;
+    font-size: 16px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+}
+
+.timeAndStatus {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 5px;
+}
+
+.activityStartTime {
+    margin-left: 5px;
+    padding-right: 5px;
+    font-size: 15px;
+}
+
+.timeBarContainer {
+    display: flex;
+    align-items: center;
+}
+
+.timeBar {
+    border-radius: 10px;
+    height: 15px;
+    border: 0.5px solid black;
+    width: 90px;
+    overflow: hidden;
+    text-align: center;
+}
+
+.timeLeftContent{
+    font-size: 10px; 
+    position: absolute; 
+    width: 90px;
+}
+
+.fillBar {
+    height: 100%;
+    width: 0%;
+    background-color: orange;
+    border-radius: 10px; 
+    transition: width 350ms ease-in;
+    display: flex; 
+    justify-content: center;
+}
+
+.activityEndTime {
+    margin-right: 5px;
+    padding-left: 5px;
+    font-size: 15px;
+}
+
+.activityFrame {
+    width: 80vw;
+    height: 67vh;
+    position: absolute;
+    top: 180px;
+    border-radius: 10px;
+    transition: 150ms linear;
+}
+
+.currentActivities{
+    width: 80vw;
+    position: relative;
+    top: 93vh ;
+    text-align: center;
+    background-color: rgb(255, 255, 144);
+    border: 0.2px solid black;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 18px;
+    border-radius: 10px;
+    transition: 150ms linear;
+}
+
+.addCurrentActivityButton{
+    all: unset;
+    cursor: pointer;
+    width: 100%;
 }
 
 /* Schedule End */
@@ -366,11 +495,19 @@ label{
     height: 80px;
     width: 100px;
     position: fixed;
-    left: 86vw;
     top: 120px;
     border-radius: 10px;
     border: 1px solid grey;
     z-index: 10;
+    transition: 150ms linear;
+}
+
+.filterContainer1{
+    left: 86vw;
+}
+
+.filterContainer2{
+    left: 79vw;
 }
 
 .filterField{
@@ -437,6 +574,22 @@ input[type=radio] {
     border: 0.2px solid black;
 }
 
+.activityStatus{
+    width: 100%;
+    height: 10px;
+    background-color: rgb(255, 255, 144);
+    border-radius: 10px;
+    border: 0.2px solid black;
+}
+
+.abstatus{
+    display: flex;
+    align-items: center;
+    width:5vw;   
+    margin-left:2vw;
+    margin-right: 0.3vw;
+}
+
 #editButton{
     all: unset;
     cursor: pointer;
@@ -498,8 +651,6 @@ input[type=radio] {
 .addActivityBar2{
     left: 10vw;
 }
-
-
 
 .headingPopUp{
     width: 6.5vw;

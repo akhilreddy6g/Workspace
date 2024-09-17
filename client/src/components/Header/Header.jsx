@@ -1,5 +1,6 @@
 import {useContext} from "react";
 import featuresTabHook from "../Noncomponents";
+import DateTimeDisplay from "../Sidebar/F1/DateTimeDisplay";
 
 export default function Header(){
   const {state, takeAction} = useContext(featuresTabHook);
@@ -16,6 +17,7 @@ export default function Header(){
           <p id="titlename">Workspace</p>
         </a>
       </div>
+      <DateTimeDisplay></DateTimeDisplay>
       <img className="logo" id="daymodelogo" src={state.darkMode? "src/assets/moon.svg" :"src/assets/sun.svg"} onClick={() => {takeAction({type:"changeBgState"});}} alt="Day Mode" />
       <a href="/day-off">
         <img className="logo" id="powerlogo" src="src/assets/power.svg" alt="Power logo"/>

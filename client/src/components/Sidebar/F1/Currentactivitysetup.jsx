@@ -1,10 +1,11 @@
 import featuresTabHook from "../../Noncomponents";
 import { useContext} from "react";
-import Headingpopup from "./Headingpopup";
+import Headingpopup from "../F2/Headingpopup"
 import axios from "axios";
 
-export default function Activitysetup(){
+export default function Currentactivitysetup(){
     const {state, takeAction} = useContext(featuresTabHook);
+
     const submitAddActivity = async (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);
@@ -18,7 +19,7 @@ export default function Activitysetup(){
         try {
             await axios({
                 method: 'post',
-                url: 'http://localhost:3000/add-activity',
+                url: 'http://localhost:3000/add-current-day-activity',
                 headers: {'Content-Type' : 'application/json'},
                 data: {data}
             });
@@ -27,9 +28,11 @@ export default function Activitysetup(){
         } catch (error) {
             console.log("Something went wrong", error);
         };
+        takeAction({type:"changeCurrentDayState", payload:false});
     };
+    
     return (<><Headingpopup></Headingpopup>
-            <div className="addActivity">
+            <div className={`addActivity ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} >
                 <form className="activityForm" onSubmit={submitAddActivity}>
                     <input type="text" id="activityName" name="info" className="actFormElement"  placeholder="Upto 40 char"/>
                     <input type="text" id="activityDesc" name="desc" className="actFormElement" placeholder="Upto 200 Char"/>

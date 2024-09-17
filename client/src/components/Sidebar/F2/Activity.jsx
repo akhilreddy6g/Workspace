@@ -107,7 +107,7 @@ export default function Activity(props) {
       <div className="activity ab" id="actStart"> <p className="activityContent editable" ref={actStartRef}>{props.startTime}</p> </div>
       <div className="activity ab" id="actEnd"> <p className="activityContent editable" ref={actEndRef}>{props.endTime}</p> </div>
       <div className="activity ab" id="actPriority"> <p className="activityContent editable" ref={actPriorityRef}>{props.priority}</p> </div>
-      <div className="activity ab"> <p className="activityContent">Status</p> </div>
+      <div className="activity ab abstatus"> <div className="activityStatus"></div></div>
       <button className="modifyIcon" id="editButton" ref={editButtonRef} onClick={(event) => editActivity(event, props.id)}>
         <img id="editButtonImg" className="asset" src="src/assets/edit.svg" alt="edit" ref={editButtonImgRef}/>
       </button>
