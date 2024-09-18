@@ -7,7 +7,7 @@ export default function Dailyactivities(){
     const {state, takeAction} = useContext(featuresTabHook);
     var data = state.activityData;
     async function alterData(){
-      const res = await axios.get("http://localhost:3000/");
+      const res = await axios.get("http://localhost:3000/activities");
       takeAction({type:"changeActivityData", payload: res.data})
     };
     

@@ -7,20 +7,20 @@ import axios from "axios"
 
 export default function CurrentSchedule(){
     const {state, takeAction} = useContext(featuresTabHook);
-    var data = state.activityData;
+    var caData = state.combinedActivityData;
     async function alterData(){
-        const res = await axios.get("http://localhost:3000/");
-        takeAction({type:"changeActivityData", payload: res.data})
+        const combinedAct = await axios.get("http://localhost:3000/combined-activities");
+        takeAction({type:"changeCombinedActivityData", payload: combinedAct.data})
       };
 
     function activityMapping(object, index){
         return <Activitytab
         sno = {index+1}
-        id = {object.activity_id} 
-        key = {object.activity_id}
+        id = {object.activity_uuid} 
+        key = {object.activity_uuid}
         activity={object.activity_name} 
-        startTime={object.activity_start_time} 
-        endTime={object.activity_end_time} 
+        startTime={object.activity_start_time.slice(0,5)}
+        endTime={object.activity_end_time.slice(0,5)} 
         priority={object.activity_priority}/>
     };
 
@@ -29,7 +29,7 @@ export default function CurrentSchedule(){
       },[state.updateActivity]);
 
     return (<><div className={`activityListHView ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`}>
-        {data.map(activityMapping)}
+        {caData.map(activityMapping)}
     </div>
     <Activityframe></Activityframe>
     <Currentdayactivity></Currentdayactivity></>

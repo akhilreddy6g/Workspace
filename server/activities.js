@@ -20,7 +20,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.json());
 
-app.get("/", async (req,res)=>{
+app.get("/activities", async (req,res)=>{
     try {
         const data = await db.query('SELECT * FROM activities ORDER BY activity_start_time');
         res.json(data.rows);
@@ -93,6 +93,39 @@ app.patch("/edit-activity", async(req, res)=>{
     }
     }
     );
+
+app.get("/current-activities", async (req,res)=>{
+    try {
+        const data = await db.query('SELECT * FROM current_day_activities ORDER BY activity_start_time');
+        res.json(data.rows);
+    } catch (error) {
+        res.status(404).json({ message: `Unsuccessful in retrieving the data`});
+    };
+});
+
+app.get("/combined-activities", async (req,res)=>{
+    try {
+        const data = await db.query('SELECT * FROM activities UNION SELECT * FROM current_day_activities ORDER BY activity_start_time');
+        res.json(data.rows);
+    } catch (error) {
+        res.status(404).json({ message: `Unsuccessful in retrieving the data`});
+    };
+});
+
+app.post("/add-current-day-activity", async (req,res)=>{
+    const {actName,actDescr,priority,startTime,endTime} = req.body.data;
+    console.log("actName, actDescr, priority, actStart, actEnd", actName,actDescr,priority,startTime,endTime);
+    try {
+        await db.query(
+        "INSERT INTO current_day_activities(activity_name, activity_description, activity_priority, activity_start_time, activity_end_time) VALUES ($1, $2, $3, $4, $5)", 
+        [actName, actDescr, priority, startTime, endTime]);
+        console.log("Successfully added the activity");
+        res.status(200).json({ message: `Successfully inserted the activity the activity`});
+    } catch (error) {
+        res.status(404).json(`Something went wrong: ${error}`);
+    };
+});
+
 
 app.listen(port, () => {
     console.log(`Listening at port ${port}`);
