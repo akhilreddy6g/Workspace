@@ -5,7 +5,6 @@ import axios from "axios";
 
 export default function Currentactivitysetup(){
     const {state, takeAction} = useContext(featuresTabHook);
-
     const submitAddActivity = async (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);

@@ -105,7 +105,7 @@ app.get("/current-activities", async (req,res)=>{
 
 app.get("/combined-activities", async (req,res)=>{
     try {
-        const data = await db.query('SELECT * FROM activities UNION SELECT * FROM current_day_activities ORDER BY activity_start_time');
+        const data = await db.query('SELECT * FROM activities UNION SELECT * FROM current_day_activities ORDER BY activity_start_time, activity_end_time');
         res.json(data.rows);
     } catch (error) {
         res.status(404).json({ message: `Unsuccessful in retrieving the data`});

@@ -59,8 +59,8 @@ export default function Activity(props) {
           actPriorityRef.current.textContent = correctedPriority;
         } else {
           actNameRef.current.textContent = actualActivity.activity_name;
-          actStartRef.current.textContent = actualActivity.activity_start_time;
-          actEndRef.current.textContent = actualActivity.activity_end_time;
+          actStartRef.current.textContent = actualActivity.activity_start_time.slice(0,5);
+          actEndRef.current.textContent = actualActivity.activity_end_time.slice(0,5);
           actPriorityRef.current.textContent = actualActivity.activity_priority;
         }
         actNameRef.current.contentEditable = "false";

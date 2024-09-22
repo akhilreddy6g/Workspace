@@ -10,6 +10,17 @@ export default function Dailyactivities(){
       const res = await axios.get("http://localhost:3000/activities");
       takeAction({type:"changeActivityData", payload: res.data})
     };
+
+    function convertTimeToAmPm(time24hr) {
+      let [hours, minutes] = time24hr.split(':').map(Number);
+      let period = hours < 12 ? 'AM' : 'PM';
+      if (hours === 0) {
+          hours = 12; 
+      } else if (hours > 12) {
+          hours -= 12; 
+      }
+      return `${hours}:${minutes.toString().padStart(2, '0')} ${period}`;
+    }
     
     function activityMapping(object, index){
       return <Activity
@@ -17,8 +28,8 @@ export default function Dailyactivities(){
       id = {object.activity_id} 
       key = {object.activity_id}
       activity={object.activity_name} 
-      startTime={object.activity_start_time} 
-      endTime={object.activity_end_time} 
+      startTime={object.activity_start_time.slice(0,5)} 
+      endTime={object.activity_end_time.slice(0,5)} 
       priority={object.activity_priority}/>
     };
 

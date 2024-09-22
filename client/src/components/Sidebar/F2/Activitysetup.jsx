@@ -27,7 +27,9 @@ export default function Activitysetup(){
         } catch (error) {
             console.log("Something went wrong", error);
         };
+        takeAction({type:"changeAddDailyActState", payload:false});
     };
+    
     return (<><Headingpopup></Headingpopup>
             <div className="addActivity">
                 <form className="activityForm" onSubmit={submitAddActivity}>
