@@ -1,3 +1,4 @@
+import axios from "axios";
 import featuresTabHook from "../../Noncomponents";
 import { useContext, useEffect, useRef, useState } from "react";
 
@@ -5,16 +6,8 @@ export default function Activityframe(props) {
   const { state, takeAction } = useContext(featuresTabHook);
   const [activeTab, setActiveTab] = useState(null);
   const intervalRef = useRef(null);
-
-  const resetButtonStyle = (buttonRef) => {
-    if (buttonRef && buttonRef.current) {
-      buttonRef.current.style.boxShadow = "none";
-      buttonRef.current.style.backgroundColor = "rgb(255,255,144)";
-    } else if (buttonRef) {
-      buttonRef.style.boxShadow = "none";
-      buttonRef.style.backgroundColor = "rgb(255,255,144)";
-    }
-  };
+  const skipRef = useRef(null);
+  const completeRef = useRef(null);
 
   function changeIndex(e, count) {
     e.preventDefault();
@@ -31,9 +24,19 @@ export default function Activityframe(props) {
             block: "nearest",
             inline: "start"
           });
-      }
-    }
-  }
+      };
+    };
+  };
+
+  function resetButtonStyle(buttonRef){
+    if (buttonRef && buttonRef.current) {
+      buttonRef.current.style.boxShadow = "none";
+      buttonRef.current.style.backgroundColor = "rgb(255,255,144)";
+    } else if (buttonRef) {
+      buttonRef.style.boxShadow = "none";
+      buttonRef.style.backgroundColor = "rgb(255,255,144)";
+    };
+  };
 
   function closestTimeTab(tabs) {
     const now = new Date();
@@ -52,31 +55,68 @@ export default function Activityframe(props) {
       };
     });
     if(activeTab!=closestTab){
-        const prevTab = document.querySelector(`.atab-${activeTab + 1}`)
+        const prevTab = document.querySelector(`.atab-${activeTab + 1}`);
         if (prevTab) {
-        prevTab.style.boxShadow = "none";
-        prevTab.style.backgroundImage = "none";
-        prevTab.style.color = "black"}
+          prevTab.style.boxShadow = "none";
+          prevTab.style.backgroundImage = "none";
+          prevTab.style.color = "black"
+        };
     }
     if(state.csActivityIndex!=closestTab && state.activeTab!=closestTab){
         takeAction({type:"changeActiveTab", payload:closestTab});
         takeAction({type:"changeActTabButtRef", payload:closestTab});
     };
-    console.log("closest tab", closestTab);
     return closestTab;
   }
 
   const highlightClosestTab = () => {
     const curclosestTab = closestTimeTab(state.combinedActivityData);
-    console.log("closesetab", curclosestTab);
     setActiveTab(curclosestTab);
     return curclosestTab;
   };
 
+  async function updateActivityStatus(event, id, type, status, newStatus, actionType) {
+    event.preventDefault();
+    if ((actionType === "skip" && (status === null)) || 
+        (actionType === "complete" && status !== 1)) {
+        try {
+            const data = { actId: id, actStatus: newStatus };
+            const prevState = sessionStorage.getItem(id);
+            if (prevState == null || prevState && JSON.parse(prevState).action !=="complete") {
+                const url = type === "c" ? "http://localhost:3000/update-ca-status" : "http://localhost:3000/update-da-status";
+                await axios.post(url, { data });
+                sessionStorage.setItem(id, JSON.stringify({ action: actionType, value: true }));
+                if (completeRef.current && actionType === "complete") {
+                    completeRef.current.disabled = true;
+                }
+                if (skipRef.current) {
+                    skipRef.current.disabled = true;
+                }
+                changeIndex(event, 1);
+            } else {
+                const { action, value } = JSON.parse(prevState);
+                if (action === actionType && value === true) {
+                    console.log("Cannot update the status of the activity");
+                }
+            }
+        } catch (error) {
+            console.log(`Unable to ${actionType} the Activity`);
+        }
+    } else {
+        console.log("Status already Updated");
+    }
+  }
+
+  async function skipActivity(event, id, type, status) {
+      await updateActivityStatus(event, id, type, status, 0, "skip");
+  }
+
+  async function completeActivity(event, id, type, status) {
+      await updateActivityStatus(event, id, type, status, 1, "complete");
+  }
+
   useEffect(() => {
-    console.log("useEffect running")
     const closest = highlightClosestTab();
-    console.log("closeset tba inside ue", closest);
     if(closest==null){
         console.log("no activities scheduled currently");
     } else{
@@ -91,7 +131,7 @@ export default function Activityframe(props) {
             inline: "start"
             });
         };
-    }
+    };
     clearInterval(intervalRef.current);
     intervalRef.current = setInterval(highlightClosestTab, 15000);
     return () => {
@@ -99,21 +139,33 @@ export default function Activityframe(props) {
     };
   }, [activeTab, state.combinedActivityData]);
       
-    return (<> <button className="prevActivity" style={{position:"fixed", top:"55vh", left: state.fthState? "15vw": "8vw", height:"50px", width:"23px", transition:"150ms linear"}} onClick={(e)=>{changeIndex(e, -1)}} disabled={state.csActivityIndex==0} >{"<"}</button>
-        <div className={`activityFrame ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"} ${state.darkMode? "scheduleDark" :"scheduleNormal"}`} id={props.id}>
-            <div className={`activityTitle  ${state.darkMode? "activityFrameDark" : "activityFrameNormal"}`} style={{borderTop:"0"}}>{state.csActivityIndex+1}. {props.activity}</div>
-            <div className="csButtonsContainer">
-            <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"red"}}>Skip</button>
-            <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"green"}}>Complete</button>
-            <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"orange"}}>Update</button>
-            <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"orange"}}>Delete</button>
-            <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"teal"}}>Notes</button>
-            <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"teal"}}>Upload</button>
-            </div>
-            <div className={`activityDescription  ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{position:"absolute", top:"38vh", left:"69vw", width:"10vw", height:"23vh", overflow:"scroll", textAlign:"start", borderRadius:"10px"}}>
-                <div className={`activityDescrHeading`} style={{borderBottom: state.darkMode? "0.2px solid white": "0.2px solid black", display:"flex", justifyContent:"center", flexGrow:"1"}}>Description</div>
-                <p className="notes" style={{padding:"5px"}}>{props.notes}</p></div>
-        </div> <button className="nextActivity" style={{position:"fixed", top:"55vh", left: state.fthState? "97.5vw": "90.5vw", height:"50px", width:"23px", transition:"150ms linear"}} onClick={(e)=>{changeIndex(e, +1)}} disabled={state.csActivityIndex==state.combinedActivityData.length-1}>{">"}</button>
-        </>
-    )
+  return (<> <button className="prevActivity" style={{left: state.fthState? "15vw": "8vw"}} onClick={(e)=>{changeIndex(e, -1)}} disabled={state.csActivityIndex==0} >{"<"}</button>
+      <div className={`activityFrame ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"} ${state.darkMode? "scheduleDark" :"scheduleNormal"}`} id={props.id}>
+          <div className={`activityTitle  ${state.darkMode? "activityFrameDark" : "activityFrameNormal"}`} style={{borderTop:"0"}}>{state.csActivityIndex+1}. {props.activity}</div>
+          <div className="csButtonsContainer">
+          <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} 
+            onClick={(e)=>{skipActivity(e, props.id, props.type, props.status)}} 
+            disabled={props.status==0 || props.status ==1 || sessionStorage.getItem(props.id)!==null && (JSON.parse(sessionStorage.getItem(props.id)).action=="skip" ||  JSON.parse(sessionStorage.getItem(props.id)).action=="complete")} 
+            ref={skipRef} 
+            style={{backgroundColor:"red"}}>
+              Skip
+          </button>
+          <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} 
+            onClick={(e)=>{completeActivity(e, props.id, props.type, props.status)}} 
+            disabled={props.status==1 || sessionStorage.getItem(props.id) && JSON.parse(sessionStorage.getItem(props.id)).action=="complete"} 
+            ref={completeRef} 
+            style={{backgroundColor:"green"}}>
+            Complete
+          </button>
+          <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"orange"}}>Update</button>
+          <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"orange"}}>Delete</button>
+          <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"teal"}}>Notes</button>
+          <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"teal"}}>Upload</button>
+          </div>
+          <div className={`activityDescription  ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`}>
+              <div className={`activityDescrHeading`} style={{borderBottom: state.darkMode? "0.2px solid white": "0.2px solid black"}}>Description</div>
+              <p className="notes">{props.notes}</p></div>
+      </div> <button className="nextActivity" style={{left: state.fthState? "97.5vw": "90.5vw"}} onClick={(e)=>{changeIndex(e, 1)}} disabled={state.csActivityIndex==state.combinedActivityData.length-1}>{">"}</button>
+      </>
+  )
 };

@@ -30,7 +30,8 @@ export default function Dailyactivities(){
       activity={object.activity_name} 
       startTime={object.activity_start_time.slice(0,5)} 
       endTime={object.activity_end_time.slice(0,5)} 
-      priority={object.activity_priority}/>
+      priority={object.activity_priority}
+      status={object.activity_status}/>
     };
 
     useEffect(() => {

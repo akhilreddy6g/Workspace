@@ -100,6 +100,24 @@ export default function Activity(props) {
     takeAction({ type: "changeActivityState", payload: false });
   }
 
+  const getBackgroundColor = () => {
+    const item = sessionStorage.getItem(props.id);
+    if (item) {
+        const parsedItem = JSON.parse(item);
+        if (parsedItem.action === "complete") {
+            return 'green';
+        } else if (parsedItem.action === "skip") {
+            return 'red';
+        }
+    }
+    if (props.status == "0") {
+        return 'red';
+    } else if (props.status == "1") {
+        return 'green';
+    }
+    return 'rgb(255, 255, 144)'
+};
+
   return (
     <div className={`soloActivityBar ${state.darkMode ? "soloActivityBarDark" : "soloActivityBarNormal"}`} id={`activity-${props.id}`} ref={activityRef}>
       <div className="activity abid" id="actNo"> <p className="activityContent">{props.sno}</p></div>
@@ -107,7 +125,7 @@ export default function Activity(props) {
       <div className="activity ab" id="actStart"> <p className="activityContent editable" ref={actStartRef}>{props.startTime}</p> </div>
       <div className="activity ab" id="actEnd"> <p className="activityContent editable" ref={actEndRef}>{props.endTime}</p> </div>
       <div className="activity ab" id="actPriority"> <p className="activityContent editable" ref={actPriorityRef}>{props.priority}</p> </div>
-      <div className="activity ab abstatus"> <div className="activityStatus"></div></div>
+      <div className="activity ab abstatus"> <div className="activityStatus" style={{backgroundColor:getBackgroundColor()}} ></div></div>
       <button className="modifyIcon" id="editButton" ref={editButtonRef} onClick={(event) => editActivity(event, props.id)}>
         <img id="editButtonImg" className="asset" src="src/assets/edit.svg" alt="edit" ref={editButtonImgRef}/>
       </button>

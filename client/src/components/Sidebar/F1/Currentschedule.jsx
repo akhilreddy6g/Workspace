@@ -35,6 +35,7 @@ export default function CurrentSchedule(){
         endTime={object.activity_end_time.slice(0,5)}  
         priority={object.activity_priority}
         type ={object.activity_type}
+        status = {object.activity_status}
         />
     };
 
@@ -61,6 +62,7 @@ export default function CurrentSchedule(){
             priority={state.csActivityIndex==null? caData[0].activity_priority: caData[state.csActivityIndex].activity_priority}
             notes={state.csActivityIndex==null? caData[0].activity_description : caData[state.csActivityIndex].activity_description}
             type={state.csActivityIndex==null? caData[0].activity_type : caData[state.csActivityIndex].activity_type}
+            status = {state.csActivityIndex==null? caData[0].activity_status : caData[state.csActivityIndex].activity_status}
           />
         )}
         <Currentdayactivity />

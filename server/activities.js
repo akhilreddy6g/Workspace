@@ -117,7 +117,7 @@ app.post("/add-current-day-activity", async (req,res)=>{
     console.log("actName, actDescr, priority, actStart, actEnd", actName,actDescr,priority,startTime,endTime);
     try {
         await db.query(
-        "INSERT INTO current_day_activities(activity_name, activity_description, activity_priority, activity_start_time, activity_end_time) VALUES ($1, $2, $3, $4, $5)", 
+        "INSERT INTO current_day_activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time) VALUES ($1, $2, $3, $4, $5)", 
         [actName, actDescr, priority, startTime, endTime]);
         console.log("Successfully added the activity");
         res.status(200).json({ message: `Successfully inserted the activity the activity`});
@@ -126,6 +126,53 @@ app.post("/add-current-day-activity", async (req,res)=>{
     };
 });
 
+app.post("/update-da-status", async (req,res)=>{
+    const {actId, actStatus} = req.body.data;
+    console.log("actId, actStatus", actId, actStatus);
+    try {
+        await db.query(
+        "UPDATE activities SET activity_status = $1 WHERE activity_uuid=$2", 
+        [actStatus, actId]);
+        console.log("Successfully updated the daily activity status");
+        res.status(200).json({ message: `Successfully updated the daily activity status`});
+    } catch (error) {
+        res.status(404).json(`Something went wrong: ${error}`);
+    };
+});
+
+app.post("/update-ca-status", async (req,res)=>{
+    const {actId, actStatus} = req.body.data;
+    console.log("actId, actStatus", actId, actStatus);
+    try {
+        await db.query(
+        "UPDATE current_day_activities SET activity_status=$1 WHERE activity_uuid=$2", 
+        [actStatus, actId]);
+        console.log("Successfully updated the current day activity status");
+        res.status(200).json({ message: `Successfully updated the current day activity status`});
+    } catch (error) {
+        res.status(404).json(`Something went wrong: ${error}`);
+    };
+});
+
+app.delete("/delete-current-activities", async (req, res) => {
+    try {
+        await db.query("DELETE FROM current_day_activities")
+        console.log("Successfully deleted the current day activities");
+        res.status(200).json({ message: `Successfully deleted the current day activities`});
+    } catch (error) {
+        res.status(404).json(`Something went wrong: ${error}`);
+    }
+});
+
+app.patch("/reset-daily-activities-status", async (req, res) => {
+    try {
+        await db.query("UPDATE activities SET activity_status = NULL");
+        console.log("Status of daily activities successfully reset");
+        res.status(200).json({ message: `Status of daily activities successfully reset`});
+    } catch (error) {
+        res.status(404).json(`Something went wrong: ${error}`);
+    }
+})
 
 app.listen(port, () => {
     console.log(`Listening at port ${port}`);
