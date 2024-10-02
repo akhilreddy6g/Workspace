@@ -1,6 +1,7 @@
 import React, { useContext, useRef } from 'react';
 import axios from 'axios';
 import featuresTabHook from "../../Noncomponents";
+import { timeToMinutes } from '../../Noncomponents';
 
 export default function Activity(props) {
   const { state, takeAction } = useContext(featuresTabHook);
@@ -44,6 +45,9 @@ export default function Activity(props) {
         const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
         if ((actName !== actualActivity.activity_name || actStart !== actualActivity.activity_start_time || actEnd !== actualActivity.activity_end_time || actPriority !== actualActivity.activity_priority) &&
           actName.length > 0 && timeRegex.test(actStart) && timeRegex.test(actEnd) && !isNaN(actPriority) && actPriority.trim() !== '') {
+          const startTimeInMin = timeToMinutes(actStart);
+          const endTimeInMin = timeToMinutes(actEnd);
+          if(startTimeInMin<endTimeInMin){
           let correctedPriority = actPriority;
           let correctedActName = actName.slice(0, 50);
           correctedPriority = Math.min(Math.max(correctedPriority, 0), 10);
@@ -63,13 +67,19 @@ export default function Activity(props) {
           actEndRef.current.textContent = actualActivity.activity_end_time.slice(0,5);
           actPriorityRef.current.textContent = actualActivity.activity_priority;
         }
+        } else {
+          actNameRef.current.textContent = actualActivity.activity_name;
+          actStartRef.current.textContent = actualActivity.activity_start_time.slice(0,5);
+          actEndRef.current.textContent = actualActivity.activity_end_time.slice(0,5);
+          actPriorityRef.current.textContent = actualActivity.activity_priority;
+        }
         actNameRef.current.contentEditable = "false";
         actStartRef.current.contentEditable = "false";
         actEndRef.current.contentEditable = "false";
         actPriorityRef.current.contentEditable = "false";
         deleteButtonRef.current.style.visibility = "visible";
         editButtonImgRef.current.src = "src/assets/edit.svg";
-        editButtonRef.current.style.backgroundColor = "green";
+        editButtonRef.current.style.backgroundColor = "teal";
       } catch (error) {
         console.error("Something went wrong", error);
       }

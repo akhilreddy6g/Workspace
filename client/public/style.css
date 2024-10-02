@@ -282,7 +282,7 @@ label{
     height: 30px;
     background-color: rgb(255, 255, 144);
     border: 0.2px solid black;
-    position: relative;
+    position: fixed;
     top: 85px;
     display: flex;
     flex-direction: row;
@@ -600,28 +600,6 @@ label{
     align-items: center;
 }
 
-.dailyActivity{
-    width: 80vw;
-    position: fixed;
-    top: 85px;
-    display: flex;
-    flex-direction: row;
-    background-color: rgb(255, 255, 144);
-    border: 0.2px solid black;
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    font-size: 20px;
-    border-radius: 10px;
-    transition: 150ms linear;
-}
-
-.dailyActivity1{
-    left: 17vw;
-}
-
-.dailyActivity2{
-    left: 10vw;
-}
-
 .filterContainer{
     display: flex;
     flex-direction: column;
@@ -725,7 +703,7 @@ input[type=radio] {
 #editButton{
     all: unset;
     cursor: pointer;
-    background-color: green;
+    background-color: teal;
     display: flex;
     align-items: center;
     height: 24px;
@@ -733,12 +711,25 @@ input[type=radio] {
     border-radius: 50%;
     margin-top: 2px;
     margin-left: 2vw;
-  }
+}
 
 #deleteButton{
     all: unset;
     cursor: pointer;
     background-color: red;
+    display: flex;
+    align-items: center;
+    height: 24px;
+    width: 25px;
+    border-radius: 50%;
+    margin-top: 2px;
+    margin-left: 2vw;
+}
+
+#addButton{
+    all: unset;
+    cursor: pointer;
+    background-color: green;
     display: flex;
     align-items: center;
     height: 24px;
@@ -932,6 +923,45 @@ input[type=radio] {
 
 /* Quick Session end */
 
+/* Missed Activities Start */
+
+.missedActivity{
+    display: flex;
+    background-color: rgb(255, 255, 144);
+    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    border-radius: 10px;
+    font-size: 20px;
+    border: 0.2px solid black;
+}
+
+.missedActivitiesList{
+    padding-top: 20px;
+}
+
+.dailyActivity{
+    width: 80vw;
+    position: fixed;
+    top: 85px;
+    display: flex;
+    flex-direction: row;
+    background-color: rgb(255, 255, 144);
+    border: 0.2px solid black;
+    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 20px;
+    border-radius: 10px;
+    transition: 150ms linear;
+}
+
+.dailyActivity1{
+    left: 17vw;
+}
+
+.dailyActivity2{
+    left: 10vw;
+}
+
+/* Missed Activities End */
+
 /* Setday Feature Styling Start */
 
 .setDay{
@@ -985,6 +1015,8 @@ input[type=radio] {
     background-color: rgba(179, 179, 179, 0.5);
     pointer-events: auto;
     z-index: 2;
+    top: 0;
+    left: 0;
 }
 
 .closeSetDayButton{

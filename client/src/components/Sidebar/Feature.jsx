@@ -21,7 +21,6 @@ export default function Feature(props){
             const features = document.querySelectorAll(".feature");
             features.forEach(element => {
                 if(element.id!=feature){
-                    console.log("id",element.id);
                     element.classList.remove("selectFeature");
                 };
             });

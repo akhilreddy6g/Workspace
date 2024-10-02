@@ -15,6 +15,7 @@ export default function App() {
           fthState: !state.fthState,
           activeTab: 0,
           updateActivity: false,
+          updateMissedActivity: false,
           disclaimerButtons:false,
         };
       case "changeStdState":
@@ -30,6 +31,7 @@ export default function App() {
           addDailyActState: false,
           qastate: false,
           updateActivity:false,
+          updateMissedActivity: false,
           disclaimerButtons:false,
         };
       case "changeBgState":
@@ -37,7 +39,9 @@ export default function App() {
           ...state,
           darkMode: !state.darkMode,
           updateActivity: false,
+          updateMissedActivity: false,
           editActivity: false,
+          editMissedActivity:false,
           disclaimerButtons:false,
         };
       case "changeScheduleState":
@@ -52,6 +56,7 @@ export default function App() {
           addDailyActState: false,
           qastate: false,
           updateActivity:false,
+          updateMissedActivity: false,
           disclaimerButtons:false,
         };
       case "changeCurrentDayState":
@@ -110,6 +115,7 @@ export default function App() {
           dailyactstate: true,
           qastate: false,
           updateActivity:false,
+          updateMissedActivity: false,
           disclaimerButtons:false,
           filterButton : false
         };
@@ -140,6 +146,7 @@ export default function App() {
           addDailyActState: false,
           qastate: !state.qastate,
           updateActivity:false,
+          updateMissedActivity: false,
           disclaimerButtons:false,
           filterButton : false
         };
@@ -172,6 +179,38 @@ export default function App() {
           disclaimerButtons:false,
           filterButton : false
         };
+      case "changeMissedActivityData":
+        return{
+          ...state,
+          stdState: false,
+          schedulestate: false,
+          csActivityIndex: 0,
+          activityTabButtRef: null,
+          activeTab: 0,
+          missedActivities: action.payload,
+          dailyactstate: false,
+          addDailyActState: false,
+          qastate: false,
+          disclaimerButtons:false,
+          filterButton : false
+
+        }
+        case "changeMissedActivityState":
+          return{
+            ...state,
+            stdState: false,
+            schedulestate: false,
+            csActivityIndex: 0,
+            activityTabButtRef: null,
+            activeTab: 0,
+            updateMissedActivity: action.payload,
+            dailyactstate: false,
+            addDailyActState: false,
+            qastate: false,
+            disclaimerButtons:false,
+            filterButton : false
+  
+          }
       case "changeActivityState":
         return{
           ...state,
@@ -183,7 +222,9 @@ export default function App() {
           dailyactstate: true,
           qastate: false,
           updateActivity: action.payload,
+          updateMissedActivity: false,
           editActivity: false,
+          editMissedActivity:false,
           filterButton : false
         };
       case "changeEditActivityState":
@@ -198,9 +239,26 @@ export default function App() {
           dailyactstate: true,
           qastate: false,
           editActivity: !state.editActivity,
+          editMissedActivity:false,
           disclaimerButtons:false,
           filterButton : false
         };
+      case "changeEditMissedActivityState":
+        return{
+          ...state,
+          stdState: false,
+          schedulestate: false,
+          addCurrentDayActivity: false,
+          csActivityIndex: 0,
+          activityTabButtRef: null,
+          activeTab: 0,
+          dailyactstate: false,
+          qastate: false,
+          editActivity: false,
+          editMissedActivity: !state.editMissedActivity,
+          disclaimerButtons:false,
+          filterButton : false
+        }
       case "changeDisclaimerState":
         return{
           ...state,
@@ -210,7 +268,6 @@ export default function App() {
           csActivityIndex: 0,
           activityTabButtRef: null,
           activeTab: 0,
-          dailyactstate: true,
           qastate: false,
           disclaimerState: action.payload,
           filterButton : false
@@ -224,7 +281,6 @@ export default function App() {
           csActivityIndex: 0,
           activityTabButtRef: null,
           activeTab: 0,
-          dailyactstate: true,
           qastate: false,
           disclaimerButtons: !state.disclaimerButtons,
           filterButton : false
@@ -275,8 +331,11 @@ export default function App() {
     qastate:false, 
     activityData:[],
     combinedActivityData:[],
+    missedActivities:[],
     updateActivity:false,
+    updateMissedActivity:false,
     editActivity:false,
+    editMissedActivity:false,
     disclaimerState:false,
     disclaimerButtons:false, 
     resolve: null,

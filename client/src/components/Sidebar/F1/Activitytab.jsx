@@ -6,6 +6,7 @@ export default function Activitytab(props){
     const {state, takeAction} = useContext(featuresTabHook);
     const [hover, setHover] = useState(false);
     const [progress, setProgress] = useState(0);
+    const [remTime, setRemTime] = useState(0);
     const buttonRef = useRef(null);
 
     function handleMouseEnter() {
@@ -31,6 +32,13 @@ export default function Activitytab(props){
         };
       };
 
+    function convertMinutesToHours(minutes) {
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+        return `${hours}h ${remainingMinutes}m`;
+    }
+    
+
     async function updateProgress() {
         const now = new Date();
         const currentTimeMinutes = now.getHours() * 60 + now.getMinutes(); 
@@ -39,8 +47,6 @@ export default function Activitytab(props){
         if(currentTimeMinutes==0 && now.getSeconds()>=0 && now.getSeconds()<=15){
             sessionStorage.clear();
             try {
-                await axios.delete("http://localhost:3000/delete-current-activities");
-                await axios.patch("http://localhost:3000/reset-daily-activities-status");
                 const combinedAct = await axios.get("http://localhost:3000/combined-activities");
                 takeAction({type:"changeCombinedActivityData", payload: combinedAct.data});
             } catch (error) {
@@ -55,12 +61,19 @@ export default function Activitytab(props){
                 sessionStorage.setItem(props.id, JSON.stringify({ action: "skip", value: true }));
             };
             setProgress(100);
+            setRemTime('0h 0m');
         } else if (currentTimeMinutes >= startTimeMinutes && currentTimeMinutes <= endTimeMinutes) {
             const totalTime = endTimeMinutes - startTimeMinutes; 
             const timeElapsed = currentTimeMinutes - startTimeMinutes;
+            const timeLeft = totalTime - timeElapsed;
+            const timeLeftInHours = convertMinutesToHours(timeLeft);
+            setRemTime(timeLeftInHours);
             const percentage = (timeElapsed / totalTime) * 100;
             setProgress(percentage);
         } else {
+            const totalTime = endTimeMinutes - startTimeMinutes;
+            const timeLeftInHours = convertMinutesToHours(totalTime);
+            setRemTime(timeLeftInHours);
             setProgress(0);
         };
     };
@@ -145,9 +158,9 @@ export default function Activitytab(props){
                 <div className="activityStartTime">{props.startTime}</div>
                 <div className="timeBarContainer">
                     <div className="timeBar" onMouseOver={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                        {hover && <p className="timeLeftContent"> {Math.floor(100-progress)}% left</p>}
+                        {hover && <p className="timeLeftContent"> {remTime} left</p>}
                     <div className="fillBar" style={{width: getBarWidth(progress), backgroundColor: getBackgroundColor()}}>
-                        {(progress>15 || sessionStorage.getItem(props.id)!=null || props.status!=null) && <div className="activityCurrentStatus" style={{backgroundColor:"white"}}> 
+                        {(progress>15 || sessionStorage.getItem(props.id)!=null || props.status!=null) && (!hover) && <div className="activityCurrentStatus" style={{backgroundColor:"white"}}> 
                         {(props.status!=null || sessionStorage.getItem(props.id)) && <img className="activityStatusImg" src={imgOp()} alt="activityStatus" /> }</div>}
                     </div>
                 </div>

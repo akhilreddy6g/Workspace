@@ -25,8 +25,8 @@ export default function Dailyactivities(){
     function activityMapping(object, index){
       return <Activity
       sno = {index+1}
-      id = {object.activity_id} 
-      key = {object.activity_id}
+      id = {object.activity_uuid} 
+      key = {object.activity_uuid}
       activity={object.activity_name} 
       startTime={object.activity_start_time.slice(0,5)} 
       endTime={object.activity_end_time.slice(0,5)} 

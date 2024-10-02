@@ -6,9 +6,7 @@ export default function Filtercheckbox(){
     const {state, takeAction} = useContext(featuresTabHook);
     const [filter, changeFilter] = useState("activity_start_time");
     const alterFilter = async (event) => {
-        console.log("filter", filter);
         changeFilter(event.target.value)
-        console.log("event", event.target);
         if(filter!=event.target.value){
             try {
                 const res = await axios.get(`http://localhost:3000/activities/${event.target.value}`);
@@ -17,7 +15,7 @@ export default function Filtercheckbox(){
                 console.log("Something went wrong", error);
             };
         };
-    }
+    };
     return ( state.filterButton &&
         <div className={`filterContainer ${state.darkMode? "navdarkMode" : "featureNormal"} ${state.fthState? "filterContainer1" : "filterContainer2"}`}>
         <div>

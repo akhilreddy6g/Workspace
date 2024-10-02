@@ -38,6 +38,22 @@ export default function Activityframe(props) {
     };
   };
 
+  function postLastTabStatusUpdate(csIndex){
+    takeAction({type:"changeActTabButtRef", payload:csIndex});
+    resetButtonStyle(state.activityTabButtRef);
+    const actTab = document.querySelector(`.atab-${1}`);
+    takeAction({ type: "changeCsActivityIndex", payload: csIndex, button: actTab });
+    if (actTab) {
+      actTab.style.boxShadow = "0 0 7px black";
+      actTab.style.backgroundColor = "#b1c7b3";
+      actTab.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "start"
+        });
+    };
+  }
+
   function closestTimeTab(tabs) {
     const now = new Date();
     const currentTime = now.getHours() * 60 + now.getMinutes(); 
@@ -92,7 +108,11 @@ export default function Activityframe(props) {
                 if (skipRef.current) {
                     skipRef.current.disabled = true;
                 }
-                changeIndex(event, 1);
+                if(state.csActivityIndex+1<state.combinedActivityData.length){
+                  changeIndex(event, 1);
+                } else {
+                  postLastTabStatusUpdate(0);
+                }
             } else {
                 const { action, value } = JSON.parse(prevState);
                 if (action === actionType && value === true) {
@@ -100,7 +120,7 @@ export default function Activityframe(props) {
                 }
             }
         } catch (error) {
-            console.log(`Unable to ${actionType} the Activity`);
+            console.log(`Unable to ${actionType} the Activity: ${error}`);
         }
     } else {
         console.log("Status already Updated");
