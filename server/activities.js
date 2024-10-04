@@ -300,6 +300,7 @@ cron.schedule('0 0 * * *', async () => {
         const records = await db.query("SELECT * FROM current_day_Activities WHERE activity_status IS NULL OR activity_status=0");
         if (records.rows.length > 0) {
             const now = new Date();
+            now.setDate(now.getDate() - 1)
             const missedActivities = records.rows.map(record => ({
                 ...record, activity_date: now.toISOString().split('T')[0]
             }));

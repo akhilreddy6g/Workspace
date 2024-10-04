@@ -1,6 +1,8 @@
 import {useContext, useState, useEffect, useRef} from "react";
 import featuresTabHook from "../../Noncomponents";
 import axios from "axios";
+import { timeToMinutes } from "../../Noncomponents";
+import { resetButtonStyle } from "../../Noncomponents";
 
 export default function Activitytab(props){
     const {state, takeAction} = useContext(featuresTabHook);
@@ -17,27 +19,11 @@ export default function Activitytab(props){
         setHover(false); 
     }
 
-    const timeToMinutes = (timeStr) => {
-        const [hours, minutes] = timeStr.split(":").map(Number);
-        return hours * 60 + minutes;
-    };
-
-    function resetButtonStyle(buttonRef){
-        if (buttonRef && buttonRef.current) {
-          buttonRef.current.style.boxShadow = "none";
-          buttonRef.current.style.backgroundColor = "rgb(255,255,144)";
-        } else if (buttonRef) {
-          buttonRef.style.boxShadow = "none";
-          buttonRef.style.backgroundColor = "rgb(255,255,144)";
-        };
-      };
-
     function convertMinutesToHours(minutes) {
         const hours = Math.floor(minutes / 60);
         const remainingMinutes = minutes % 60;
         return `${hours}h ${remainingMinutes}m`;
     }
-    
 
     async function updateProgress() {
         const now = new Date();
@@ -149,9 +135,9 @@ export default function Activitytab(props){
     return (<>
         <div className={`activityTab-${props.id} atab-${props.sno} activitiesInCurrentSchedule ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ref={buttonRef} onClick={()=>{selectActivityTab(props.sno)}}>
             <div className="csInfoContainer">
-                <p className="csInfo type">{props.type=="d"? "Daily" : "Today"}</p>
+                <p className="csInfo type" style={{backgroundColor: props.type=="d"? "teal" : "black"}}>{props.type=="d"? "Daily" : "Today"}</p>
                 <p className="sno" id={props.sno} style={{fontSize:"15px"}}>{props.sno}</p>
-                <p className="csInfo priority">Priority: {props.priority}</p>
+                <p className="csInfo priority" style={{backgroundColor: props.type=="d"? "teal" : "black"}}>Priority: {props.priority}</p>
             </div>
             <div className="activityName" >{props.activity}</div>
             <div className="timeAndStatus">

@@ -14,6 +14,7 @@ export default function Missedactivities(props){
     const editButtonRef = useRef(null);
     const deleteButtonRef = useRef(null);
     const addButtonRef = useRef(null);
+    const navbar = document.querySelector(".navbar");
 
     async function editActivity(e, id){
         e.preventDefault();
@@ -39,6 +40,7 @@ export default function Missedactivities(props){
           addButtonRef.current.style.visibility = "hidden";
           editButtonImgRef.current.src = "src/assets/ok.svg";
           editButtonRef.current.style.backgroundColor = "orange";
+          document.querySelector(".navbar").style.zIndex = 0
         } else {
           document.body.style.overflow = "auto";
           const activityElement = activityRef.current;
@@ -89,6 +91,7 @@ export default function Missedactivities(props){
             addButtonRef.current.style.visibility = "visible";
             editButtonImgRef.current.src = "src/assets/edit.svg";
             editButtonRef.current.style.backgroundColor = "teal";
+            document.querySelector(".navbar").style.zIndex = "2"
           } catch (error) {
             console.error("Something went wrong", error);
           }

@@ -13,17 +13,6 @@ export default function CurrentSchedule(){
         const combinedAct = await axios.get("http://localhost:3000/combined-activities");
         takeAction({type:"changeCombinedActivityData", payload: combinedAct.data})
       };
-
-    function convertTimeToAmPm(time24hr) {
-      let [hours, minutes] = time24hr.split(':').map(Number);
-      let period = hours < 12 ? 'AM' : 'PM';
-      if (hours === 0) {
-          hours = 12; 
-      } else if (hours > 12) {
-          hours -= 12; 
-      }
-      return `${hours}:${minutes.toString().padStart(2, '0')} ${period}`;
-    }
       
     function activityMapping(object, index){
         return <Activitytab

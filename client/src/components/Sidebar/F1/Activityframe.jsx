@@ -1,6 +1,7 @@
 import axios from "axios";
 import featuresTabHook from "../../Noncomponents";
 import { useContext, useEffect, useRef, useState } from "react";
+import { resetButtonStyle } from "../../Noncomponents";
 
 export default function Activityframe(props) {
   const { state, takeAction } = useContext(featuresTabHook);
@@ -25,16 +26,6 @@ export default function Activityframe(props) {
             inline: "start"
           });
       };
-    };
-  };
-
-  function resetButtonStyle(buttonRef){
-    if (buttonRef && buttonRef.current) {
-      buttonRef.current.style.boxShadow = "none";
-      buttonRef.current.style.backgroundColor = "rgb(255,255,144)";
-    } else if (buttonRef) {
-      buttonRef.style.boxShadow = "none";
-      buttonRef.style.backgroundColor = "rgb(255,255,144)";
     };
   };
 
