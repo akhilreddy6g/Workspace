@@ -23,7 +23,7 @@ export default function Missedactivitysetup(){
         getData().then(records => {setData(records)}).catch(error => {`error is ${error}`});
       },[state.updateMissedActivity]);
     
-    return <> <div className="maMainContainer" style={{display:"flex", flexDirection:"column", position:"fixed", top:"85px", left:"17vw", gap:"20px"}}>  {state.editMissedActivity && <div className="overLay1"></div>}
+    return <> <div className="maMainContainer" style={{display:"flex", flexDirection:"column", position:"absolute", top:"85px", left:"17vw", gap:"20px"}}>  {state.editMissedActivity && <div className="overLay1"></div>}
          {data.length > 0 ? data.map(mapping) : <div className={`scheduleDisclaimer ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`}><p className="scheduleContext">Great Work! You have no missed activities</p></div>}
     </div>
     </>

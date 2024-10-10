@@ -37,4 +37,28 @@ export const timeToMinutes = (timeStr) => {
     return hours * 60 + minutes;
 };
 
+export function futureDate(){
+  const now = new Date();
+  now.setDate(now.getDate() + 1);
+  const timeZone = 'America/New_York';
+  const options = { timeZone: timeZone, year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+  const newYorkTimeString = new Intl.DateTimeFormat('en-US', options).format(now);
+  const newYorkTime = new Date(newYorkTimeString);
+  return newYorkTime;
+}
+
+export function parseLocaleDateString(dateString) {
+  const [month, day, year] = dateString.replace(",", "").split(" ");
+  const parsedDate = new Date(`${month} ${day}, ${year}`);
+  return parsedDate;
+}
+
+export function localDate(value){
+  const actDate = new Date(value);
+  const options = { timeZone: 'America/New_York', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+  const localDate = new Intl.DateTimeFormat('en-US', options).format(actDate);
+  const date = localDate.toString().split(',')[0];
+  return date
+}
+
 export default featuresTabHook;

@@ -5,6 +5,7 @@ import featuresTabHook,{dayStatus} from './Noncomponents';
 import { BrowserRouter as Router} from 'react-router-dom';
 import Approuter from './Sidebar/Approuter';
 import Deletedisclaimer from './Sidebar/F2/Deletedisclaimer';
+import { futureDate } from './Noncomponents';
 
 export default function App() {
   function changeStateInfo(state, action){
@@ -16,6 +17,7 @@ export default function App() {
           activeTab: 0,
           updateActivity: false,
           updateMissedActivity: false,
+          updateUpcomActivity:false,
           disclaimerButtons:false,
         };
       case "changeStdState":
@@ -29,9 +31,11 @@ export default function App() {
           activeTab: 0,
           dailyactstate: false,
           addDailyActState: false,
+          addUpcActState: false,
           qastate: false,
           updateActivity:false,
           updateMissedActivity: false,
+          updateUpcomActivity:false,
           disclaimerButtons:false,
         };
       case "changeBgState":
@@ -40,8 +44,10 @@ export default function App() {
           darkMode: !state.darkMode,
           updateActivity: false,
           updateMissedActivity: false,
+          updateUpcomActivity:false,
           editActivity: false,
           editMissedActivity:false,
+          editUpcActivity:false,
           disclaimerButtons:false,
         };
       case "changeScheduleState":
@@ -54,9 +60,11 @@ export default function App() {
           activeTab: 0,
           dailyactstate: false,
           addDailyActState: false,
+          addUpcActState: false,
           qastate: false,
           updateActivity:false,
           updateMissedActivity: false,
+          updateUpcomActivity:false,
           disclaimerButtons:false,
         };
       case "changeCurrentDayState":
@@ -67,6 +75,7 @@ export default function App() {
           addCurrentDayActivity: action.payload,
           dailyactstate: false,
           addDailyActState: false,
+          addUpcActState: false,
           qastate: false,
           disclaimerButtons:false,
         }
@@ -78,6 +87,7 @@ export default function App() {
           activityTabButtRef: action.button,
           dailyactstate: false,
           addDailyActState: false,
+          addUpcActState: false,
           qastate: false,
           disclaimerButtons:false,
         }
@@ -89,6 +99,7 @@ export default function App() {
           activityTabButtRef: action.button!=null? action.button : state.activityTabButtRef,
           dailyactstate: false,
           addDailyActState: false,
+          addUpcActState: false,
           qastate: false,
           disclaimerButtons:false,
         }
@@ -99,6 +110,7 @@ export default function App() {
           activeTab: action.payload,
           dailyactstate: false,
           addDailyActState: false,
+          addUpcActState: false,
           qastate: false,
           disclaimerButtons:false,
         }
@@ -116,6 +128,7 @@ export default function App() {
           qastate: false,
           updateActivity:false,
           updateMissedActivity: false,
+          updateUpcomActivity:false,
           disclaimerButtons:false,
           filterButton : false
         };
@@ -129,6 +142,53 @@ export default function App() {
           activityTabButtRef: null,
           activeTab: 0,
           addDailyActState: action.payload,
+          addUpcActState: false,
+          qastate: false,
+          disclaimerButtons:false,
+          filterButton : false
+        }
+      case "changeAddUpcActState":
+        return {
+          ...state,
+          stdState: false,
+          schedulestate: false,
+          addCurrentDayActivity: false,
+          csActivityIndex: 0,
+          activityTabButtRef: null,
+          activeTab: 0,
+          addDailyActState: false,
+          addUpcActState: action.payload,
+          qastate: false,
+          disclaimerButtons:false,
+          filterButton : false
+        }
+      case "changeActDate":
+        return{
+          ...state,
+          stdState: false,
+          schedulestate: false,
+          addCurrentDayActivity: false,
+          csActivityIndex: 0,
+          activityTabButtRef: null,
+          activeTab: 0,
+          addDailyActState: false,
+          addUpcActState: false,
+          actDate: action.payload,
+          qastate: false,
+          disclaimerButtons:false,
+          filterButton : false
+        }
+      case "changeActDateTabRef":
+        return {
+          ...state,
+          stdState: false,
+          schedulestate: false,
+          addCurrentDayActivity: false,
+          csActivityIndex: 0,
+          activityTabButtRef: null,
+          activeTab: 0,
+          addDailyActState: false,
+          actDateTabRef: action.payload,
           qastate: false,
           disclaimerButtons:false,
           filterButton : false
@@ -144,9 +204,11 @@ export default function App() {
           activeTab: 0,
           dailyactstate: false,
           addDailyActState: false,
+          addUpcActState: false,
           qastate: !state.qastate,
           updateActivity:false,
           updateMissedActivity: false,
+          updateUpcomActivity:false,
           disclaimerButtons:false,
           filterButton : false
         };
@@ -174,6 +236,7 @@ export default function App() {
           activeTab: 0,
           dailyactstate: false,
           addDailyActState: false,
+          addUpcActState: false,
           qastate: false,
           combinedActivityData: action.payload,
           disclaimerButtons:false,
@@ -190,27 +253,42 @@ export default function App() {
           missedActivities: action.payload,
           dailyactstate: false,
           addDailyActState: false,
+          addUpcActState: false,
           qastate: false,
           disclaimerButtons:false,
           filterButton : false
-
-        }
-        case "changeMissedActivityState":
-          return{
-            ...state,
-            stdState: false,
-            schedulestate: false,
-            csActivityIndex: 0,
-            activityTabButtRef: null,
-            activeTab: 0,
-            updateMissedActivity: action.payload,
-            dailyactstate: false,
-            addDailyActState: false,
-            qastate: false,
-            disclaimerButtons:false,
-            filterButton : false
-  
-          }
+        };
+      case "changeUpcomActivityData":
+        return{
+          ...state,
+          stdState: false,
+          schedulestate: false,
+          csActivityIndex: 0,
+          activityTabButtRef: null,
+          activeTab: 0,
+          upcomActivityData: action.payload,
+          dailyactstate: false,
+          addDailyActState: false,
+          qastate: false,
+          disclaimerButtons:false,
+          filterButton : false
+        };
+      case "changeMissedActivityState":
+        return{
+          ...state,
+          stdState: false,
+          schedulestate: false,
+          csActivityIndex: 0,
+          activityTabButtRef: null,
+          activeTab: 0,
+          updateMissedActivity: action.payload,
+          dailyactstate: false,
+          addDailyActState: false,
+          addUpcActState: false,
+          qastate: false,
+          disclaimerButtons:false,
+          filterButton : false
+        };
       case "changeActivityState":
         return{
           ...state,
@@ -223,10 +301,46 @@ export default function App() {
           qastate: false,
           updateActivity: action.payload,
           updateMissedActivity: false,
+          updateUpcomActivity:false,
+          editActivity: false,
+          editMissedActivity:false,
+          editUpcActivity: false,
+          filterButton : false
+        };
+      case "changeUpcActivityState":
+        return{
+          ...state,
+          stdState: false,
+          schedulestate: false,
+          csActivityIndex: 0,
+          activityTabButtRef: null,
+          activeTab: 0,
+          dailyactstate: false,
+          qastate: false,
+          updateActivity: false,
+          updateMissedActivity: false,
+          updateUpcomActivity:action.payload,
           editActivity: false,
           editMissedActivity:false,
           filterButton : false
-        };
+        }
+      case "changeEditUpcActivityState":
+        return{
+          ...state,
+          stdState: false,
+          schedulestate: false,
+          csActivityIndex: 0,
+          activityTabButtRef: null,
+          activeTab: 0,
+          dailyactstate: false,
+          qastate: false,
+          updateActivity: false,
+          updateMissedActivity: false,
+          editActivity: false,
+          editMissedActivity:false,
+          editUpcActivity: !state.editUpcActivity,
+          filterButton : false
+        }
       case "changeEditActivityState":
         return{
           ...state,
@@ -240,6 +354,7 @@ export default function App() {
           qastate: false,
           editActivity: !state.editActivity,
           editMissedActivity:false,
+          editUpcActivity: false,
           disclaimerButtons:false,
           filterButton : false
         };
@@ -256,6 +371,7 @@ export default function App() {
           qastate: false,
           editActivity: false,
           editMissedActivity: !state.editMissedActivity,
+          editUpcActivity: false,
           disclaimerButtons:false,
           filterButton : false
         }
@@ -328,18 +444,24 @@ export default function App() {
     activeTab: 0,
     dailyactstate:false, 
     addDailyActState: false,
+    addUpcActState: false,
+    actDate: futureDate(),
+    actDateTabRef: null,
     qastate:false, 
     activityData:[],
     combinedActivityData:[],
     missedActivities:[],
+    upcomActivityData:[],
     updateActivity:false,
     updateMissedActivity:false,
+    updateUpcomActivity:false,
+    editUpcActivity:false,
     editActivity:false,
     editMissedActivity:false,
     disclaimerState:false,
     disclaimerButtons:false, 
     resolve: null,
-    filterButton : false
+    filterButton : false,
   });
   
   return (

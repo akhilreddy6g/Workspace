@@ -23,11 +23,10 @@ export default function Activitysetup(){
                 data: {data}
             });
             takeAction({type:"changeActivityState", payload:!state.updateActivity});
-            event.target.reset();
         } catch (error) {
             console.log("Something went wrong", error);
         };
-        takeAction({type:"changeAddDailyActState", payload:false});
+        event.target.reset();
     };
     
     return (<><Headingpopup></Headingpopup>

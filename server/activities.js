@@ -14,6 +14,14 @@ const db = new pg.Client({
     port: '5432'
 });
 
+function localDate(value){
+    const actDate = new Date(value);
+    const options = { timeZone: 'America/New_York', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+    const localDate = new Intl.DateTimeFormat('en-US', options).format(actDate);
+    const date = localDate.toString().split(',')[0];
+    return date
+  }
+
 db.connect();
 
 const port = 3000;
@@ -28,7 +36,7 @@ app.get("/activities", async (req,res)=>{
         console.log("Successfully retrieved daily activities");
         res.json(data.rows);
     } catch (error) {
-        console.log("UnSuccessful in retrieving the daily activities");
+        console.log("Unsuccessful in retrieving the daily activities");
         res.status(404).json({ message: `Unsuccessful in retrieving the daily activities: ${error}`});
     };
 });
@@ -293,11 +301,97 @@ app.patch("/edit-missed-activity", async(req, res)=>{
     };
 });
 
+app.post("/update-upcoming-activities", async (req, res) => {
+    console.log("<––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––>");
+    const {actName,actDescr,priority,startTime,endTime,actDate} = req.body;
+    try {
+        await db.query("INSERT INTO upcoming_activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time, activity_date) VALUES ($1, $2, $3, $4, $5, $6)",[actName,actDescr,priority,startTime,endTime,actDate]);
+        console.log(`Successfully added the upcoming activity`);
+        res.status(200).json({ message: `Successfully added the upcoming activity`});
+    } catch (error) {
+        console.error(error);
+        console.log(`Unsuccessful in adding the upcoming activity: ${error}.`);
+        res.status(500).json({ message: `Unsuccessful in adding the upcoming activity: ${error}.` });
+    };
+})
+
+app.get("/upcoming-activities/:actDate", async (req, res) => {
+    console.log("<––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––>");
+    const date = localDate(req.params.actDate)
+    try {
+        const data = await db.query('SELECT * FROM upcoming_activities WHERE activity_date=$1 ORDER BY activity_start_time', [date]);
+        console.log(`Successfully retrieved upcoming activities on ${date}`);
+        res.json(data.rows);
+    } catch (error) {
+        console.log(`Unsuccessful in retrieving the upcoming activities: ${error}`);
+        res.status(404).json({ message: `Unsuccessful in retrieving the upcoming activities: ${error}`});
+    };
+})
+
+app.get("/upcoming-activity/:id", async (req, res) => {
+    console.log("<––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––>");
+    const id = req.params.id;
+    try {
+        const data = await db.query('SELECT * FROM upcoming_activities WHERE activity_uuid=$1 ORDER BY activity_start_time', [id]);
+        console.log(`Successfully retrieved upcoming activity with id ${id}`);
+        res.json(data.rows);
+    } catch (error) {
+        console.log(`Unsuccessful in retrieving the upcoming activity with id ${id}: ${error}`);
+        res.status(404).json({ message: `Unsuccessful in retrieving the upcoming activity with id ${id}: ${error}`});
+    };
+})
+
+app.patch("/edit-upcoming-activity", async (req, res) => {
+    console.log("<––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––>");
+    const {actName, actStart, actEnd, actPriority, id} = req.body.data;
+    try {
+        await db.query("UPDATE upcoming_activities SET activity_name = $1, activity_priority = $2, activity_start_time = $3, activity_end_time = $4 WHERE activity_uuid = $5", [actName, actPriority, actStart, actEnd, id]);
+        console.log(`Successfully updated the upcoming activity with id ${id}`);
+        res.status(200).json({ message: `Successfully updated the upcoming activity with id ${id}`});
+    } catch (error) {
+        console.log(`Unsuccessful in updating the upcoming activity with ${id}: ${error}`);
+        res.json({ message: `Unsuccessful in updating the upcoming activity with id ${id}: ${error}`});
+    };
+});
+
+app.delete("/delete-upcoming-activity/:actDate/:id", async (req, res) => {
+    console.log("<––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––>");
+    const actDate = localDate(req.params.actDate);
+    const id = req.params.id;
+    try {
+        await db.query("DELETE FROM upcoming_activities WHERE activity_date=$1 AND activity_uuid=$2", [actDate,id]);
+        console.log(`Successfully deleted the upcoming activity with ${id}.`);
+        res.status(200).json({ message: `Successfully deleted the upcoming activity with id ${id}.`});
+    } catch (error) {
+        console.error(error);
+        console.log(`Unsuccessful in deleting the upcoming activity with ${id}: ${error}.`);
+        res.status(500).json({ message: `Unsuccessful in deleting the upcoming activity with id ${id}: ${error}.` });
+    };
+})
+
+app.post("/add-upcoming-activity/:actDate/:id", async (req, res) => {
+    console.log("<––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––>");
+    const actDate = localDate(req.params.actDate);
+    const id = req.params.id;
+    try {
+        const data = await db.query("SELECT * FROM upcoming_activities WHERE activity_date=$1 AND activity_uuid=$2", [actDate,id]);
+        const record = data.rows[0];
+        await db.query("INSERT INTO current_day_activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time) VALUES ($1, $2, $3, $4, $5)", 
+        [record.activity_name, record.activity_description,record.activity_priority, record.activity_start_time, record.activity_end_time]);
+        console.log(`Successfully added the upcoming activity with id ${id} to current schedule`);
+        res.status(200).json({ message: `Successfully added the upcoming activity with id ${id} to current schedule`});
+    } catch (error) {
+        console.error(error);
+        console.log(`Unsuccessful in adding the upcoming activity with id ${id} to current schedule: ${error}.`);
+        res.status(500).json({ message: `Unsuccessful in adding the upcoming activity with id ${id} to current schedule: ${error}.` });
+    };
+});
+
 cron.schedule('0 0 * * *', async () => {
     console.log("<––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––>");
     console.log('Running daily job at 12:00 AM');
     try {
-        const records = await db.query("SELECT * FROM current_day_Activities WHERE activity_status IS NULL OR activity_status=0");
+        const records = await db.query("SELECT * FROM current_day_activities WHERE activity_status IS NULL OR activity_status=0");
         if (records.rows.length > 0) {
             const now = new Date();
             now.setDate(now.getDate() - 1)
@@ -313,7 +407,15 @@ cron.schedule('0 0 * * *', async () => {
         } else {
             console.log("No missing activities");
         };
-         await db.query("UPDATE activities SET activity_status = NULL");
+        const now1 = new Date();
+        const upcActDate = now1.toISOString().split('T')[0];
+        const upcRecords = (await db.query("SELECT * FROM upcoming_activities WHERE activity_date=$1", [upcActDate])).rows;
+        for (const element of upcRecords) {
+            await db.query("INSERT INTO current_day_activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time) VALUES ($1, $2, $3, $4, $5)", 
+            [element.activity_name, element.activity_description, element.activity_priority, element.activity_start_time, element.activity_end_time]);
+        };
+        await db.query(`DELETE FROM upcoming_activities WHERE activity_date=$1`, [upcActDate]);
+        await db.query("UPDATE activities SET activity_status = NULL");
     } catch (error) {
         console.error('Error in daily job:', error);
     };
