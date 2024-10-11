@@ -138,7 +138,6 @@ app.get("/current-day-missed-activities", async (req,res)=>{
     };
 });
 
-
 app.get("/combined-activities", async (req,res)=>{
     console.log("<––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––>");
     try {
@@ -195,6 +194,19 @@ app.post("/update-ca-status", async (req,res)=>{
         res.status(500).json(`Unsuccessful in updating the current day activity status: ${error}`);
     };
 });
+
+app.delete("/delete-current-activity/:id", async(req, res) => {
+    console.log("<––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––>");
+    const id = req.params.id;
+    try {
+        await db.query("DELETE FROM current_day_activities WHERE activity_uuid=$1", [id])
+        console.log(`Successfully deleted the current day activity with id: ${id}`);
+        res.status(200).json({ message: `Successfully deleted the current day activities`});
+    } catch (error) {
+        console.log(`Unsuccessful in deleting the current day activities: ${error}`);
+        res.status(404).json(`Unsuccessful in deleting the current day activities: ${error}`);
+    };
+})
 
 app.delete("/delete-current-activities", async (req, res) => {
     console.log("<––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––>");

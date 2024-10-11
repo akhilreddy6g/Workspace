@@ -22,16 +22,6 @@ export function convertTimeToAmPm(time24hr) {
   return `${hours}:${minutes.toString().padStart(2, '0')} ${period}`;
 }
 
-export function resetButtonStyle(buttonRef){
-    if (buttonRef && buttonRef.current) {
-      buttonRef.current.style.boxShadow = "none";
-      buttonRef.current.style.backgroundColor = "rgb(255,255,144)";
-    } else if (buttonRef) {
-      buttonRef.style.boxShadow = "none";
-      buttonRef.style.backgroundColor = "rgb(255,255,144)";
-    };
-  };
-
 export const timeToMinutes = (timeStr) => {
     const [hours, minutes] = timeStr.split(":").map(Number);
     return hours * 60 + minutes;

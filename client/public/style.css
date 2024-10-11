@@ -1046,6 +1046,12 @@ input[type=radio] {
    background-color : #b1c7b3 !important;
 }
 
+.currentActivityTab{
+    box-shadow : 0 0 7px black;
+    background-image : linear-gradient(to right ,rgb(42, 42, 243), rgba(144, 10, 144, 0.925));
+    color : white;
+}
+
 .planAhead1{
     left: 16.5vw;
 }

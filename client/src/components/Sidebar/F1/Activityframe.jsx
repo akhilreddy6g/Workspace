@@ -1,14 +1,14 @@
 import axios from "axios";
 import featuresTabHook from "../../Noncomponents";
 import { useContext, useEffect, useRef, useState } from "react";
-import { resetButtonStyle } from "../../Noncomponents";
 
 export default function Activityframe(props) {
   const { state, takeAction } = useContext(featuresTabHook);
-  const [activeTab, setActiveTab] = useState(null);
   const intervalRef = useRef(null);
   const skipRef = useRef(null);
   const completeRef = useRef(null);
+  var minDiff = Infinity;
+  var minIndex = null;
 
   function alertMessage(message){
     takeAction({type:"changeFailedAction", payload:message});
@@ -19,39 +19,11 @@ export default function Activityframe(props) {
 
   function changeIndex(e, count) {
     e.preventDefault();
-    resetButtonStyle(state.activityTabButtRef);
     const newIndex = state.csActivityIndex + count;
     if (newIndex >= 0 && newIndex <= state.combinedActivityData.length - 1) {
-      const actTab = document.querySelector(`.atab-${newIndex + 1}`);
-      takeAction({ type: "changeCsActivityIndex", payload: count, button: actTab });
-      console.log("new csactivityindex: ", state.csActivityIndex);
-      if (actTab) {
-        actTab.style.boxShadow = "0 0 7px black";
-        actTab.style.backgroundColor = "#b1c7b3";
-        actTab.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest",
-            inline: "start"
-          });
-      };
+      takeAction({ type: "changeCsActivityIndex", payload: count});
     };
   };
-
-  function postLastTabStatusUpdate(csIndex){
-    takeAction({type:"changeActTabButtRef", payload:csIndex});
-    resetButtonStyle(state.activityTabButtRef);
-    const actTab = document.querySelector(`.atab-${1}`);
-    takeAction({ type: "changeCsActivityIndex", payload: csIndex, button: actTab });
-    if (actTab) {
-      actTab.style.boxShadow = "0 0 7px black";
-      actTab.style.backgroundColor = "#b1c7b3";
-      actTab.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-          inline: "start"
-        });
-    };
-  }
 
   function closestTimeTab(tabs) {
     const now = new Date();
@@ -64,30 +36,30 @@ export default function Activityframe(props) {
       const tabStartTime = startHours * 60 + startMinutes;
       const tabEndTime = endHours * 60 + endMinutes;
       const timeDiff = currentTime - tabStartTime;
+      const absDiff = Math.abs(timeDiff);
+      if(absDiff<minDiff && state.activeTab===null && minIndex!=index){
+        minIndex = index;
+        var nextIndex = index+1
+        minDiff = absDiff;
+      };
       if (timeDiff >= 0 && timeDiff < closestTimeDiff && currentTime<tabEndTime) {
         closestTab = index;
         closestTimeDiff = timeDiff;
       };
     });
-    if(activeTab!=closestTab){
-        const prevTab = document.querySelector(`.atab-${activeTab + 1}`);
-        if (prevTab) {
-          prevTab.style.boxShadow = "none";
-          prevTab.style.backgroundImage = "none";
-          prevTab.style.color = "black"
-        };
-    }
-    if(state.csActivityIndex!=closestTab && state.activeTab!=closestTab){
-        console.log("yes, im here");
-        takeAction({type:"changeActiveTab", payload:closestTab});
+    if(state.activeTab!=closestTab){
+      takeAction({type:"changeActiveTab", payload:closestTab});
+      if(closestTab!=null){
         takeAction({type:"changeActTabButtRef", payload:closestTab});
+      } else {
+        takeAction({type:"changeActTabButtRef", payload:state.csActivityIndex+1});
+      }
     };
     return closestTab;
   }
 
   const highlightClosestTab = () => {
     const curclosestTab = closestTimeTab(state.combinedActivityData);
-    setActiveTab(curclosestTab);
     return curclosestTab;
   };
 
@@ -99,7 +71,7 @@ export default function Activityframe(props) {
         try {
             const data = { actId: id, actStatus: newStatus };
             const prevState = sessionStorage.getItem(id);
-            if (prevState == null || prevState && JSON.parse(prevState).action !=="complete") {
+            if (prevState === null || prevState && JSON.parse(prevState).action !=="complete") {
                 const userResponse = await new Promise((resolve) => {
                   takeAction({ type: "changeDisclaimerState", payload: true });
                   takeAction({ type: "changeDisclaimerButtons"});
@@ -117,11 +89,9 @@ export default function Activityframe(props) {
                         skipRef.current.disabled = true;
                     };
                     if(state.csActivityIndex+1<state.combinedActivityData.length){
-                      console.log("length check")
                       changeIndex(event, 1);
                     } else {
-                      console.log("postlast")
-                      postLastTabStatusUpdate(0);
+                      takeAction({type:"changeActTabButtRef", payload:0});
                     };
                 } else {
                   console.log("Action cancelled by the user");
@@ -149,30 +119,47 @@ export default function Activityframe(props) {
       await updateActivityStatus(event, id, type, status, 1, "complete");
   }
 
+  async function deleteActivity(event, id, type) {
+    event.preventDefault();
+    document.body.style.overflow = "hidden";
+    takeAction({ type: "changeCurrentAction", payload: "delete the activity"});
+    const userResponse = await new Promise((resolve) => {
+      takeAction({ type: "changeDisclaimerState", payload: true });
+      takeAction({ type: "changeDisclaimerButtons" });
+      takeAction({ type: "setResolve", payload: resolve });
+    });
+    document.body.style.overflow = "auto";
+    if (userResponse) {
+      try {
+        const url = type === "c" ? `http://localhost:3000/delete-current-activity/${id}` : `http://localhost:3000/delete-activity/${id}`
+        await axios.delete(url);
+        alertMessage("Successfully deleted the activity");
+        takeAction({ type: "changeActivityState", payload: false});
+      } catch (error) {
+        console.error("Something went wrong", error);
+        alertMessage("Unable to delete the activity");
+      };
+    } else {
+      console.log("Action canceled by the user.");
+    };
+  };
+
   useEffect(() => {
     const closest = highlightClosestTab();
     if(closest==null){
-        console.log("no activities scheduled currently");
+      console.log("No activities scheduled currently");
     } else{
-        const actTab = document.querySelector(`.atab-${closest + 1}`);
-        if (actTab && activeTab==state.csActivityIndex) {
-        actTab.style.boxShadow = "0 0 7px black";
-        actTab.style.backgroundImage = "linear-gradient(to right ,rgb(42, 42, 243), rgba(144, 10, 144, 0.925))";
-        actTab.style.color = "white"
-        actTab.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest",
-            inline: "start"
-            });
-        };
+      console.log("Index of current activity: ", state.activeTab);
     };
     clearInterval(intervalRef.current);
     intervalRef.current = setInterval(highlightClosestTab, 15000);
     return () => {
       clearInterval(intervalRef.current);
     };
-  }, [activeTab, state.combinedActivityData]);
+  }, [state.activeTab, state.combinedActivityData]);
       
+
+
   return (<> <button className="prevActivity" style={{left: state.fthState? "15vw": "8vw"}} onClick={(e)=>{changeIndex(e, -1)}} disabled={state.csActivityIndex==0} >{"<"}</button>
       <div className={`activityFrame ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"} ${state.darkMode? "scheduleDark" :"scheduleNormal"}`} id={props.id}>
           <div className={`activityTitle  ${state.darkMode? "activityFrameDark" : "activityFrameNormal"}`} style={{borderTop:"0"}}>{state.csActivityIndex+1}. {props.activity}</div>
@@ -192,7 +179,7 @@ export default function Activityframe(props) {
             Complete
           </button>
           <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"orange"}}>Update</button>
-          <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"orange"}}>Delete</button>
+          <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"orange"}} onClick={(event)=>{deleteActivity(event, props.id, props.type)}}>Delete</button>
           <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"teal"}}>Notes</button>
           <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"teal"}}>Upload</button>
           </div>

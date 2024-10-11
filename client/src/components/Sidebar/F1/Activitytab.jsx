@@ -2,7 +2,6 @@ import {useContext, useState, useEffect, useRef} from "react";
 import featuresTabHook from "../../Noncomponents";
 import axios from "axios";
 import { timeToMinutes } from "../../Noncomponents";
-import { resetButtonStyle } from "../../Noncomponents";
 
 export default function Activitytab(props){
     const {state, takeAction} = useContext(featuresTabHook);
@@ -11,13 +10,43 @@ export default function Activitytab(props){
     const [remTime, setRemTime] = useState(0);
     const buttonRef = useRef(null);
 
-    function handleMouseEnter() {
-        setHover(true); 
-    }
+    function selectActivityTab(sno){
+        takeAction({type:"changeActTabButtRef", payload:sno-1});
+    };
 
-    function handleMouseLeave() {
-        setHover(false); 
-    }
+    function selectInitialTab(){
+        const index = props.sno-1;
+        const curr = state.csActivityIndex;
+        if (curr===null && state.activeTab===null) {
+            if(props.sno==1){
+                return "specialTab";
+            }
+        } else if (curr === index) {
+            if(buttonRef!=null && buttonRef.current!=null){
+                buttonRef.current.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "start"
+                  });
+            }
+            return "specialTab";
+        };
+        return "";
+    };
+
+    function selectCurrentActivityTab(){
+        if(state.activeTab==props.sno-1){
+            if(buttonRef!=null && buttonRef.current!=null){
+                buttonRef.current.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "start"
+                  });
+            }
+            return "currentActivityTab";
+        }
+        return "";
+      }
 
     function convertMinutesToHours(minutes) {
         const hours = Math.floor(minutes / 60);
@@ -64,22 +93,6 @@ export default function Activitytab(props){
         };
     };
 
-    function selectActivityTab(sno){
-        const prevButtonRef = state.activityTabButtRef;
-        if(prevButtonRef && prevButtonRef.current){
-            prevButtonRef.current.style.boxShadow = "none";
-            prevButtonRef.current.style.backgroundColor = "rgb(255,255,144)";
-        } else if(prevButtonRef){
-            prevButtonRef.style.boxShadow = "none";
-            prevButtonRef.style.backgroundColor = "rgb(255,255,144)";
-        } 
-        takeAction({type:"changeActTabButtRef", payload:sno-1, button:buttonRef});
-        if(sno-1!=state.activeTab && buttonRef && buttonRef.current){
-            buttonRef.current.style.boxShadow = "0 0 7px black";
-            buttonRef.current.style.backgroundColor = "#b1c7b3";
-        };
-    };
-
     const getBarWidth = (progress) => {
         const item = sessionStorage.getItem(props.id);
         return (props.status == null && item == null) ? `${progress}%` : "100%";
@@ -119,6 +132,14 @@ export default function Activitytab(props){
             return '/src/assets/greenok.svg';
         }
     }
+
+    function handleMouseEnter() {
+        setHover(true); 
+    }
+
+    function handleMouseLeave() {
+        setHover(false); 
+    }
     
     useEffect(() => {
         updateProgress();
@@ -126,14 +147,8 @@ export default function Activitytab(props){
         return () => clearInterval(intervalId);
     }, [props.startTime, props.endTime]);
 
-    useEffect(() => {
-        if(state.activityTabButtRef){
-            resetButtonStyle(state.activityTabButtRef);
-        };
-    }, [state.activeTab])
-
     return (<>
-        <div className={`activityTab-${props.id} atab-${props.sno} activitiesInCurrentSchedule ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ref={buttonRef} onClick={()=>{selectActivityTab(props.sno)}}>
+        <div className={`activityTab-${props.id} atab-${props.sno} ${selectInitialTab()} ${selectCurrentActivityTab()} activitiesInCurrentSchedule ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ref={buttonRef} onClick={()=>{selectActivityTab(props.sno)}}>
             <div className="csInfoContainer">
                 <p className="csInfo type" style={{backgroundColor: props.type=="d"? "teal" : "black"}}>{props.type=="d"? "Daily" : "Today"}</p>
                 <p className="sno" id={props.sno} style={{fontSize:"15px"}}>{props.sno}</p>
@@ -157,3 +172,4 @@ export default function Activitytab(props){
         </>
     );
 } 
+
