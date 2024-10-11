@@ -4,8 +4,9 @@ import Features from './Sidebar/Features';
 import featuresTabHook,{dayStatus} from './Noncomponents';
 import { BrowserRouter as Router} from 'react-router-dom';
 import Approuter from './Sidebar/Approuter';
-import Deletedisclaimer from './Sidebar/F2/Deletedisclaimer';
+import Disclaimersetup from './Disclaimersetup';
 import { futureDate } from './Noncomponents';
+import Failedaction from './Failedaction';
 
 export default function App() {
   function changeStateInfo(state, action){
@@ -381,9 +382,6 @@ export default function App() {
           stdState: false,
           schedulestate: false,
           addCurrentDayActivity: false,
-          csActivityIndex: 0,
-          activityTabButtRef: null,
-          activeTab: 0,
           qastate: false,
           disclaimerState: action.payload,
           filterButton : false
@@ -394,12 +392,25 @@ export default function App() {
           stdState: false,
           schedulestate: false,
           addCurrentDayActivity: false,
-          csActivityIndex: 0,
-          activityTabButtRef: null,
-          activeTab: 0,
           qastate: false,
           disclaimerButtons: !state.disclaimerButtons,
           filterButton : false
+        }
+      case "changeCurrentAction":
+        return {
+          ...state,
+          stdState: false,
+          schedulestate: false,
+          addCurrentDayActivity: false,
+          qastate: false,
+          filterButton : false,
+          currentAction : action.payload,
+        }
+      case "changeFailedAction":
+        return {
+          ...state,
+          failedActionMessage: action.payload!=null? action.payload : state.failedActionMessage,
+          failedAction:!state.failedAction,
         }
       case "setResolve":
         return {
@@ -407,10 +418,6 @@ export default function App() {
           stdState: false,
           schedulestate: false,
           addCurrentDayActivity: false,
-          csActivityIndex: 0,
-          activityTabButtRef: null,
-          activeTab: 0,
-          dailyactstate: true,
           qastate: false,
           resolve: action.payload,
           filterButton : false
@@ -424,7 +431,6 @@ export default function App() {
           csActivityIndex: 0,
           activityTabButtRef: null,
           activeTab: 0,
-          dailyactstate: true,
           qastate: false,
           filterButton : action.payload
         }
@@ -458,6 +464,9 @@ export default function App() {
     editUpcActivity:false,
     editActivity:false,
     editMissedActivity:false,
+    currentAction:null,
+    failedActionMessage:null,
+    failedAction:false,
     disclaimerState:false,
     disclaimerButtons:false, 
     resolve: null,
@@ -469,7 +478,8 @@ export default function App() {
     <featuresTabHook.Provider value={{state, takeAction}}>
      <Header></Header>
      <Features></Features>
-     <Deletedisclaimer></Deletedisclaimer>
+     <Disclaimersetup></Disclaimersetup>
+     <Failedaction></Failedaction>
      <Approuter></Approuter>
     </featuresTabHook.Provider>
     </Router>

@@ -5,7 +5,6 @@ import { timeToMinutes } from '../../Noncomponents';
 
 export default function Activity(props) {
   const { state, takeAction } = useContext(featuresTabHook);
-
   const actNameRef = useRef(null);
   const actStartRef = useRef(null);
   const actEndRef = useRef(null);
@@ -14,6 +13,13 @@ export default function Activity(props) {
   const editButtonImgRef = useRef(null);
   const editButtonRef = useRef(null);
   const deleteButtonRef = useRef(null);
+
+  function alertMessage(message){
+    takeAction({type:"changeFailedAction", payload:message});
+    setTimeout(() => {
+        takeAction({type:"changeFailedAction"});
+    }, 3500);
+  }
 
   async function editActivity(event, id) {
     event.preventDefault();
@@ -54,7 +60,9 @@ export default function Activity(props) {
           const data = { actName: correctedActName, actStart: actStart, actEnd: actEnd, actPriority: correctedPriority, id: id};
           try {
             await axios.patch(`http://localhost:3000/edit-activity`, { data });
+            alertMessage("Successfully edited the activity");
           } catch (error) {
+            alertMessage("Unable to edit the activity: Enter unique activity name");
             console.error("Something went wrong", error);
           }
           actNameRef.current.textContent = correctedActName;
@@ -62,12 +70,14 @@ export default function Activity(props) {
           actEndRef.current.textContent = actEnd;
           actPriorityRef.current.textContent = correctedPriority;
         } else {
+          alertMessage("Unable to add the activity: Start time must be less than end time");
           actNameRef.current.textContent = actualActivity.activity_name;
           actStartRef.current.textContent = actualActivity.activity_start_time.slice(0,5);
           actEndRef.current.textContent = actualActivity.activity_end_time.slice(0,5);
           actPriorityRef.current.textContent = actualActivity.activity_priority;
         }
         } else {
+          alertMessage("Unable to add the activity: please enter valid information");
           actNameRef.current.textContent = actualActivity.activity_name;
           actStartRef.current.textContent = actualActivity.activity_start_time.slice(0,5);
           actEndRef.current.textContent = actualActivity.activity_end_time.slice(0,5);
@@ -81,6 +91,7 @@ export default function Activity(props) {
         editButtonImgRef.current.src = "src/assets/edit.svg";
         editButtonRef.current.style.backgroundColor = "teal";
       } catch (error) {
+        alertMessage("Unable to add the activity");
         console.error("Something went wrong", error);
       }
     }
@@ -91,6 +102,7 @@ export default function Activity(props) {
     const activityElement = activityRef.current;
     document.body.style.overflow = "hidden";
     activityElement.style.backgroundImage = "linear-gradient(to right ,rgb(42, 42, 243), rgba(144, 10, 144, 0.925))";
+    takeAction({ type: "changeCurrentAction", payload: "delete the activity"});
     const userResponse = await new Promise((resolve) => {
       takeAction({ type: "changeDisclaimerState", payload: true });
       takeAction({ type: "changeDisclaimerButtons" });
@@ -101,13 +113,15 @@ export default function Activity(props) {
     if (userResponse) {
       try {
         await axios.delete(`http://localhost:3000/delete-activity/${id}`);
+        takeAction({ type: "changeActivityState", payload: false });
+        alertMessage("Successfully deleted the activity");
       } catch (error) {
         console.error("Something went wrong", error);
+        alertMessage("Unable to delete the activity");
       }
     } else {
-      console.log("Activity deletion was canceled by user.");
+      console.log("Action canceled by the user.");
     }
-    takeAction({ type: "changeActivityState", payload: false });
   }
 
   const getBackgroundColor = () => {

@@ -15,6 +15,13 @@ export default function Futureactivity(props){
   const addButtonRef = useRef(null);
   const {state, takeAction} = useContext(featuresTabHook);
 
+  function alertMessage(message){
+    takeAction({type:"changeFailedAction", payload:message});
+    setTimeout(() => {
+        takeAction({type:"changeFailedAction"});
+    }, 3500);
+  }
+
   async function editActivity(e, id){
     e.preventDefault();
     takeAction({ type: "changeEditUpcActivityState"})
@@ -56,7 +63,9 @@ export default function Futureactivity(props){
             const data = { actName: correctedActName, actStart: actStart, actEnd: actEnd, actPriority: correctedPriority, id: id};
             try {
               await axios.patch(`http://localhost:3000/edit-upcoming-activity`, { data });
+              alertMessage("Successfully edited the activity")
             } catch (error) {
+              alertMessage("Unable to edit the activity: Enter unique activity name");
               console.error("Something went wrong", error);
             }
             actNameRef.current.textContent = correctedActName;
@@ -64,6 +73,7 @@ export default function Futureactivity(props){
             actEndRef.current.textContent = actEnd;
             actPriorityRef.current.textContent = correctedPriority;
           } else {
+            alertMessage("Unable to add the activity: Start time must be less than end time");
             actNameRef.current.textContent = actualActivity.activity_name;
             actStartRef.current.textContent = actualActivity.activity_start_time.slice(0,5);
             actEndRef.current.textContent = actualActivity.activity_end_time.slice(0,5);
@@ -71,6 +81,7 @@ export default function Futureactivity(props){
           }
         } else {
           console.log("Please provide correct information");
+          alertMessage("Unable to add the activity: please enter valid information")
           actNameRef.current.textContent = actualActivity.activity_name;
           actStartRef.current.textContent = actualActivity.activity_start_time.slice(0,5);
           actEndRef.current.textContent = actualActivity.activity_end_time.slice(0,5);
@@ -86,6 +97,7 @@ export default function Futureactivity(props){
         editButtonRef.current.style.backgroundColor = "teal";
         document.querySelector(".navbar").style.zIndex = "2"
       } catch (error) {
+        alertMessage("Unable to add the activity")
         console.error("Something went wrong", error);
       }
     }
@@ -96,6 +108,7 @@ export default function Futureactivity(props){
     const activityElement = activityRef.current;
     document.body.style.overflow = "hidden";
     activityElement.style.backgroundImage = "linear-gradient(to right ,rgb(42, 42, 243), rgba(144, 10, 144, 0.925))";
+    takeAction({ type: "changeCurrentAction", payload: "delete the activity"});
     const userResponse = await new Promise((resolve) => {
       takeAction({ type: "changeDisclaimerState", payload: true });
       takeAction({ type: "changeDisclaimerButtons"});
@@ -107,8 +120,10 @@ export default function Futureactivity(props){
         try {
             await axios.delete(`http://localhost:3000/delete-upcoming-activity/${state.actDate}/${id}`);
             takeAction({type:"changeUpcActivityState", payload: !state.updateUpcomActivity});
+            alertMessage("Successfully deleted the activity")
         } catch (error) {
             console.log(`Something went wrong while deleting the missed activitiy: ${error}`);
+            alertMessage("Unable to delete the activity")
         };
     } else {
       console.log("Activity deletion was canceled by user.");
@@ -120,18 +135,32 @@ export default function Futureactivity(props){
     const now = new Date();
     const currentTimeMinutes = now.getHours() * 60 + now.getMinutes(); 
     const startTimeMinutes =  timeToMinutes(actStartRef.current.textContent); 
-    if (currentTimeMinutes<startTimeMinutes){
+    takeAction({ type: "changeCurrentAction", payload: "add the activity to current schedule?"});
+        const userResponse = await new Promise((resolve) => {
+          takeAction({ type: "changeDisclaimerState", payload: true });
+          takeAction({ type: "changeDisclaimerButtons" });
+          takeAction({ type: "setResolve", payload: resolve });
+        });
+    if(userResponse){
+      if (currentTimeMinutes<startTimeMinutes){
         try {
             await axios.post(`http://localhost:3000/add-upcoming-activity/${state.actDate}/${id}`);
             await axios.delete(`http://localhost:3000/delete-upcoming-activity/${state.actDate}/${id}`)
             takeAction({type:"changeUpcActivityState", payload: !state.updateUpcomActivity});
+            alertMessage("Successfully added the missed activity to current schedule");
             console.log("Successfully added the upcoming activity to current schedule");
         } catch (error) {
-            console.log(`Something went wrong while adding upcoming activity to current schedule: ${error}`)
+            console.log(`Something went wrong while adding upcoming activity to current schedule: ${error}`);
+            alertMessage("Unable to add the missed activity back to current schedule");
         }
-    } else{
-        console.log("Cannot add upcoming activity back");
-    };
+      } else{
+          console.log("Cannot add upcoming activity back");
+          alertMessage("Unable to add the missed activity back to current schedule: start time must be less than current time")
+      };
+    } else {
+      console.log("Action canceled by the user");
+    }
+    
 }
 
     return (

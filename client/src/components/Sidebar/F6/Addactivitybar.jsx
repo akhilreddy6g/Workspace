@@ -5,6 +5,12 @@ import axios from "axios";
 
 export default function Addactivitybar(){
     const {state, takeAction} = useContext(featuresTabHook);
+    function alertMessage(message){
+        takeAction({type:"changeFailedAction", payload:message});
+        setTimeout(() => {
+            takeAction({type:"changeFailedAction"});
+        }, 3500);
+      }
     const submitAddActivity = async (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);
@@ -20,10 +26,13 @@ export default function Addactivitybar(){
             try {
                 await axios.post('http://localhost:3000/update-upcoming-activities', data);
                 takeAction({type:"changeUpcActivityState", payload:!state.updateUpcomActivity});
+                alertMessage("Successfully added the activity");
             } catch (error) {
                 console.log("Something went wrong", error);
+                alertMessage("Please enter valid information. Start time must be less than end time")
             };
         } else {
+            alertMessage("Please enter all the necessary information");
             console.log("Please enter all the necessary information");
         };
         event.target.reset();

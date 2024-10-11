@@ -5,6 +5,12 @@ import axios from "axios";
 
 export default function Currentactivitysetup(){
     const {state, takeAction} = useContext(featuresTabHook);
+    function alertMessage(message){
+        takeAction({type:"changeFailedAction", payload:message});
+        setTimeout(() => {
+            takeAction({type:"changeFailedAction"});
+        }, 3500);
+      }
     const submitAddActivity = async (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);
@@ -13,18 +19,25 @@ export default function Currentactivitysetup(){
             actDescr:formData.get("desc"),
             priority:formData.get("priority"),
             startTime:formData.get("startTime"),
-            endTime:formData.get("endTime")
+            endTime:formData.get("endTime"),
         };
-        try {
-            await axios({
-                method: 'post',
-                url: 'http://localhost:3000/add-current-day-activity',
-                headers: {'Content-Type' : 'application/json'},
-                data: {data}
-            });
-            takeAction({type:"changeActivityState", payload:!state.updateActivity});
-        } catch (error) {
-            console.log("Something went wrong", error);
+        if(data.actName.length>0 && data.actDescr.length>0 && data.startTime.length>0 && data.endTime.length>0){
+            try {
+                await axios({
+                    method: 'post',
+                    url: 'http://localhost:3000/add-current-day-activity',
+                    headers: {'Content-Type' : 'application/json'},
+                    data: {data}
+                });
+                takeAction({type:"changeActivityState", payload:!state.updateActivity});
+                alertMessage("Successfully added the activity");
+            } catch (error) {
+                console.log("Something went wrong", error);
+                alertMessage("Unable to add the activity: Please enter valid information (start time must be less than current time)");
+            };
+        } else {
+            alertMessage("Please enter all the necessary information");
+            console.log("Please enter all the necessary information");
         };
         event.target.reset();
     };

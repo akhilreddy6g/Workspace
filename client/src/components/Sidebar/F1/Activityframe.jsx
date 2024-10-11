@@ -10,6 +10,13 @@ export default function Activityframe(props) {
   const skipRef = useRef(null);
   const completeRef = useRef(null);
 
+  function alertMessage(message){
+    takeAction({type:"changeFailedAction", payload:message});
+    setTimeout(() => {
+        takeAction({type:"changeFailedAction"});
+    }, 3500);
+  }
+
   function changeIndex(e, count) {
     e.preventDefault();
     resetButtonStyle(state.activityTabButtRef);
@@ -17,6 +24,7 @@ export default function Activityframe(props) {
     if (newIndex >= 0 && newIndex <= state.combinedActivityData.length - 1) {
       const actTab = document.querySelector(`.atab-${newIndex + 1}`);
       takeAction({ type: "changeCsActivityIndex", payload: count, button: actTab });
+      console.log("new csactivityindex: ", state.csActivityIndex);
       if (actTab) {
         actTab.style.boxShadow = "0 0 7px black";
         actTab.style.backgroundColor = "#b1c7b3";
@@ -70,6 +78,7 @@ export default function Activityframe(props) {
         };
     }
     if(state.csActivityIndex!=closestTab && state.activeTab!=closestTab){
+        console.log("yes, im here");
         takeAction({type:"changeActiveTab", payload:closestTab});
         takeAction({type:"changeActTabButtRef", payload:closestTab});
     };
@@ -84,35 +93,49 @@ export default function Activityframe(props) {
 
   async function updateActivityStatus(event, id, type, status, newStatus, actionType) {
     event.preventDefault();
+    takeAction({ type: "changeCurrentAction", payload: actionType + ` the activity`});
     if ((actionType === "skip" && (status === null)) || 
         (actionType === "complete" && status !== 1)) {
         try {
             const data = { actId: id, actStatus: newStatus };
             const prevState = sessionStorage.getItem(id);
             if (prevState == null || prevState && JSON.parse(prevState).action !=="complete") {
-                const url = type === "c" ? "http://localhost:3000/update-ca-status" : "http://localhost:3000/update-da-status";
-                await axios.post(url, { data });
-                sessionStorage.setItem(id, JSON.stringify({ action: actionType, value: true }));
-                if (completeRef.current && actionType === "complete") {
-                    completeRef.current.disabled = true;
-                }
-                if (skipRef.current) {
-                    skipRef.current.disabled = true;
-                }
-                if(state.csActivityIndex+1<state.combinedActivityData.length){
-                  changeIndex(event, 1);
+                const userResponse = await new Promise((resolve) => {
+                  takeAction({ type: "changeDisclaimerState", payload: true });
+                  takeAction({ type: "changeDisclaimerButtons"});
+                  takeAction({ type: "setResolve", payload: resolve });
+                });
+                if (userResponse){
+                    const url = type === "c" ? "http://localhost:3000/update-ca-status" : "http://localhost:3000/update-da-status";
+                    await axios.post(url, { data });
+                    alertMessage(`Successfully ${actionType=="skip"? "skipped" : "completed"} the activity`);
+                    sessionStorage.setItem(id, JSON.stringify({ action: actionType, value: true }));
+                    if (completeRef.current && actionType === "complete") {
+                        completeRef.current.disabled = true;
+                    };
+                    if (skipRef.current) {
+                        skipRef.current.disabled = true;
+                    };
+                    if(state.csActivityIndex+1<state.combinedActivityData.length){
+                      console.log("length check")
+                      changeIndex(event, 1);
+                    } else {
+                      console.log("postlast")
+                      postLastTabStatusUpdate(0);
+                    };
                 } else {
-                  postLastTabStatusUpdate(0);
-                }
+                  console.log("Action cancelled by the user");
+                };
             } else {
                 const { action, value } = JSON.parse(prevState);
                 if (action === actionType && value === true) {
                     console.log("Cannot update the status of the activity");
-                }
-            }
+                    alertMessage("Status Updated Already");
+                };
+            };
         } catch (error) {
             console.log(`Unable to ${actionType} the Activity: ${error}`);
-        }
+        };
     } else {
         console.log("Status already Updated");
     }

@@ -257,6 +257,45 @@ label{
 .disclaimerContent{
     display: flex;
     justify-content: center;
+    text-align: center;
+}
+
+.failedAction{
+    text-align: center;
+    position: absolute;
+    font-size: 15px;
+    background-color: orange;
+    z-index: 10 !important;
+    border: 1px solid black;
+    border-radius: 25px;
+    color: black;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    transition: 350ms linear;
+}
+
+.actionContainer{
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    height: 100vh;
+    width: 80vw;
+    position: fixed;
+    top: 120vh;
+    text-align: center;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 18px;
+    border-radius: 10px;
+    transition: 350ms linear;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.actionContainer1{
+    top: 87vh !important;
+    transition: 350ms linear;
 }
 
 .disclaimerAction{
@@ -1003,8 +1042,8 @@ input[type=radio] {
 }
 
 .specialTab{
-   box-shadow : 0 0 7px black;
-   background-color : #b1c7b3;
+   box-shadow : 0 0 7px black !important;
+   background-color : #b1c7b3 !important;
 }
 
 .planAhead1{

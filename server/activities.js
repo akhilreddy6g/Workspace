@@ -110,7 +110,7 @@ app.patch("/edit-activity", async(req, res)=>{
         res.status(200).json({ message: `Successfully updated the daily activity with id ${id}`});
     } catch (error) {
         console.log(`Unsuccessful in updating the daily activity with ${id}: ${error}`);
-        res.json({ message: `Unsuccessful in updating the daily activity with id ${id}: ${error}`});
+        res.status(500).json(`Unsuccessful in updating the daily activity with id ${id}: ${error}`);
     };
 });
 
