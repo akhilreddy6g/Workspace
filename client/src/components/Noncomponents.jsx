@@ -37,6 +37,17 @@ export function futureDate(){
   return newYorkTime;
 }
 
+export function currentTimeInMinutes() {
+  const actDate = new Date();
+  const options = { timeZone: 'America/New_York', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+  const localDate = new Intl.DateTimeFormat('en-US', options).format(actDate);
+  const newDate = new Date(localDate)
+  let hours = newDate.getHours();
+  const minutes = newDate.getMinutes();
+  const totalMinutes = (hours * 60) + minutes;
+  return totalMinutes;
+}
+
 export function parseLocaleDateString(dateString) {
   const [month, day, year] = dateString.replace(",", "").split(" ");
   const parsedDate = new Date(`${month} ${day}, ${year}`);

@@ -24,7 +24,7 @@ export default function Addactivitybar(){
         };
         if(data.actName.length>0 && data.actDescr.length>0 && data.startTime.length>0 && data.endTime.length>0){
             try {
-                await axios.post('http://localhost:3000/update-upcoming-activities', data);
+                await axios.post('http://localhost:3000/add-upcoming-activities', data);
                 takeAction({type:"changeUpcActivityState", payload:!state.updateUpcomActivity});
                 alertMessage("Successfully added the activity");
             } catch (error) {

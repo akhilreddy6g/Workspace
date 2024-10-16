@@ -1,11 +1,12 @@
 import featuresTabHook from "../../Noncomponents";
 import Activity from "./Activity";
-import { useContext, useEffect} from "react";
+import { useContext, useEffect, useRef} from "react";
 import axios from "axios";
 
 export default function Dailyactivities(){
     const {state, takeAction} = useContext(featuresTabHook);
     var data = state.activityData;
+    const isFirstRender = useRef(true);
     async function alterData(){
       const res = await axios.get("http://localhost:3000/activities");
       takeAction({type:"changeActivityData", payload: res.data})
@@ -24,7 +25,10 @@ export default function Dailyactivities(){
     };
 
     useEffect(() => {
-      alterData();
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+      } else {
+      alterData();}
     },[state.updateActivity]);
 
     return <>

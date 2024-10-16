@@ -36,7 +36,7 @@ export default function Activitytab(props){
 
     function selectCurrentActivityTab(){
         if(state.activeTab==props.sno-1){
-            if(buttonRef!=null && buttonRef.current!=null){
+            if(state.csActivityIndex==state.activeTab && buttonRef!=null && buttonRef.current!=null){
                 buttonRef.current.scrollIntoView({
                     behavior: "smooth",
                     block: "nearest",
@@ -171,5 +171,5 @@ export default function Activitytab(props){
         </div>
         </>
     );
-} 
+};
 

@@ -56,9 +56,18 @@ label{
 .logo{
     width: 22px;
     height: 22px;
-    min-height: 20px;
-    min-width: 20px;
     margin: 5px;
+}
+
+.targetContainer{
+    all: unset;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    height: 24px;
+    width: 25px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0);
 }
 
 #titlename{

@@ -1,4 +1,4 @@
-import {useContext, useEffect} from "react";
+import {useContext, useEffect, useRef} from "react";
 import featuresTabHook from "../../Noncomponents";
 import Activitytab from "./Activitytab";
 import Activityframe from "./ActivityFrame";
@@ -7,6 +7,7 @@ import axios from "axios"
 
 export default function CurrentSchedule(){
     const {state, takeAction} = useContext(featuresTabHook);
+    const isFirstRender = useRef(true);
     
     async function alterData(){
         const combinedAct = await axios.get("http://localhost:3000/combined-activities");
@@ -28,7 +29,10 @@ export default function CurrentSchedule(){
     };
 
     useEffect(() => {
-        alterData();
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+      } else {
+        alterData()};
       },[state.updateActivity]);
 
     if (!state.combinedActivityData || state.combinedActivityData.length === 0) {

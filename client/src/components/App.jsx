@@ -40,13 +40,6 @@ export default function App() {
         return {
           ...state,
           darkMode: !state.darkMode,
-          updateActivity: false,
-          updateMissedActivity: false,
-          updateUpcomActivity:false,
-          editActivity: false,
-          editMissedActivity:false,
-          editUpcActivity:false,
-          disclaimerButtons:false,
         };
       case "changeScheduleState":
         return {

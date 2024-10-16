@@ -1,30 +1,59 @@
 import featuresTabHook from "../../Noncomponents";
-import { useContext, useEffect, useState} from "react";
+import { useContext, useEffect, useState, useRef} from "react";
 import axios from "axios";
 import Missedactivitiesdates from "./Missedactivitiesdates";
 
 export default function Missedactivitysetup(){
-    const {state, takeAction} = useContext(featuresTabHook);
-    const [data, setData] = useState([]);
+    const { state, takeAction } = useContext(featuresTabHook);
+    const isFirstRender = useRef(true);
+    const [dates, setDates] = useState([]);
+    const [activities, setActivities] = useState([]);
 
-    async function getData(){
-        const response = await axios.get("http://localhost:3000/missed-activities-dates");
-        return response.data;
-    };
+    async function getData() {
+        const [datesResponse, activitiesResponse] = await Promise.all([
+            axios.get("http://localhost:3000/missed-activities-dates"),
+            axios.get("http://localhost:3000/missed-activities")
+        ]);
+        return {
+            dates: datesResponse.data,
+            activities: activitiesResponse.data
+        };
+    }
 
-    function mapping(object, index){
-        return <Missedactivitiesdates
-            key = {index}
-            date = {object.activity_date}
-        />
+    function mapping(object, index) {
+        const filteredActivities = activities.filter(activity => activity.activity_date.slice(0, 10) === object.activity_date.slice(0, 10));
+        return (
+            <Missedactivitiesdates
+                key={index}
+                date={object.activity_date}
+                activities={filteredActivities}
+            />
+        );
     }
 
     useEffect(() => {
-        getData().then(records => {setData(records)}).catch(error => {`error is ${error}`});
-      },[state.updateMissedActivity]);
-    
-    return <> <div className={`maMainContainer ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} style={{display:"flex", flexDirection:"column", position:"absolute", top:"85px", gap:"20px", transition:"150ms linear"}}>  {state.editMissedActivity && <div className="overLay1"></div>}
-         {data.length > 0 ? data.map(mapping) : <div className={`scheduleDisclaimer ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`}><p className="scheduleContext">Great Work! You have no missed activities</p></div>}
-    </div>
-    </>
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+        } else {
+            getData().then(records => {
+                setDates(records.dates);
+                setActivities(records.activities);
+            }).catch(error => {
+                console.error(`error is ${error}`);
+            });
+        }
+    }, [state.updateMissedActivity]);
+
+    return (
+        <> 
+            <div className={`maMainContainer ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} style={{display: "flex", flexDirection: "column", position: "absolute", top: "85px", gap: "20px", transition: "150ms linear"}}>
+                {state.editMissedActivity && <div className="overLay1"></div>}
+                {dates.length > 0 ? dates.map(mapping) : (
+                    <div className={`scheduleDisclaimer ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`}>
+                        <p className="scheduleContext">Great Work! You have no missed activities</p>
+                    </div>
+                )}
+            </div>
+        </>
+    );
 }
