@@ -437,7 +437,7 @@ app.delete("/delete-upcoming-activity/:actDate/:id", async (req, res) => {
 });
 
 
-cron.schedule('12 0 * * *', async () => {
+cron.schedule('2 0 * * *', async () => {
     console.log("<––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––>");
     console.log('Running daily job at 12:00 AM');
     

@@ -386,6 +386,11 @@ export default function App() {
           qastate: false,
           filterButton : action.payload
         }
+      case "changeTrend":
+        return {
+          ...state,
+          trend: action.payload
+        }
       default:
         return state;
     };
@@ -422,6 +427,7 @@ export default function App() {
     disclaimerButtons:false, 
     resolve: null,
     filterButton : false,
+    trend: 0,
   });
   
   return (

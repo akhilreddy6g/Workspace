@@ -62,4 +62,11 @@ export function localDate(value){
   return date
 }
 
+export function minutesToHours(minutes) {
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return `${hours} hr and ${remainingMinutes} min`;
+}
+
+
 export default featuresTabHook;
