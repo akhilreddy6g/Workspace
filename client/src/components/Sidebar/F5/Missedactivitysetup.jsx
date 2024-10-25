@@ -2,6 +2,7 @@ import featuresTabHook from "../../Noncomponents";
 import { useContext, useEffect, useState, useRef} from "react";
 import axios from "axios";
 import Missedactivitiesdates from "./Missedactivitiesdates";
+import { apiUrl } from "../../Noncomponents";
 
 export default function Missedactivitysetup(){
     const { state, takeAction } = useContext(featuresTabHook);
@@ -11,8 +12,8 @@ export default function Missedactivitysetup(){
 
     async function getData() {
         const [datesResponse, activitiesResponse] = await Promise.all([
-            axios.get("http://localhost:3000/missed-activities-dates"),
-            axios.get("http://localhost:3000/missed-activities")
+            apiUrl.get(`/missed-activities-dates/${state.emailId}`),
+            apiUrl.get(`/missed-activities/${state.emailId}`)
         ]);
         return {
             dates: datesResponse.data,

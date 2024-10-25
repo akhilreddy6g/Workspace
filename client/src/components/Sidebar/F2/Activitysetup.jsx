@@ -2,6 +2,7 @@ import featuresTabHook from "../../Noncomponents";
 import { useContext} from "react";
 import Headingpopup from "./Headingpopup";
 import axios from "axios";
+import { apiUrl } from "../../Noncomponents";
 
 export default function Activitysetup(){
     const {state, takeAction} = useContext(featuresTabHook);
@@ -23,14 +24,13 @@ export default function Activitysetup(){
         };
         if(data.actName.length>0 && data.actDescr.length>0 && data.startTime.length>0 && data.endTime.length>0){
             try {
-                await axios({
-                    method: 'post',
-                    url: 'http://localhost:3000/add-activity',
-                    headers: {'Content-Type' : 'application/json'},
-                    data: {data}
-                });
-                takeAction({type:"changeActivityState", payload:!state.updateActivity});
-                alertMessage("Successfully added the activity");
+                const response = await apiUrl.post(`/add-activity/${state.emailId}`, {data})
+                if (response.data.flag){
+                    takeAction({type:"changeActivityState", payload:!state.updateActivity});
+                    alertMessage("Successfully added the activity");}
+                else{
+                    alertMessage("Unable to add the activity: Please enter valid information (start time must be less than current time)");
+                }
             } catch (error) {
                 console.log("Something went wrong", error);
                 alertMessage("Please enter valid information. Start time must be less than end time");

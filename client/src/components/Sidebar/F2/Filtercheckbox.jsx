@@ -1,6 +1,7 @@
 import { useContext, useState } from "react"
 import featuresTabHook from "../../Noncomponents"
 import axios from "axios";
+import { apiUrl } from "../../Noncomponents";
 
 export default function Filtercheckbox(){
     const {state, takeAction} = useContext(featuresTabHook);
@@ -9,7 +10,7 @@ export default function Filtercheckbox(){
         changeFilter(event.target.value)
         if(filter!=event.target.value){
             try {
-                const res = await axios.get(`http://localhost:3000/activities/${event.target.value}`);
+                const res = await apiUrl.get(`/activities/${state.emailId}?filter=${event.target.value}`);
                 takeAction({type:"changeActivityData", payload: res.data});
             } catch (error) {
                 console.log("Something went wrong", error);

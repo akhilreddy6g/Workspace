@@ -2,13 +2,14 @@ import featuresTabHook from "../../Noncomponents";
 import Activity from "./Activity";
 import { useContext, useEffect, useRef} from "react";
 import axios from "axios";
+import { apiUrl } from "../../Noncomponents";
 
 export default function Dailyactivities(){
     const {state, takeAction} = useContext(featuresTabHook);
     var data = state.activityData;
     const isFirstRender = useRef(true);
     async function alterData(){
-      const res = await axios.get("http://localhost:3000/activities");
+      const res = await apiUrl.get(`/activities/${state.emailId}`);
       takeAction({type:"changeActivityData", payload: res.data})
     };
 
@@ -31,7 +32,11 @@ export default function Dailyactivities(){
       alterData();}
     },[state.updateActivity]);
 
+    if (!state.activityData || state.activityData === 0) {
+      return <><div className={`scheduleDisclaimer ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`}><p className="scheduleContext">No daily activities to show. Add activities, to view</p></div><Currentdayactivity /></>;
+    }
+
     return <>
-    <div className={`activityContainer ${state.fthState? "activityContainer1" : "activityContainer2"} ${state.editActivity && "activityContainer3"}`} id="actContainer">{data.map(activityMapping)}</div>
+    <div className={`activityContainer ${state.fthState? "activityContainer1" : "activityContainer2"} ${state.editActivity && "activityContainer3"}`} id="actContainer">{data && data.length > 0 && data.map(activityMapping)}</div>
     </>
 }

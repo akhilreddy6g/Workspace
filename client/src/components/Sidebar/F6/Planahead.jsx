@@ -6,6 +6,7 @@ import Activityheader from "./Activityheader";
 import Futureactivity from "./Futureactivity";
 import axios from "axios";
 import { futureDate } from "../../Noncomponents";
+import { apiUrl } from "../../Noncomponents";
 
 export default function Planahead(){ 
     const {state, takeAction} = useContext(featuresTabHook);
@@ -24,7 +25,7 @@ export default function Planahead(){
     };
 
     async function alterData(){
-        const res = await axios.get(`http://localhost:3000/upcoming-activities/${state.actDate}`);
+        const res = await apiUrl.get(`/upcoming-activities/${state.emailId}?date=${state.actDate}`);
         takeAction({type:"changeUpcomActivityData", payload: res.data});
       };
   

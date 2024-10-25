@@ -2,6 +2,7 @@ import { useContext, useRef } from "react";
 import featuresTabHook from "../../Noncomponents";
 import axios from "axios";
 import { timeToMinutes } from "../../Noncomponents";
+import { apiUrl } from "../../Noncomponents";
 
 export default function Futureactivity(props){
   const actNameRef = useRef(null);
@@ -46,7 +47,7 @@ export default function Futureactivity(props){
       activityElement.style.backgroundImage = "none";
       activityElement.style.zIndex = "auto";
       try {
-        const actualActivity = (await axios.get(`http://localhost:3000/upcoming-activity/${id}`)).data[0];
+        const actualActivity = (await apiUrl.get(`/upcoming-activity/${state.emailId}?id=${id}`)).data[0];
         const actName = actNameRef.current.textContent.trim();
         const actStart = actStartRef.current.textContent.trim();
         const actEnd = actEndRef.current.textContent.trim();
@@ -62,7 +63,7 @@ export default function Futureactivity(props){
             correctedPriority = Math.min(Math.max(correctedPriority, 0), 10);
             const data = { actName: correctedActName, actStart: actStart, actEnd: actEnd, actPriority: correctedPriority, id: id};
             try {
-              await axios.patch(`http://localhost:3000/edit-upcoming-activity`, { data });
+              await apiUrl.patch(`/edit-upcoming-activity/:${state.emailId}`, { data });
               alertMessage("Successfully edited the activity")
             } catch (error) {
               alertMessage("Unable to edit the activity: Enter unique activity name");
@@ -118,7 +119,7 @@ export default function Futureactivity(props){
     activityElement.style.backgroundImage = "none";
     if (userResponse) {
         try {
-            await axios.delete(`http://localhost:3000/delete-upcoming-activity/${state.actDate}/${id}`);
+            await apiUrl.delete(`/delete-upcoming-activity/${state.emailId}?id=${id}&date=${state.actDate}`);
             takeAction({type:"changeUpcActivityState", payload: !state.updateUpcomActivity});
             alertMessage("Successfully deleted the activity")
         } catch (error) {
@@ -144,8 +145,8 @@ export default function Futureactivity(props){
     if(userResponse){
       if (currentTimeMinutes<startTimeMinutes){
         try {
-            await axios.post(`http://localhost:3000/add-upcoming-activity/${state.actDate}/${id}`);
-            await axios.delete(`http://localhost:3000/delete-upcoming-activity/${state.actDate}/${id}`)
+            await apiUrl.post(`/add-upcoming-activity/${state.emailId}?date=${state.actDate}&id=${id}`);
+            await apiUrl.delete(`/delete-upcoming-activity/${state.emailId}?date=${state.actDate}&id=${id}`)
             takeAction({type:"changeUpcActivityState", payload: !state.updateUpcomActivity});
             alertMessage("Successfully added the missed activity to current schedule");
             console.log("Successfully added the upcoming activity to current schedule");

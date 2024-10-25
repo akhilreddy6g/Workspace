@@ -2,6 +2,7 @@ import React, { useContext, useRef } from 'react';
 import axios from 'axios';
 import featuresTabHook from "../../Noncomponents";
 import { timeToMinutes } from '../../Noncomponents';
+import { apiUrl } from '../../Noncomponents';
 
 export default function Activity(props) {
   const { state, takeAction } = useContext(featuresTabHook);
@@ -43,7 +44,7 @@ export default function Activity(props) {
       activityElement.style.backgroundImage = "none";
       activityElement.style.zIndex = "auto";
       try {
-        const actualActivity = (await axios.get(`http://localhost:3000/activity/${id}`)).data[0];
+        const actualActivity = (await apiUrl.get(`/activity/${state.emailId}?id=${id}`)).data[0];
         const actName = actNameRef.current.textContent.trim();
         const actStart = actStartRef.current.textContent.trim();
         const actEnd = actEndRef.current.textContent.trim();
@@ -59,7 +60,7 @@ export default function Activity(props) {
           correctedPriority = Math.min(Math.max(correctedPriority, 0), 10);
           const data = { actName: correctedActName, actStart: actStart, actEnd: actEnd, actPriority: correctedPriority, id: id};
           try {
-            await axios.patch(`http://localhost:3000/edit-activity`, { data });
+            await apiUrl.patch(`/edit-activity/${state.emailId}`, { data });
             alertMessage("Successfully edited the activity");
           } catch (error) {
             alertMessage("Unable to edit the activity: Enter unique activity name");
@@ -112,7 +113,7 @@ export default function Activity(props) {
     activityElement.style.backgroundImage = "none";
     if (userResponse) {
       try {
-        await axios.delete(`http://localhost:3000/delete-activity/${id}`);
+        await apiUrl.delete(`/delete-activity/${state.emailId}?id=${id}`);
         takeAction({ type: "changeActivityState", payload: false });
         alertMessage("Successfully deleted the activity");
       } catch (error) {

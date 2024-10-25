@@ -15,11 +15,117 @@ legend{
 }
 
 label{
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family : Cambria, Cochin, Georgia, 'Times New Roman', serif;
     padding-left: 15px;
 }
 
 /* Native Html Elements End */
+
+/* Login Start */
+
+.homepage {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    z-index: -1;
+    background-color: rgb(255, 255, 144);
+    display: flex;
+    flex-direction: row;
+    font-family: Cambria, Cochin, Georgia, Times New Roman, serif;
+  }
+  
+.appTitleContainer {
+    width: 65vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.appTitle {
+    color: black;
+    font-size: 100px;
+    font-weight: bolder;
+    font-family: Cambria, Cochin, Georgia, Times New Roman, serif;
+}
+
+.authContainer {
+    width: 35vw;
+    background-color: gray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loginSetup {
+    height: 400px;
+    width: 400px;
+    gap: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 0 5px black;
+    border-radius: 3px;
+}
+
+.loginTitle {
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
+.userInfoForm {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.emailContainer, .passwordContainer, .loginSubmitButtonContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.emailInput, .passwordInput {
+    width: 350px;
+    text-align: center;
+    font-size: 18px;
+    color: black;
+}
+
+.loginSubmitButton {
+    width: 350px;
+    font-size: 18px;
+    background-color: gray;
+    border: 0.5px solid black;
+    border-radius: 2px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.signUpNDemoContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.signUpButton, .demoButton {
+    all: unset;
+    cursor: pointer;
+}
+
+.authFailContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+}
+
+.errorText {
+    color: red;
+}
+  
+
+/* Login End */
 
 /* Navbar styling start */
 
@@ -73,7 +179,7 @@ label{
 #titlename{
     font-size: 45px;
     text-shadow: 1px 1px 4px black;
-    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family:Cambria, Cochin, Georgia, 'Times New Roman', serif;
 }
 
 #titlelink{
@@ -160,7 +266,7 @@ label{
 }
 
 .featureTitle{
-    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family:Cambria, Cochin, Georgia, 'Times New Roman', serif;
     font-size: 18px;
     font-weight: bold;
 }
@@ -294,7 +400,7 @@ label{
     position: fixed;
     top: 120vh;
     text-align: center;
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family: Cambria, Cochin, Georgia, 'Times New Roman', serif;
     font-size: 18px;
     border-radius: 10px;
     transition: 350ms linear;
@@ -338,7 +444,7 @@ label{
     justify-content: center;
     padding: 0;
     font-size: 20px;
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family : Cambria, Cochin, Georgia, 'Times New Roman', serif;
     border-radius: 10px;
     transition: 150ms linear;
 }
@@ -364,7 +470,7 @@ label{
     display: flex;
     flex-direction: row;
     gap: 10px;
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family : Cambria, Cochin, Georgia, 'Times New Roman', serif;
     font-size: 20px;
     overflow-x: auto; 
     padding-top: 5px;
@@ -543,7 +649,7 @@ label{
     text-align: center;
     background-color: rgb(255, 255, 144);
     border: 0.2px solid black;
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family: Cambria, Cochin, Georgia, 'Times New Roman', serif;
     font-size: 18px;
     border-radius: 10px;
     transition: 150ms linear;
@@ -560,7 +666,7 @@ label{
     width: 10vw;
     border-radius: 10px;
     border: 0.2px solid black;
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family: Cambria, Cochin, Georgia, 'Times New Roman', serif;
 }
 
 .csButtonsContainer{
@@ -599,7 +705,7 @@ label{
 }
 
 .activityTitle{
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family: Cambria, Cochin, Georgia, 'Times New Roman', serif;
     font-size: 20px;
     height: 30px;
     display: flex;
@@ -673,7 +779,7 @@ label{
 }
 
 .filterLabel{
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family : Cambria, Cochin, Georgia, 'Times New Roman', serif;
 }
 
 .filterInput{
@@ -691,7 +797,7 @@ input[type=radio] {
     width: 80vw;
     top: 133px;
     position: relative;
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family : Cambria, Cochin, Georgia, 'Times New Roman', serif;
     border-radius: 10px;
     transition: 150ms linear;
     z-index: -1;
@@ -716,7 +822,7 @@ input[type=radio] {
     position: relative;
     display: flex;
     flex-direction: row;
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family : Cambria, Cochin, Georgia, 'Times New Roman', serif;
     font-size: 20px;
     border-radius: 10px;
     transition: 150ms linear;
@@ -827,7 +933,7 @@ input[type=radio] {
     height: 15px;
     background-color: teal;
     clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family : Cambria, Cochin, Georgia, 'Times New Roman', serif;
     font-size: 10px;
     text-align: center;
     color: white;
@@ -866,7 +972,7 @@ input[type=radio] {
 .actFormElement{
     text-align: center;
     background-color:rgb(255, 255, 144);
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family : Cambria, Cochin, Georgia, 'Times New Roman', serif;
     height: 30px;
     font-size: 14px;
     border: 0;
@@ -900,7 +1006,7 @@ input[type=radio] {
     font-weight: bold;
     background-color: teal;
     border: 0;
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family : Cambria, Cochin, Georgia, 'Times New Roman', serif;
 }
 
 .submitActivity:hover{
@@ -975,7 +1081,7 @@ input[type=radio] {
 .missedActivity{
     display: flex;
     background-color: rgb(255, 255, 144);
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family : Cambria, Cochin, Georgia, 'Times New Roman', serif;
     border-radius: 10px;
     font-size: 20px;
     border: 0.2px solid black;
@@ -993,7 +1099,7 @@ input[type=radio] {
     flex-direction: row;
     background-color: rgb(255, 255, 144);
     border: 0.2px solid black;
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family : Cambria, Cochin, Georgia, 'Times New Roman', serif;
     font-size: 20px;
     border-radius: 10px;
     transition: 150ms linear;
@@ -1018,7 +1124,7 @@ input[type=radio] {
     display: flex;
     flex-direction: row;
     gap: 10px;
-    font-family : Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family : Cambria, Cochin, Georgia, 'Times New Roman', serif;
     padding-top: 5px;
     padding-left: 5px;
     padding-right: 5px;
@@ -1163,7 +1269,7 @@ input[type=radio] {
 }
 
 .setDayContext{
-    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family:Cambria, Cochin, Georgia, 'Times New Roman', serif;
     font-size: 15px;
     color: white;
     padding-left: 15px;
@@ -1174,7 +1280,7 @@ input[type=radio] {
 /* Form Styling Start */
 
 .sessionSetup{
-    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-family:Cambria, Cochin, Georgia, 'Times New Roman', serif;
     padding-top: 15px;
     background-color: grey;
 }

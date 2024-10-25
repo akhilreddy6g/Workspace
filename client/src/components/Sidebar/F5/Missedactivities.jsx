@@ -2,6 +2,7 @@ import featuresTabHook from "../../Noncomponents";
 import { useContext, useRef } from "react";
 import axios from "axios";
 import { timeToMinutes } from "../../Noncomponents";
+import { apiUrl } from "../../Noncomponents";
 
 export default function Missedactivities(props){
   const {state, takeAction} = useContext(featuresTabHook);
@@ -47,7 +48,7 @@ export default function Missedactivities(props){
         activityElement.style.backgroundImage = "none";
         activityElement.style.zIndex = "auto";
         try {
-          const actualActivity = (await axios.get(`http://localhost:3000/missed-activity/${id}`)).data[0];
+          const actualActivity = (await apiUrl.get(`/missed-activity/${state.emailId}?id=${id}`)).data[0];
           const actName = actNameRef.current.textContent.trim();
           const actStart = actStartRef.current.textContent.trim();
           const actEnd = actEndRef.current.textContent.trim();
@@ -63,7 +64,7 @@ export default function Missedactivities(props){
               correctedPriority = Math.min(Math.max(correctedPriority, 0), 10);
               const data = { actName: correctedActName, actStart: actStart, actEnd: actEnd, actPriority: correctedPriority, id: id};
               try {
-                await axios.patch(`http://localhost:3000/edit-missed-activity`, { data });
+                await apiUrl.patch(`/edit-missed-activity/${state.emailId}`, { data });
                 alertMessage("Successfully edited the activity");
               } catch (error) {
                 alertMessage("Unable to add the activity: Enter unique activity name");
@@ -118,7 +119,7 @@ export default function Missedactivities(props){
       activityElement.style.backgroundImage = "none";
       if (userResponse) {
           try {
-              await axios.delete(`http://localhost:3000/delete-missed-activity/${id}`);
+              await apiUrl.delete(`/delete-missed-activity/${state.emailId}?id=${id}`);
               takeAction({type:"changeMissedActivityState", payload: !state.updateMissedActivity});
               alertMessage("Successfully deleted the activity")
           } catch (error) {
@@ -144,8 +145,8 @@ export default function Missedactivities(props){
       if(userResponse){
         if (currentTimeMinutes<startTimeMinutes){
           try {
-              await axios.post(`http://localhost:3000/add-missed-activities/${id}`);
-              await axios.delete(`http://localhost:3000/delete-missed-activity/${id}`);
+              await apiUrl.post(`/add-missed-activities/${state.emailId}?id=${id}`);
+              await apiUrl.delete(`/delete-missed-activity/${state.emailId}?id=${id}`);
               takeAction({type:"changeMissedActivityState", payload:!state.updateMissedActivity});
               alertMessage("Successfully added the missed activity to current schedule");
               console.log("Successfully added the missed activity to current schedule");

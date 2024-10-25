@@ -4,7 +4,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title} from 'chart.js';
 import { useContext, useEffect, useRef} from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { minutesToHours } from "../../Noncomponents";
-import axios from 'axios';
+import { apiUrl } from "../../Noncomponents";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
@@ -37,7 +37,7 @@ export default function T1(){
     const actTime = [highPriorityTime, midPriorityTime, lowPriorityTime];
 
     async function alterData(){
-        const combinedAct = await axios.get("http://localhost:3000/combined-activities");
+        const combinedAct = await apiUrl.get(`/combined-activities/${state.emailId}`);
         takeAction({type:"changeCombinedActivityData", payload: combinedAct.data})
       };
 
@@ -55,14 +55,6 @@ export default function T1(){
         responsive: true,
         cutout: "0%",
         plugins: {
-            // title: {
-            //     display: true,
-            //     text: `Time Sceduled based on Activity Priority`,
-            //     color: state.darkMode? 'white' : 'black',
-            //     font: {
-            //         size: 18,  
-            //         align: 'center'
-            //     }},
             legend: {
                 display: true,
                 position: 'right',

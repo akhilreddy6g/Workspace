@@ -1,7 +1,7 @@
 import {useContext, useState, useEffect, useRef} from "react";
 import featuresTabHook from "../../Noncomponents";
-import axios from "axios";
 import { timeToMinutes } from "../../Noncomponents";
+import { apiUrl } from "../../Noncomponents";
 
 export default function Activitytab(props){
     const {state, takeAction} = useContext(featuresTabHook);
@@ -62,7 +62,7 @@ export default function Activitytab(props){
         if(currentTimeMinutes==0 && now.getSeconds()>=0 && now.getSeconds()<=15){
             sessionStorage.clear();
             try {
-                const combinedAct = await axios.get("http://localhost:3000/combined-activities");
+                const combinedAct = await apiUrl.get(`/combined-activities/${state.emailId}`);
                 takeAction({type:"changeCombinedActivityData", payload: combinedAct.data});
             } catch (error) {
                 console.log("Something went wrong", error);
@@ -70,9 +70,8 @@ export default function Activitytab(props){
         };
         if (currentTimeMinutes >= endTimeMinutes) {
             if(props.status==null && JSON.parse(sessionStorage.getItem(props.id))==null){
-                const data = { actId: props.id, actStatus: 0};
-                const url = props.type === "c" ? "http://localhost:3000/update-ca-status" : "http://localhost:3000/update-da-status";
-                await axios.post(url, { data });
+                const url = props.type === "c" ? `/update-ca-status/${state.emailId}?id=${props.id}&status=${0}` : `/update-da-status/${state.emailId}?id=${props.id}&status=${0}`;
+                await apiUrl.post(url);
                 sessionStorage.setItem(props.id, JSON.stringify({ action: "skip", value: true }));
             };
             setProgress(100);

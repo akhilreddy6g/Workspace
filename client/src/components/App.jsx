@@ -1,14 +1,16 @@
-import {useReducer} from 'react';
+import {useReducer, useLayoutEffect, useRef} from 'react';
 import Header from './Header/Header';
 import Features from './Sidebar/Features';
 import featuresTabHook,{dayStatus} from './Noncomponents';
-import { BrowserRouter as Router} from 'react-router-dom';
 import Approuter from './Sidebar/Approuter';
 import Disclaimersetup from './Disclaimersetup';
 import { futureDate } from './Noncomponents';
 import Failedaction from './Failedaction';
+import { apiUrl } from './Noncomponents';
+import { useNavigate } from 'react-router-dom';
 
 export default function App() {
+  const navigate = useNavigate();
   function changeStateInfo(state, action){
     switch (action.type) {
       case "changeFthState":
@@ -391,6 +393,16 @@ export default function App() {
           ...state,
           trend: action.payload
         }
+      case "changeInitialComponentsState":
+        return {
+          ...state,
+          initialComponentState: action.payload,
+        }
+      case "changeEmailId":
+        return {
+          ...state,
+          emailId : action.payload,
+        }
       default:
         return state;
     };
@@ -427,18 +439,63 @@ export default function App() {
     disclaimerButtons:false, 
     resolve: null,
     filterButton : false,
-    trend: 0,
+    trend: 0, 
+    initialComponentState: false,
+    emailId: null,
   });
+
+  useLayoutEffect(() => {
+    const requestInterceptor = apiUrl.interceptors.request.use(function(config){
+      const storedToken = localStorage.getItem('token');
+      config.headers.Authorization = !config._retry && storedToken ? `Bearer ${storedToken}`: config.headers.Authorization;
+      return config;
+    }, function (error) {
+      return Promise.reject(error);
+    });
+    return () => {
+      apiUrl.interceptors.request.eject(requestInterceptor);
+    };
+  }, []);
+  
+  useLayoutEffect(() => {
+    const responseInterceptor = apiUrl.interceptors.response.use(
+      function (response){
+        return response;
+      },
+      async function(error){
+        const originalRequest = error.config;
+        if (error.response!=null && ((error.response.status === 403 && error.response.data.message === 'Token expired or invalid') || (error.response.status === 401 && error.response.data.message === 'Access token missing')) && (originalRequest._retry === undefined)) {
+          originalRequest._retry = true;
+          try {
+            const data = await apiUrl.post('/refresh-token');
+            localStorage.setItem('token', data.data.token); 
+            apiUrl.defaults.headers.common['Authorization'] = `Bearer ${data.data.token}`;
+            originalRequest.headers['Authorization'] = `Bearer ${data.data.token}`;
+            return apiUrl(originalRequest);
+          } catch (refreshError) {
+            takeAction({ type: "changeInitialComponentsState", payload: false});
+            navigate('/login');
+            return Promise.reject(refreshError);
+          }
+        } else {
+          takeAction({ type: "changeInitialComponentsState", payload: false});
+          navigate('/login');
+        }
+        return Promise.reject(error);
+      }
+    );
+    return () => {
+      apiUrl.interceptors.response.eject(responseInterceptor);
+    };
+  }, []);
   
   return (
-    <Router>
     <featuresTabHook.Provider value={{state, takeAction}}>
-     <Header></Header>
-     <Features></Features>
-     <Disclaimersetup></Disclaimersetup>
-     <Failedaction></Failedaction>
+     {state.initialComponentState && <Header></Header>}
+     {state.initialComponentState && <Features></Features>}
+     {state.initialComponentState && <Disclaimersetup></Disclaimersetup>}
+     {state.initialComponentState && <Failedaction></Failedaction>}
      <Approuter></Approuter>
     </featuresTabHook.Provider>
-    </Router>
   );
 };

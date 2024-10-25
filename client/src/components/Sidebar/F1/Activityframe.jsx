@@ -1,6 +1,6 @@
-import axios from "axios";
 import featuresTabHook from "../../Noncomponents";
 import { useContext, useEffect, useRef, useState } from "react";
+import { apiUrl } from "../../Noncomponents";
 
 export default function Activityframe(props) {
   const { state, takeAction } = useContext(featuresTabHook);
@@ -69,7 +69,6 @@ export default function Activityframe(props) {
     if ((actionType === "skip" && (status === null)) || 
         (actionType === "complete" && status !== 1)) {
         try {
-            const data = { actId: id, actStatus: newStatus };
             const prevState = sessionStorage.getItem(id);
             if (prevState === null || prevState && JSON.parse(prevState).action !=="complete") {
                 const userResponse = await new Promise((resolve) => {
@@ -78,8 +77,8 @@ export default function Activityframe(props) {
                   takeAction({ type: "setResolve", payload: resolve });
                 });
                 if (userResponse){
-                    const url = type === "c" ? "http://localhost:3000/update-ca-status" : "http://localhost:3000/update-da-status";
-                    await axios.post(url, { data });
+                    const url = type === "c" ? `/update-ca-status/${state.emailId}?id=${id}&status=${newStatus}` : `/update-da-status/${state.emailId}?id=${id}&status=${newStatus}`;
+                    await apiUrl.post(url);
                     alertMessage(`Successfully ${actionType=="skip"? "skipped" : "completed"} the activity`);
                     sessionStorage.setItem(id, JSON.stringify({ action: actionType, value: true }));
                     if (completeRef.current && actionType === "complete") {
@@ -131,8 +130,8 @@ export default function Activityframe(props) {
     document.body.style.overflow = "auto";
     if (userResponse) {
       try {
-        const url = type === "c" ? `http://localhost:3000/delete-current-activity/${id}` : `http://localhost:3000/delete-activity/${id}`
-        await axios.delete(url);
+        const url = type === "c" ? `/delete-current-activity/${state.emailId}?id=${id}` : `/delete-activity/${state.emailId}?id=${id}`
+        await apiUrl.delete(url);
         alertMessage("Successfully deleted the activity");
         takeAction({ type: "changeActivityState", payload: false});
       } catch (error) {
@@ -149,7 +148,7 @@ export default function Activityframe(props) {
     if(closest==null){
       console.log("No activities scheduled currently");
     } else{
-      console.log("Index of current activity: ", state.activeTab);
+      
     };
     clearInterval(intervalRef.current);
     intervalRef.current = setInterval(highlightClosestTab, 15000);

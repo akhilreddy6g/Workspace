@@ -1,4 +1,5 @@
 import { createContext } from "react";
+import axios from "axios";
 
 const featuresTabHook = createContext();
 
@@ -68,5 +69,9 @@ export function minutesToHours(minutes) {
   return `${hours} hr and ${remainingMinutes} min`;
 }
 
+export const apiUrl = axios.create({
+  baseURL: "http://localhost:3000",
+  withCredentials: true,
+});
 
 export default featuresTabHook;
