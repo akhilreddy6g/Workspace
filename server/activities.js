@@ -57,18 +57,21 @@ const verifyToken = (req, res, next) => {
 
   app.post("/authenticate/:email", async (req, res) => {
     const startTimeRequest = Date.now();
+    const email = req.params.email;
+    const password = req.query.password;
     console.log(logPrefix);
+    if (!password || !email) {
+        return res.status(200).json({ error: 'Email and password are required.' });
+    }
     console.info({message: 'Incoming authentication request', timestamp: new Date().toISOString(), method: req.method, path: req.originalUrl, queryParams: req.query, userAgent: req.headers['user-agent']});
     try {
-        const email = req.params.email;
-        const password = req.query.password;
         const user = await db.query("SELECT * FROM users WHERE user_email=$1", [email]);
         if (user.rows.length === 0) {
             console.warn({ message: "Invalid email / email does not exist", email: email, statusCode: 403});
             console.log(logSuffix);
             return res.status(200).json({ isAuthenticated: false, message: 'Invalid email / email does not exist' });
         }
-        const isPasswordValid = await bcrypt.compare(password, user.rows[0].user_password);
+        const isPasswordValid = bcrypt.compare(password, user.rows[0].user_password);
         if (!isPasswordValid) {
             console.warn({ message: "Invalid credentials", email: email, statusCode: 403});
             console.log(logSuffix);
@@ -129,7 +132,7 @@ app.post("/register/:email", async (req, res) => {
     try {
         const user = await db.query("SELECT * FROM users WHERE user_email=$1", [email]);
         if (user.rows.length === 0) {
-            const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+            const hashedPassword = bcrypt.hash(password, SALT_ROUNDS);
             await db.query(
                 "INSERT INTO users (user_email, user_password) VALUES ($1, $2)",
                 [email, hashedPassword]
@@ -601,7 +604,7 @@ app.post("/add-upcoming-activities/:email", verifyToken, async (req, res) => {
     const finalDate = updatedActDate.toISOString().split('T')[0];
     const startTimeRequest = Date.now();
     console.log(logPrefix);
-    console.info({message: 'Incoming request to add upcoming activities',timestamp: new Date().toISOString(),method: req.method,path: req.originalUrl,params: req.params,bodyData: req.body,userAgent: req.headers['user-agent']});
+    console.info({message: 'Incoming request to add upcoming activities',timestamp: new Date().toISOString(),method: req.method,path: req.originalUrl,params: req.params,bodyData: req.body, adjustedDate: finalDate, userAgent: req.headers['user-agent']});
     try {
         await db.query(
             "INSERT INTO upcoming_activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time, activity_date, user_email) VALUES ($1, $2, $3, $4, $5, $6, $7)",
@@ -727,8 +730,8 @@ cron.schedule('2 0 * * *', async () => {
             for (const element of upcRecords) {
                 try {
                     await db.query(
-                        "INSERT INTO current_day_activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time) VALUES ($1, $2, $3, $4, $5)", 
-                        [element.activity_name, element.activity_description, element.activity_priority, element.activity_start_time, element.activity_end_time]
+                        "INSERT INTO current_day_activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time, user_email) VALUES ($1, $2, $3, $4, $5, $6)", 
+                        [element.activity_name, element.activity_description, element.activity_priority, element.activity_start_time, element.activity_end_time, element.user_email]
                     );
                     console.info({ message: `Inserted upcoming activity: ${element.activity_name}`, statusCode: 201, });
                 } catch (insertError) {

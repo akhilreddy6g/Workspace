@@ -47,7 +47,9 @@ export default function Futureactivity(props){
       activityElement.style.backgroundImage = "none";
       activityElement.style.zIndex = "auto";
       try {
-        const actualActivity = (await apiUrl.get(`/upcoming-activity/${state.emailId}?id=${id}`)).data[0];
+        const sessionMail = sessionStorage.getItem('email');
+        const mail = state.emailId? state.emailId : sessionMail
+        const actualActivity = (await apiUrl.get(`/upcoming-activity/${mail}?id=${id}`)).data[0];
         const actName = actNameRef.current.textContent.trim();
         const actStart = actStartRef.current.textContent.trim();
         const actEnd = actEndRef.current.textContent.trim();
@@ -63,7 +65,9 @@ export default function Futureactivity(props){
             correctedPriority = Math.min(Math.max(correctedPriority, 0), 10);
             const data = { actName: correctedActName, actStart: actStart, actEnd: actEnd, actPriority: correctedPriority, id: id};
             try {
-              await apiUrl.patch(`/edit-upcoming-activity/:${state.emailId}`, { data });
+              const sessionMail = sessionStorage.getItem('email');
+              const mail = state.emailId? state.emailId : sessionMail
+              await apiUrl.patch(`/edit-upcoming-activity/:${mail}`, { data });
               alertMessage("Successfully edited the activity")
             } catch (error) {
               alertMessage("Unable to edit the activity: Enter unique activity name");
@@ -119,7 +123,9 @@ export default function Futureactivity(props){
     activityElement.style.backgroundImage = "none";
     if (userResponse) {
         try {
-            await apiUrl.delete(`/delete-upcoming-activity/${state.emailId}?id=${id}&date=${state.actDate}`);
+            const sessionMail = sessionStorage.getItem('email');
+            const mail = state.emailId? state.emailId : sessionMail
+            await apiUrl.delete(`/delete-upcoming-activity/${mail}?id=${id}&date=${state.actDate}`);
             takeAction({type:"changeUpcActivityState", payload: !state.updateUpcomActivity});
             alertMessage("Successfully deleted the activity")
         } catch (error) {
@@ -145,8 +151,10 @@ export default function Futureactivity(props){
     if(userResponse){
       if (currentTimeMinutes<startTimeMinutes){
         try {
-            await apiUrl.post(`/add-upcoming-activity/${state.emailId}?date=${state.actDate}&id=${id}`);
-            await apiUrl.delete(`/delete-upcoming-activity/${state.emailId}?date=${state.actDate}&id=${id}`)
+            const sessionMail = sessionStorage.getItem('email');
+            const mail = state.emailId? state.emailId : sessionMail
+            await apiUrl.post(`/add-upcoming-activity/${mail}?date=${state.actDate}&id=${id}`);
+            await apiUrl.delete(`/delete-upcoming-activity/${mail}?date=${state.actDate}&id=${id}`)
             takeAction({type:"changeUpcActivityState", payload: !state.updateUpcomActivity});
             alertMessage("Successfully added the missed activity to current schedule");
             console.log("Successfully added the upcoming activity to current schedule");

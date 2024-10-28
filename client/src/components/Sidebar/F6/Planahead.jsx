@@ -25,7 +25,9 @@ export default function Planahead(){
     };
 
     async function alterData(){
-        const res = await apiUrl.get(`/upcoming-activities/${state.emailId}?date=${state.actDate}`);
+        const sessionMail = sessionStorage.getItem('email');
+        const mail = state.emailId? state.emailId : sessionMail
+        const res = await apiUrl.get(`/upcoming-activities/${mail}?date=${state.actDate}`);
         takeAction({type:"changeUpcomActivityData", payload: res.data});
       };
   
@@ -52,7 +54,7 @@ export default function Planahead(){
     useEffect(() => {
         if (isFirstRender.current) {
             isFirstRender.current = false;}
-        else if(state.updateUpcomActivity.length!=0){
+        else{
             alterData();
         };
       },[state.updateUpcomActivity, state.actDate]);

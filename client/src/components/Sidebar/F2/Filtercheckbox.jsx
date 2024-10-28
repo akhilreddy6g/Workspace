@@ -10,7 +10,9 @@ export default function Filtercheckbox(){
         changeFilter(event.target.value)
         if(filter!=event.target.value){
             try {
-                const res = await apiUrl.get(`/activities/${state.emailId}?filter=${event.target.value}`);
+                const sessionMail = sessionStorage.getItem('email');
+                const mail = state.emailId? state.emailId : sessionMail
+                const res = await apiUrl.get(`/activities/${mail}?filter=${event.target.value}`);
                 takeAction({type:"changeActivityData", payload: res.data});
             } catch (error) {
                 console.log("Something went wrong", error);

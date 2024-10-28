@@ -11,9 +11,11 @@ export default function Missedactivitysetup(){
     const [activities, setActivities] = useState([]);
 
     async function getData() {
+        const sessionMail = sessionStorage.getItem('email');
+        const mail = state.emailId? state.emailId : sessionMail
         const [datesResponse, activitiesResponse] = await Promise.all([
-            apiUrl.get(`/missed-activities-dates/${state.emailId}`),
-            apiUrl.get(`/missed-activities/${state.emailId}`)
+            apiUrl.get(`/missed-activities-dates/${mail}`),
+            apiUrl.get(`/missed-activities/${mail}`)
         ]);
         return {
             dates: datesResponse.data,

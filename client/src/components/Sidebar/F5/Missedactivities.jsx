@@ -48,7 +48,9 @@ export default function Missedactivities(props){
         activityElement.style.backgroundImage = "none";
         activityElement.style.zIndex = "auto";
         try {
-          const actualActivity = (await apiUrl.get(`/missed-activity/${state.emailId}?id=${id}`)).data[0];
+          const sessionMail = sessionStorage.getItem('email');
+          const mail = state.emailId? state.emailId : sessionMail
+          const actualActivity = (await apiUrl.get(`/missed-activity/${mail}?id=${id}`)).data[0];
           const actName = actNameRef.current.textContent.trim();
           const actStart = actStartRef.current.textContent.trim();
           const actEnd = actEndRef.current.textContent.trim();
@@ -64,7 +66,9 @@ export default function Missedactivities(props){
               correctedPriority = Math.min(Math.max(correctedPriority, 0), 10);
               const data = { actName: correctedActName, actStart: actStart, actEnd: actEnd, actPriority: correctedPriority, id: id};
               try {
-                await apiUrl.patch(`/edit-missed-activity/${state.emailId}`, { data });
+                const sessionMail = sessionStorage.getItem('email');
+                const mail = state.emailId? state.emailId : sessionMail
+                await apiUrl.patch(`/edit-missed-activity/${mail}`, { data });
                 alertMessage("Successfully edited the activity");
               } catch (error) {
                 alertMessage("Unable to add the activity: Enter unique activity name");
@@ -119,6 +123,8 @@ export default function Missedactivities(props){
       activityElement.style.backgroundImage = "none";
       if (userResponse) {
           try {
+              const sessionMail = sessionStorage.getItem('email');
+              const mail = state.emailId? state.emailId : sessionMail
               await apiUrl.delete(`/delete-missed-activity/${state.emailId}?id=${id}`);
               takeAction({type:"changeMissedActivityState", payload: !state.updateMissedActivity});
               alertMessage("Successfully deleted the activity")
@@ -145,8 +151,10 @@ export default function Missedactivities(props){
       if(userResponse){
         if (currentTimeMinutes<startTimeMinutes){
           try {
-              await apiUrl.post(`/add-missed-activities/${state.emailId}?id=${id}`);
-              await apiUrl.delete(`/delete-missed-activity/${state.emailId}?id=${id}`);
+              const sessionMail = sessionStorage.getItem('email');
+              const mail = state.emailId? state.emailId : sessionMail
+              await apiUrl.post(`/add-missed-activities/${mail}?id=${id}`);
+              await apiUrl.delete(`/delete-missed-activity/${mail}?id=${id}`);
               takeAction({type:"changeMissedActivityState", payload:!state.updateMissedActivity});
               alertMessage("Successfully added the missed activity to current schedule");
               console.log("Successfully added the missed activity to current schedule");

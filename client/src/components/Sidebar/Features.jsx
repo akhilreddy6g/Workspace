@@ -29,6 +29,7 @@ export default function Features(){
         if(userResponse){
             takeAction({type:"changeInitialComponentsState", payload:false});
             await apiUrl.post('/logout');
+            sessionStorage.clear();
             signOut(); 
             navigate("/login"); 
         } else {
@@ -41,7 +42,7 @@ export default function Features(){
     <Feature id="1" featureName="currentSchedule" title="Current Schedule" show="cs" path="/current-schedule"></Feature>
     <Feature id="2" featureName="dailyActivities" title="Daily Activities" show="da" path="/daily-activities"></Feature>
     <Feature id="3" featureName="quickActivitySession" title="Quick Session" show="qa" path="/quick-session"></Feature>
-    <Feature id="4" featureName="trendsNProgress" title="Trends & Progress" show="snp" path="/trends-and-progress"></Feature>
+    <Feature id="4" featureName="trendsNProgress" title="Trends & Progress" show="tnp" path="/trends-and-progress"></Feature>
     <Feature id="5" featureName="missedActivities" title="Missed Activities" show="ma" path="/missed-activities"></Feature>
     <Feature id="6" featureName="planAhead" title="Plan Ahead" show="pa" path="/plan-ahead"></Feature>
     <Feature id="7" featureName="setYourDay" title="Set Your Day" show="syd" path="/set-your-day"></Feature></div>

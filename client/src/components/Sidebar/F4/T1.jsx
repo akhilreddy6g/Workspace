@@ -37,7 +37,9 @@ export default function T1(){
     const actTime = [highPriorityTime, midPriorityTime, lowPriorityTime];
 
     async function alterData(){
-        const combinedAct = await apiUrl.get(`/combined-activities/${state.emailId}`);
+        const sessionMail = sessionStorage.getItem('email');
+        const mail = state.emailId? state.emailId : sessionMail
+        const combinedAct = await apiUrl.get(`/combined-activities/${mail}`);
         takeAction({type:"changeCombinedActivityData", payload: combinedAct.data})
       };
 

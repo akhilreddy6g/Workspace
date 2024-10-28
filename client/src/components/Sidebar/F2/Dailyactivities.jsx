@@ -9,7 +9,9 @@ export default function Dailyactivities(){
     var data = state.activityData;
     const isFirstRender = useRef(true);
     async function alterData(){
-      const res = await apiUrl.get(`/activities/${state.emailId}`);
+      const sessionMail = sessionStorage.getItem('email');
+      const mail = state.emailId? state.emailId : sessionMail
+      const res = await apiUrl.get(`/activities/${mail}`);
       takeAction({type:"changeActivityData", payload: res.data})
     };
 

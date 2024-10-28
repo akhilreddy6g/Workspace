@@ -44,7 +44,9 @@ export default function Activity(props) {
       activityElement.style.backgroundImage = "none";
       activityElement.style.zIndex = "auto";
       try {
-        const actualActivity = (await apiUrl.get(`/activity/${state.emailId}?id=${id}`)).data[0];
+        const sessionMail = sessionStorage.getItem('email');
+        const mail = state.emailId? state.emailId : sessionMail
+        const actualActivity = (await apiUrl.get(`/activity/${mail}?id=${id}`)).data[0];
         const actName = actNameRef.current.textContent.trim();
         const actStart = actStartRef.current.textContent.trim();
         const actEnd = actEndRef.current.textContent.trim();
@@ -60,7 +62,9 @@ export default function Activity(props) {
           correctedPriority = Math.min(Math.max(correctedPriority, 0), 10);
           const data = { actName: correctedActName, actStart: actStart, actEnd: actEnd, actPriority: correctedPriority, id: id};
           try {
-            await apiUrl.patch(`/edit-activity/${state.emailId}`, { data });
+            const sessionMail = sessionStorage.getItem('email');
+            const mail = state.emailId? state.emailId : sessionMail
+            await apiUrl.patch(`/edit-activity/${mail}`, { data });
             alertMessage("Successfully edited the activity");
           } catch (error) {
             alertMessage("Unable to edit the activity: Enter unique activity name");
@@ -113,7 +117,9 @@ export default function Activity(props) {
     activityElement.style.backgroundImage = "none";
     if (userResponse) {
       try {
-        await apiUrl.delete(`/delete-activity/${state.emailId}?id=${id}`);
+        const sessionMail = sessionStorage.getItem('email');
+        const mail = state.emailId? state.emailId : sessionMail
+        await apiUrl.delete(`/delete-activity/${mail}?id=${id}`);
         takeAction({ type: "changeActivityState", payload: false });
         alertMessage("Successfully deleted the activity");
       } catch (error) {

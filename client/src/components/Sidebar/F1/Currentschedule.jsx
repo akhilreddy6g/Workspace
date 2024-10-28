@@ -11,7 +11,9 @@ export default function CurrentSchedule() {
     var data = state.combinedActivityData;
     async function alterData() {
         try {
-            const combinedAct = await apiUrl.get(`/combined-activities/${state.emailId}`);
+            const sessionMail = sessionStorage.getItem('email');
+            const mail = state.emailId? state.emailId : sessionMail
+            const combinedAct = await apiUrl.get(`/combined-activities/${mail}`);
             takeAction({ type: "changeCombinedActivityData", payload: combinedAct.data });
         } catch (error) {
             console.error("Error fetching combined activities:", error);

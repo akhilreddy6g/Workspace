@@ -1,4 +1,4 @@
-import {useReducer, useLayoutEffect, useRef} from 'react';
+import {useReducer, useLayoutEffect, useRef, useEffect} from 'react';
 import Header from './Header/Header';
 import Features from './Sidebar/Features';
 import featuresTabHook,{dayStatus} from './Noncomponents';
@@ -7,10 +7,12 @@ import Disclaimersetup from './Disclaimersetup';
 import { futureDate } from './Noncomponents';
 import Failedaction from './Failedaction';
 import { apiUrl } from './Noncomponents';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function App() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const paths = ['/current-schedule', '/daily-activities', '/quick-session', '/trends-and-progress', '/missed-activities', '/plan-ahead', '/set-your-day', '/target']
   function changeStateInfo(state, action){
     switch (action.type) {
       case "changeFthState":
@@ -378,6 +380,10 @@ export default function App() {
           resolve: action.payload,
           filterButton : false
         }
+      case 'clearResolve':
+        return {
+          ...state, 
+          resolve: null };
       case "changeFilterButton":
         return {
           ...state,
@@ -446,7 +452,7 @@ export default function App() {
 
   useLayoutEffect(() => {
     const requestInterceptor = apiUrl.interceptors.request.use(function(config){
-      const storedToken = localStorage.getItem('token');
+      const storedToken = sessionStorage.getItem('token');
       config.headers.Authorization = !config._retry && storedToken ? `Bearer ${storedToken}`: config.headers.Authorization;
       return config;
     }, function (error) {
@@ -468,17 +474,15 @@ export default function App() {
           originalRequest._retry = true;
           try {
             const data = await apiUrl.post('/refresh-token');
-            localStorage.setItem('token', data.data.token); 
+            sessionStorage.setItem('token', data.data.token); 
             apiUrl.defaults.headers.common['Authorization'] = `Bearer ${data.data.token}`;
             originalRequest.headers['Authorization'] = `Bearer ${data.data.token}`;
             return apiUrl(originalRequest);
           } catch (refreshError) {
-            takeAction({ type: "changeInitialComponentsState", payload: false});
             navigate('/login');
             return Promise.reject(refreshError);
           }
         } else {
-          takeAction({ type: "changeInitialComponentsState", payload: false});
           navigate('/login');
         }
         return Promise.reject(error);
@@ -488,13 +492,21 @@ export default function App() {
       apiUrl.interceptors.response.eject(responseInterceptor);
     };
   }, []);
+
+  setInterval(()=>{
+    const now = new Date();
+        const currentTimeMinutes = now.getHours() * 60 + now.getMinutes(); 
+        if(currentTimeMinutes==0 && now.getSeconds() == 1){
+            sessionStorage.clear();
+        };
+  },1000);
   
   return (
     <featuresTabHook.Provider value={{state, takeAction}}>
-     {state.initialComponentState && <Header></Header>}
-     {state.initialComponentState && <Features></Features>}
-     {state.initialComponentState && <Disclaimersetup></Disclaimersetup>}
-     {state.initialComponentState && <Failedaction></Failedaction>}
+     {paths.includes(location.pathname) && <Header></Header>}
+     {paths.includes(location.pathname) && <Features></Features>}
+     {paths.includes(location.pathname) && <Disclaimersetup></Disclaimersetup>}
+     {paths.includes(location.pathname) && <Failedaction></Failedaction>}
      <Approuter></Approuter>
     </featuresTabHook.Provider>
   );

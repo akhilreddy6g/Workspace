@@ -77,7 +77,9 @@ export default function Activityframe(props) {
                   takeAction({ type: "setResolve", payload: resolve });
                 });
                 if (userResponse){
-                    const url = type === "c" ? `/update-ca-status/${state.emailId}?id=${id}&status=${newStatus}` : `/update-da-status/${state.emailId}?id=${id}&status=${newStatus}`;
+                    const sessionMail = sessionStorage.getItem('email');
+                    const mail = state.emailId? state.emailId : sessionMail
+                    const url = type === "c" ? `/update-ca-status/${mail}?id=${id}&status=${newStatus}` : `/update-da-status/${state.emailId}?id=${id}&status=${newStatus}`;
                     await apiUrl.post(url);
                     alertMessage(`Successfully ${actionType=="skip"? "skipped" : "completed"} the activity`);
                     sessionStorage.setItem(id, JSON.stringify({ action: actionType, value: true }));
@@ -130,7 +132,9 @@ export default function Activityframe(props) {
     document.body.style.overflow = "auto";
     if (userResponse) {
       try {
-        const url = type === "c" ? `/delete-current-activity/${state.emailId}?id=${id}` : `/delete-activity/${state.emailId}?id=${id}`
+        const sessionMail = sessionStorage.getItem('email');
+        const mail = state.emailId? state.emailId : sessionMail
+        const url = type === "c" ? `/delete-current-activity/${mail}?id=${id}` : `/delete-activity/${mail}?id=${id}`
         await apiUrl.delete(url);
         alertMessage("Successfully deleted the activity");
         takeAction({ type: "changeActivityState", payload: false});

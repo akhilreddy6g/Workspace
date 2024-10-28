@@ -28,50 +28,67 @@ label{
     height: 100vh;
     position: fixed;
     z-index: -1;
-    background-color: rgb(255, 255, 144);
+    background-color: teal;
     display: flex;
     flex-direction: row;
     font-family: Cambria, Cochin, Georgia, Times New Roman, serif;
   }
   
 .appTitleContainer {
-    width: 65vw;
+    width: 70vw;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 20px;
+}
+
+.captionContainer{
+    display: flex;
+    flex-direction: column;
+    padding-left: 440px;
+    margin-top: -50px;
+}
+
+.appCaption{
+    font-weight: bolder;
+    font-size: 22px;
+    color: orange;
+    text-shadow: 1px 1px 5px black;
 }
 
 .appTitle {
-    color: black;
-    font-size: 100px;
+    color: white;
+    font-size: 120px;
     font-weight: bolder;
+    text-shadow: 1px 1px 5px black;
     font-family: Cambria, Cochin, Georgia, Times New Roman, serif;
 }
 
 .authContainer {
-    width: 35vw;
-    background-color: gray;
+    width: 30vw;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: rgb(255, 255, 144);
 }
 
 .loginSetup {
     height: 400px;
-    width: 400px;
+    width: 350px;
     gap: 30px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    box-shadow: 0 0 5px black;
-    border-radius: 3px;
 }
 
 .loginTitle {
     display: flex;
-    justify-content: center;
     margin: 0;
     padding: 0;
+    font-size: 40px;
+    text-align: center;
+    justify-content: center;
 }
 
 .userInfoForm {
@@ -80,22 +97,54 @@ label{
     gap: 20px;
 }
 
-.emailContainer, .passwordContainer, .loginSubmitButtonContainer {
+.loginSubmitButtonContainer {
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
+    width: 400 px;
+}
+
+/* .loginSubmitButton:hover{
+    transform: scale(1.02);
+    background-color: rgb(1, 105, 105);
+} */
+
+
+.emailContainer, .passwordContainer{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: white;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 1px solid black;
 }
 
 .emailInput, .passwordInput {
-    width: 350px;
-    text-align: center;
+    all: unset;
+    cursor: pointer;
+    width: 250px;
     font-size: 18px;
     color: black;
+    border: 0;
+}
+
+.togglePassword{
+    display: flex;
+    align-items: center;
+}
+
+.emailInput{
+    padding-right: 30px;
+}
+
+.passwordInput{
+    padding-left: 5px;
 }
 
 .loginSubmitButton {
     width: 350px;
     font-size: 18px;
-    background-color: gray;
+    background-color: teal;
     border: 0.5px solid black;
     border-radius: 2px;
     padding-top: 4px;
@@ -105,12 +154,14 @@ label{
 .signUpNDemoContainer {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
+    gap: 20px;
 }
 
 .signUpButton, .demoButton {
     all: unset;
     cursor: pointer;
+    width: fit-content;
 }
 
 .authFailContainer {
@@ -122,6 +173,10 @@ label{
 
 .errorText {
     color: red;
+}
+
+.inputIcon {
+    font-size: 22px;
 }
   
 

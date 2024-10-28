@@ -59,18 +59,11 @@ export default function Activitytab(props){
         const currentTimeMinutes = now.getHours() * 60 + now.getMinutes(); 
         const startTimeMinutes = timeToMinutes(props.startTime); 
         const endTimeMinutes = timeToMinutes(props.endTime); 
-        if(currentTimeMinutes==0 && now.getSeconds()>=0 && now.getSeconds()<=15){
-            sessionStorage.clear();
-            try {
-                const combinedAct = await apiUrl.get(`/combined-activities/${state.emailId}`);
-                takeAction({type:"changeCombinedActivityData", payload: combinedAct.data});
-            } catch (error) {
-                console.log("Something went wrong", error);
-            };
-        };
+        const sessionMail = sessionStorage.getItem('email');
+        const mail = state.emailId? state.emailId : sessionMail
         if (currentTimeMinutes >= endTimeMinutes) {
             if(props.status==null && JSON.parse(sessionStorage.getItem(props.id))==null){
-                const url = props.type === "c" ? `/update-ca-status/${state.emailId}?id=${props.id}&status=${0}` : `/update-da-status/${state.emailId}?id=${props.id}&status=${0}`;
+                const url = props.type === "c" ? `/update-ca-status/${mail}?id=${props.id}&status=${0}` : `/update-da-status/${mail}?id=${props.id}&status=${0}`;
                 await apiUrl.post(url);
                 sessionStorage.setItem(props.id, JSON.stringify({ action: "skip", value: true }));
             };
