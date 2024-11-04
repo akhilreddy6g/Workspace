@@ -1,5 +1,5 @@
 import featuresTabHook from "../../Noncomponents";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef} from "react";
 import { apiUrl } from "../../Noncomponents";
 
 export default function Activityframe(props) {
@@ -79,7 +79,7 @@ export default function Activityframe(props) {
                 if (userResponse){
                     const sessionMail = sessionStorage.getItem('email');
                     const mail = state.emailId? state.emailId : sessionMail
-                    const url = type === "c" ? `/update-ca-status/${mail}?id=${id}&status=${newStatus}` : `/update-da-status/${state.emailId}?id=${id}&status=${newStatus}`;
+                    const url = type === "c" ? `/update-ca-status/${mail}?id=${id}&status=${newStatus}` : `/update-da-status/${mail}?id=${id}&status=${newStatus}`;
                     await apiUrl.post(url);
                     alertMessage(`Successfully ${actionType=="skip"? "skipped" : "completed"} the activity`);
                     sessionStorage.setItem(id, JSON.stringify({ action: actionType, value: true }));

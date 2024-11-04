@@ -1,7 +1,6 @@
 import featuresTabHook from "../../Noncomponents";
 import Activity from "./Activity";
 import { useContext, useEffect, useRef} from "react";
-import axios from "axios";
 import { apiUrl } from "../../Noncomponents";
 
 export default function Dailyactivities(){

@@ -3,24 +3,24 @@ import featuresTabHook from './Noncomponents';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { timeToMinutes, currentTimeInMinutes } from './Noncomponents';
-import axios from 'axios';
+import { apiUrl } from './Noncomponents';
 import { convertTimeToAmPm } from './Noncomponents';
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
 function getColor(status, startTime, endTime, statusList) {
-    if (status === 0) {
+    if (status == 0) {
         statusList.push("Skipped");
         return "red";
-    } else if (status === 1) {
+    } else if (status == 1) {
         statusList.push("Completed");
         return 'green';
-    } else if (status === null && startTime < currentTimeInMinutes() && currentTimeInMinutes() < endTime) {
+    } else if (status == null && startTime < currentTimeInMinutes() && currentTimeInMinutes() < endTime) {
         statusList.push("In Progress");
         return 'orange';
-    } else if (status === null) {
+    } else if (status == null) {
         statusList.push("Not Yet Started");
-        return 'white';
+        return 'black';
     }
 }
 
@@ -50,8 +50,14 @@ export function Target() {
     });
 
     async function alterData(){
-        const combinedAct = await axios.get("http://localhost:3000/combined-activities");
-        takeAction({type:"changeCombinedActivityData", payload: combinedAct.data})
+        try {
+            const sessionMail = sessionStorage.getItem('email');
+            const mail = state.emailId? state.emailId : sessionMail
+            const combinedAct = await apiUrl.get(`/combined-activities/${mail}`);
+            takeAction({type:"changeCombinedActivityData", payload: combinedAct.data})
+        } catch (error) {
+            console.error("Error fetching combined activities:", error);
+        }
       };
 
     const data = {
@@ -61,7 +67,7 @@ export function Target() {
                 label: 'Activities',
                 data: actTime,
                 backgroundColor: actColors, 
-                borderWidth: 2,
+                borderWidth: 4,
 
             }
         ]
@@ -73,11 +79,13 @@ export function Target() {
         plugins: {
             title: {
                 display: true,
+                position: 'bottom',
                 text: `${count}/${state.combinedActivityData.length} Completed`,
                 color: state.darkMode? 'white' : 'black',
                 font: {
-                    size: 18,  
-                    align: 'center'
+                    size: 24,  
+                    align: 'center',
+                    family: 'serif'
                 }},
             legend: {
                 display: true,
@@ -87,13 +95,12 @@ export function Target() {
                         const labels = [
                             { text: 'Completed', fillStyle: 'green', fontColor:state.darkMode? 'white' : 'rgb(48,48,48)', padding: 20, borderColor:'green'},
                             { text: 'Skipped', fillStyle: 'red', fontColor:state.darkMode? 'white' : 'rgb(48,48,48)', padding: 20, borderColor:'red'},
-                            { text: 'Not Yet Started', fillStyle: 'white', fontColor:state.darkMode? 'white' : 'rgb(48,48,48)', padding: 20, borderColor:'white'},
+                            { text: 'Not Yet Started', fillStyle: 'black', fontColor:state.darkMode? 'white' : 'rgb(48,48,48)', padding: 20, borderColor:''},
                             { text: 'In Progress', fillStyle: 'orange', fontColor:state.darkMode? 'white' : 'rgb(48,48,48)', padding: 20, borderColor:'orange'}
                         ];
                         return labels;
                     },
                     fontColor: 'white',
-
                 }
             },
             tooltip: {
@@ -102,11 +109,14 @@ export function Target() {
                         return ` ${actNames[tooltipItem.dataIndex]} -> ${actStatus[tooltipItem.dataIndex]}`;
                     }
                 }
+            },
+            datalabels: {
+                display: false
             }
         },
         elements: {
             arc: {
-                borderColor: borderColors
+                borderColor : state.darkMode? 'rgb(48, 48, 48)' : 'white'
             }
         },
     };
@@ -116,10 +126,10 @@ export function Target() {
           isFirstRender.current = false;
         } else {
           alterData()};
-        },[state.updateActivity]);  
+        },[]);  
 
     return (
-        <div className='currentTarget' style={{width:"85vw", height:"85vh", position:"fixed", left:"28vw", top:"10vh", overflow:"clip"}}>
+        <div className='currentTarget'>
             <Doughnut
                 data={data}
                 options={options}

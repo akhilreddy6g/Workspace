@@ -231,6 +231,15 @@ label{
     background-color: rgba(0, 0, 0, 0);
 }
 
+.currentTarget{
+    width: 80vw;
+    height: 80vh;
+    position: fixed;
+    left: 33vw;
+    top: 15vh;
+    overflow: clip;
+}
+
 #titlename{
     font-size: 45px;
     text-shadow: 1px 1px 4px black;
@@ -1131,6 +1140,242 @@ input[type=radio] {
 
 /* Quick Session end */
 
+/* Trends and Progress Start */
+
+.defaultTrends{
+    display: flex;
+    flex-direction: row;
+    height: 25vh;
+    width: 80vw;
+    top: 90px;
+    position: fixed;
+    gap: 10px;
+    transition: 150ms linear;
+}
+
+.tnpT1 {
+    width: 80vw; 
+    height: 70vh; 
+    position: fixed; 
+    left: 38vw;
+    top: 25vh;
+    overflow: cut;
+}
+
+.t2FilterContainer {
+    position: fixed;
+    top: 200px;
+    left: 88vw;
+    z-index: 5;
+}
+
+.tnpT3{
+    display: flex;
+    justify-content: start;
+    top: 200px;
+    width: 80vw;
+    position: fixed;
+    overflow: scroll;
+    border-radius: 10px;
+    gap: 2vw;
+}
+
+.t3FilterContainer {
+    position: fixed;
+    top: 200px;
+    left: 88vw;
+    z-index: 5;
+}
+
+.streakStats{
+    position: fixed;
+    top: 300px;
+    left: 88vw;
+    z-index: 5;
+    display: flex; 
+    flex-direction: column;
+}
+
+.streakStats p {
+    padding: 10px;
+    border-radius: 10px;
+}
+
+table, th, td {
+    padding: 10px;
+  }
+
+.streakActNum::-webkit-scrollbar {
+    width: 0;
+    height: 0; 
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.streakActNum:hover::-webkit-scrollbar {
+    width: "auto"; 
+}
+
+.streakActNum::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.streakActNum{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    width: 23vw;
+    overflow: scroll;
+    padding-right: 20px;
+}
+
+.specialTab1{
+    background-color: orange;
+ }
+
+.specialTab2{
+    background-image: linear-gradient(to right ,rgb(42, 42, 243), rgba(144, 10, 144, 0.925));
+}
+
+.defaultSTM{
+    border-radius: 50%; 
+    min-height:20px;
+    min-width:20px; 
+    text-align: center; 
+    cursor: pointer;
+}
+
+.defaultDT{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    border-radius: 10px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.defaultDI{
+    width: 50px;
+    padding-left: 10px;
+    padding-right: 50px;
+}
+
+.defaultD{
+    width:100px;
+    padding-right:20px; 
+}
+
+.defaultST{
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    gap: 30px;
+    border-radius: 10px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.defaultAI{
+    width:50px; 
+    padding-left:10px; 
+}
+
+.defaultAE{
+    padding-Left:10px;
+    width:300px;
+    overflow:scroll;
+}
+
+.streakContainer-1{
+    display: flex;
+    flex-direction: column;
+    width: 35vw;
+    height: 36vh;
+}
+
+.headingContainerInitial{
+    border: 0.1px solid black;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    background-color: rgb(255, 255, 144);
+}
+
+.headingElement-1{
+    width: 50px;
+    padding-left: 10px;
+    padding-right: 50px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.headingElement-2{
+    width: 100px;
+    padding-right: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.headingElement-3{
+    width: 150px;
+    padding-right: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+}
+
+.streakContainer-2{
+    display: flex;
+    flex-direction: column;
+    width: 30vw;
+    height: 36vh;
+    overflow: scroll;
+}
+
+.headingContainerFinal{
+    border: 0.1px solid black;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    gap: 30px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    background-color: rgb(255, 255, 144);
+
+}
+
+.headingElement-4{
+    width: 50px;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.headingElement-5{
+    width: 100px;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.t3barChart{
+    position: fixed;
+    top: 61vh;
+    width: 80vw;
+    display: flex;
+    left: 18vw;
+    justify-content: center;
+}
+
+/* Trends and Progress End */
+
 /* Missed Activities Start */
 
 .missedActivity{
@@ -1186,7 +1431,6 @@ input[type=radio] {
     padding-bottom: 10px;
     transition: 150ms linear;
     font-size: 20px;
-
 }
 
 .weekTabs{
@@ -1198,6 +1442,11 @@ input[type=radio] {
     border-radius: 10px;
     border: 0.2px solid black;
     z-index: 1;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+
 }
 
 .paTab{

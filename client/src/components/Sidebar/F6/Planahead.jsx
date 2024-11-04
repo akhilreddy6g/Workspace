@@ -4,7 +4,6 @@ import featuresTabHook from "../../Noncomponents";
 import Addactivitybar from "./Addactivitybar";
 import Activityheader from "./Activityheader";
 import Futureactivity from "./Futureactivity";
-import axios from "axios";
 import { futureDate } from "../../Noncomponents";
 import { apiUrl } from "../../Noncomponents";
 

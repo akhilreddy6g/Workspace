@@ -66,7 +66,7 @@ export function localDate(value){
 export function minutesToHours(minutes) {
   const hours = Math.floor(minutes / 60);
   const remainingMinutes = minutes % 60;
-  return `${hours} hr and ${remainingMinutes} min`;
+  return `${hours} hr ${remainingMinutes} min`;
 }
 
 export const apiUrl = axios.create({

@@ -22,7 +22,7 @@ export default function Login() {
     try {
       const authRoute = action.primary === login ? "authenticate" : "register";
       const sessionMail = sessionStorage.getItem('email');
-      const mail = sessionMail? sessionMail : email
+       const mail = sessionMail? sessionMail : email.toLowerCase();
       const response = await apiUrl.post(`/${authRoute}/${mail}?password=${password}`);
       if (response.data.isAuthenticated) {
         const accessToken = response.data.token;

@@ -1,21 +1,30 @@
-import { useContext, useRef} from "react";
+import { useContext, useEffect, useRef } from "react";
 import featuresTabHook from "../../Noncomponents";
 
 export default function Trendtab(props) {
     const { state, takeAction } = useContext(featuresTabHook);
     const trendTabRef = useRef(null);
+
+    useEffect(() => {
+        if (trendTabRef.current && state.trend == props.index) {
+            trendTabRef.current.classList.add("specialTab");
+        } else if (trendTabRef.current) {
+            trendTabRef.current.classList.remove("specialTab");
+        }
+    }, [state.trend, props.index]);
+
     function handleClick() {
-        takeAction({type:"changeTrend", payload:trendTabRef.current.id})
-    };
-    function selectInitial(){
-        if (trendTabRef.current && state.trend == trendTabRef.current.id) {
-            return "specialTab";
-        } 
-        return "";
-    };
+        takeAction({ type: "changeTrend", payload: trendTabRef.current.id});
+    }
+
     return (
-        <div className={`weekTabs ${selectInitial()}`} id={props.index} ref={trendTabRef} style={{textAlign:"center", alignItems:"center", justifyContent:"center", fontSize:"16px"}} onClick={handleClick}>
+        <div
+            className="weekTabs"
+            id={props.index}
+            ref={trendTabRef}
+            onClick={handleClick}
+        >
             <p className="paTab Date">{props.trend}</p>
         </div>
     );
-};
+}
