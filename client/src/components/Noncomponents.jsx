@@ -73,7 +73,7 @@ export function minutesToHours(minutes) {
 }
 
 export const apiUrl = axios.create({
-  baseURL: process.env.SERVER_API || "http://localhost:3000",
+  baseURL: import.meta.env.VITE_SERVER_API || "http://localhost:3000",
   withCredentials: true,
 });
 
