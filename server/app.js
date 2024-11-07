@@ -14,13 +14,16 @@ const app = express();
 const JWT_SECRET = process.env.ACCESS_TOKEN_SECRET ;
 const REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET ;
 const SALT_ROUNDS = 10;
-const port = 3000;
+const port = process.env.PORT || 3000;
 const db = new pg.Client({
-    user: 'postgres',
-    host: 'localhost',
-    password: '1234',
-    database: 'workspace',
-    port: '5432'
+    user: process.env.DB_UNAME || 'postgres',
+    host: process.env.DB_HOST_NAME || 'localhost',
+    password: process.env.DB_PW || '1234',
+    database: process.env.DB_NAME || 'workspace',
+    port: '5432',
+    ssl: {
+        rejectUnauthorized: false
+    }
 });
 const logPrefix = "<–––––––––––––––Request Start–––––––––––––––>";
 const logSuffix = "<––––––––––––––––Request End––––––––––––––––>";
@@ -187,7 +190,7 @@ app.get("/activities/:email", verifyToken, async (req, res) => {
         console.log(logPrefix);
         console.info({ message: 'Incoming request for fetching activities', timestamp: new Date().toISOString(), method: req.method, path: req.originalUrl, queryParams: req.query, params: req.params, filter: filter, userAgent: req.headers['user-agent'] });
         try {
-            const data = await db.query(`SELECT * FROM activities WHERE user_email=$1 ORDER BY ${filter}`, [email]);
+            const data = await db.query(`SELECT * FROM daily_activities WHERE user_email=$1 ORDER BY ${filter}`, [email]);
             if (data.rows.length === 0) {
                 const logMessage = `No activities found for email ${email} with ${filter} filter`;
                 console.warn({message: logMessage, statusCode: 404, requestDuration: `${Date.now() - startTime}ms`, });
@@ -220,7 +223,7 @@ app.get("/activity/:email", verifyToken, async (req, res) => {
         console.info({ message: 'Incoming request for fetching activity', timestamp: new Date().toISOString(), method: req.method,path: req.originalUrl, queryParams: req.query,params: req.params, userAgent: req.headers['user-agent'],
         });
         try {
-            const data = await db.query("SELECT * FROM activities WHERE activity_uuid = $1 AND user_email = $2", [id, email]);
+            const data = await db.query("SELECT * FROM daily_activities WHERE activity_uuid = $1 AND user_email = $2", [id, email]);
             if (data.rows.length === 0) {
                 const logMessage = `No activity found with id ${id} and email ${email}`;
                 console.warn({message: logMessage, statusCode: 404, requestDuration: `${Date.now() - startTime}ms`, });
@@ -253,7 +256,7 @@ app.post("/add-activity/:email", verifyToken, async (req, res) => {
         console.info({ message: 'Incoming request to add daily activity', timestamp: new Date().toISOString(), method: req.method, path: req.originalUrl, params: req.params, requestBody: req.body.data, userAgent: req.headers['user-agent']});
         try {
             const record = (await db.query(
-                "INSERT INTO activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time, user_email) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", 
+                "INSERT INTO daily_activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time, user_email) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", 
                 [actName, actDescr, priority, startTime, endTime, email]
             )).rows[0].activity_uuid;
             console.log("record", record);
@@ -291,7 +294,7 @@ app.post("/update-da-status/:email", verifyToken, async (req, res) => {
         console.info({ message: 'Incoming request to update activity status', timestamp: new Date().toISOString(), method: req.method, path: req.originalUrl, queryParams: req.query, params: req.params, userAgent: req.headers['user-agent']});
         try {
             await db.query(
-                "UPDATE activities SET activity_status = $1 WHERE activity_uuid = $2 AND user_email = $3", 
+                "UPDATE daily_activities SET activity_status = $1 WHERE activity_uuid = $2 AND user_email = $3", 
                 [actStatus, actId, email]
             );
             console.info({ message: `Successfully updated the activity status for activity ID: ${actId}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`, email, newStatus: actStatus,});
@@ -327,7 +330,7 @@ app.patch("/edit-activity/:email", verifyToken, async (req, res) => {
                 console.error({message: `Failed to update activity with ID: ${id} in global activities`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`,});
             }
             await db.query(
-                "UPDATE activities SET activity_name = $1, activity_priority = $2, activity_start_time = $3, activity_end_time = $4 WHERE activity_uuid = $5 AND user_email = $6", 
+                "UPDATE daily_activities SET activity_name = $1, activity_priority = $2, activity_start_time = $3, activity_end_time = $4 WHERE activity_uuid = $5 AND user_email = $6", 
                 [actName, actPriority, actStart, actEnd, id, email]
             );
             console.info({ message: `Successfully updated activity with ID: ${id}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`, email, updatedFields: { actName, actStart, actEnd, actPriority }});
@@ -353,9 +356,9 @@ app.delete("/delete-activity/:email", verifyToken, async (req, res) => {
         console.log(logPrefix);
         console.info({ message: 'Incoming request to delete activity', timestamp: new Date().toISOString(), method: req.method, path: req.originalUrl, params: req.params, queryParams: req.query, userAgent: req.headers['user-agent']});
         try {
-            const record = await db.query("SELECT * FROM activities WHERE activity_uuid = $1 AND user_email = $2", [id, email]);
+            const record = await db.query("SELECT * FROM daily_activities WHERE activity_uuid = $1 AND user_email = $2", [id, email]);
             if (record.rows.length > 0) {
-                await db.query("DELETE FROM activities WHERE activity_uuid = $1 AND user_email = $2", [id, email]);
+                await db.query("DELETE FROM daily_activities WHERE activity_uuid = $1 AND user_email = $2", [id, email]);
                 console.info({message: `Successfully deleted activity with ID: ${id}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`, email});
                 console.log(logSuffix);
                 res.status(200).json({ message: `Successfully deleted the daily activity with id ${id}` });
@@ -539,7 +542,7 @@ app.get("/combined-activities/:email", verifyToken, async (req, res) => {
         console.log(logPrefix);
         console.info({message: 'Incoming request to retrieve combined daily and current day activities', timestamp: new Date().toISOString(), method: req.method, path: req.originalUrl, params: req.params, userAgent: req.headers['user-agent']});
         try {
-            const data = await db.query('SELECT * FROM activities WHERE user_email = $1 UNION SELECT * FROM current_day_activities WHERE user_email = $1 ORDER BY activity_start_time, activity_end_time', [email]);
+            const data = await db.query('SELECT * FROM daily_activities WHERE user_email = $1 UNION SELECT * FROM current_day_activities WHERE user_email = $1 ORDER BY activity_start_time, activity_end_time', [email]);
             console.info({message: `Successfully retrieved combined daily and current day activities for email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
             res.status(200).json(data.rows);
@@ -933,6 +936,76 @@ app.get("/user-da-progress/:email", async(req, res)=> {
     }
 })
 
+app.post("/setup-sessions/:email", verifyToken, async (req, res) => {
+    const startTimeRequest = Date.now();
+    try {
+        const email = req.params.email;
+        const { startTime, endTime, totalSessions, breakTime, sessionType, sessionVersion } = req.body.data;
+        console.log(logPrefix);
+        console.info({ message: 'Incoming request to schedule sessions for today', timestamp: new Date().toISOString(), method: req.method, path: req.originalUrl, params: req.params, queryParams: req.query, userAgent: req.headers['user-agent'] });
+        try {
+            const checkRecord = await db.query(
+                "SELECT * FROM user_session WHERE user_email = $1 AND session_type = $2 AND session_version = $3", 
+                [email, sessionType, sessionVersion]
+            );
+            if (checkRecord.rowCount > 0) {
+                try {
+                    await db.query(
+                        "UPDATE user_session SET session_start_time = $1, session_end_time = $2, break_time = $3, total_sessions = $4 WHERE session_type = $5 AND session_version = $6 AND user_email = $7", 
+                        [startTime, endTime, breakTime, totalSessions, sessionType, sessionVersion, email]
+                    );
+                    console.info({ message: `Successfully updated user record and scheduled sessions for the user with email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
+                } catch (error) {
+                    console.error({ message: `Error updating user record for email: ${email}`, error: error.message, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms` });
+                }
+            } else {
+                try {
+                    await db.query(
+                        "INSERT INTO user_session (user_email, session_start_time, session_end_time, break_time, total_sessions, session_type, session_version) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+                        [email, startTime, endTime, breakTime, totalSessions, sessionType, sessionVersion]
+                    );
+                    console.info({ message: `Successfully scheduled sessions for the user with email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms` });
+                } catch (error) {
+                    console.error({ message: `Error inserting new session for email: ${email}`, error: error.message, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms` });
+                }
+            }
+            console.log(logSuffix);
+            res.status(200).json({ message: `Successfully scheduled sessions for the user with email: ${email}` });
+        } catch (error) {
+            console.error({ message: `Failed to schedule sessions for the user with email: ${email}`, error: error.message, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms` });
+            console.log(logSuffix);
+            res.status(500).json({ message: `Unsuccessful in scheduling sessions for the user with email: ${email}: ${error.message}` });
+        }
+    } catch (error) {
+        console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
+        console.log(logSuffix);
+        res.status(400).json({ message: 'Bad Request' });
+    }
+});
+
+app.get("/session-details/:email", verifyToken, async (req, res) => {
+    const startTimeRequest = Date.now();
+    try {
+        const email = req.params.email;
+        const sessionType = req.query.sessionType;
+        console.log(logPrefix);
+        try {
+            const data = await db.query(`SELECT * FROM user_session WHERE user_email=$1 AND session_Type=$2`, [email, sessionType]);
+            console.info({ message: `Successfully retrieved user session for the user with email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms` });
+            console.log(logSuffix);
+            res.status(200).json(data.rows);
+        } catch (error) {
+            console.error({ message: `Failed to retrieve user session for the user with email: ${email}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
+            console.log(logSuffix);
+            res.status(200).json({ message: `Unsuccessful in retrieving user session for the user with email: ${email}: ${error.message}` });
+        }
+    } catch (error) {
+        console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
+        console.log(logSuffix);
+        return res.status(200).json({ message: 'Bad Request' }); 
+    }
+})
+
 cron.schedule('0 0 * * *', async () => {
     const jobStartTime = Date.now();
     console.log(logPrefix);
@@ -943,8 +1016,8 @@ cron.schedule('0 0 * * *', async () => {
         try {
             if (users.length>0){
                 users.forEach(async(element)=>{
-                    const totalActivities = (await db.query("SELECT * FROM activities WHERE user_email = $1 UNION SELECT * FROM current_day_activities WHERE user_email = $1", [element.user_email])).rowCount;
-                    const completedActivities = (await db.query("SELECT * FROM activities WHERE user_email = $1 AND activity_status = 1 UNION SELECT * FROM current_day_activities WHERE user_email = $1 AND activity_status = 1", [element.user_email])).rowCount;
+                    const totalActivities = (await db.query("SELECT * FROM daily_activities WHERE user_email = $1 UNION SELECT * FROM current_day_activities WHERE user_email = $1", [element.user_email])).rowCount;
+                    const completedActivities = (await db.query("SELECT * FROM daily_activities WHERE user_email = $1 AND activity_status = 1 UNION SELECT * FROM current_day_activities WHERE user_email = $1 AND activity_status = 1", [element.user_email])).rowCount;
                     const skippedActivities = totalActivities - completedActivities;
                     const now = new Date();
                     now.setDate(now.getDate() - 1);
@@ -958,10 +1031,16 @@ cron.schedule('0 0 * * *', async () => {
             }
         } catch (error) {
             console.error({ message: `Failed to update user statistics: for user: ${element.user_email}`, error: error.message});
+        } 
+        try {
+            await db.query("UPDATE user_session SET session_version = $1", ["o"]);
+            console.info({ message: `Updated session info for all users`, statusCode: 200, });
+        } catch (error) {
+            console.error({ message: `Failed to update session info for all users`, error: error.message});
         }
         try {
             if (users.length>0){
-                const completedActivities = (await db.query("SELECT * FROM activities WHERE activity_status = 1")).rows;
+                const completedActivities = (await db.query("SELECT * FROM daily_activities WHERE activity_status = 1")).rows;
                 const now = new Date();
                 now.setDate(now.getDate() - 1);
                 try {
@@ -1037,7 +1116,7 @@ cron.schedule('0 0 * * *', async () => {
             console.error({ message: "Failed to fetch upcoming activities", error: upcError.message, });
         }
         try {
-            await db.query("UPDATE activities SET activity_status = NULL");
+            await db.query("UPDATE daily_activities SET activity_status = NULL");
             console.info({ message: "Successfully reset activity statuses", statusCode: 200, });
         } catch (updateError) {
             console.error({ message: "Failed to update activity statuses", error: updateError.message, });
