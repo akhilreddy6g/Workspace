@@ -1,8 +1,5 @@
 import { createContext } from "react";
 import axios from "axios";
-import { config } from "dotenv";
-
-config();
 
 const featuresTabHook = createContext();
 
