@@ -933,6 +933,76 @@ app.get("/user-da-progress/:email", async(req, res)=> {
     }
 })
 
+app.post("/setup-sessions/:email", verifyToken, async (req, res) => {
+    const startTimeRequest = Date.now();
+    try {
+        const email = req.params.email;
+        const { startTime, endTime, totalSessions, breakTime, sessionType, sessionVersion } = req.body.data;
+        console.log(logPrefix);
+        console.info({ message: 'Incoming request to schedule sessions for today', timestamp: new Date().toISOString(), method: req.method, path: req.originalUrl, params: req.params, queryParams: req.query, userAgent: req.headers['user-agent'] });
+        try {
+            const checkRecord = await db.query(
+                "SELECT * FROM user_session WHERE user_email = $1 AND session_type = $2 AND session_version = $3", 
+                [email, sessionType, sessionVersion]
+            );
+            if (checkRecord.rowCount > 0) {
+                try {
+                    await db.query(
+                        "UPDATE user_session SET session_start_time = $1, session_end_time = $2, break_time = $3, total_sessions = $4 WHERE session_type = $5 AND session_version = $6 AND user_email = $7", 
+                        [startTime, endTime, breakTime, totalSessions, sessionType, sessionVersion, email]
+                    );
+                    console.info({ message: `Successfully updated user record and scheduled sessions for the user with email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
+                } catch (error) {
+                    console.error({ message: `Error updating user record for email: ${email}`, error: error.message, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms` });
+                }
+            } else {
+                try {
+                    await db.query(
+                        "INSERT INTO user_session (user_email, session_start_time, session_end_time, break_time, total_sessions, session_type, session_version) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+                        [email, startTime, endTime, breakTime, totalSessions, sessionType, sessionVersion]
+                    );
+                    console.info({ message: `Successfully scheduled sessions for the user with email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms` });
+                } catch (error) {
+                    console.error({ message: `Error inserting new session for email: ${email}`, error: error.message, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms` });
+                }
+            }
+            console.log(logSuffix);
+            res.status(200).json({ message: `Successfully scheduled sessions for the user with email: ${email}` });
+        } catch (error) {
+            console.error({ message: `Failed to schedule sessions for the user with email: ${email}`, error: error.message, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms` });
+            console.log(logSuffix);
+            res.status(500).json({ message: `Unsuccessful in scheduling sessions for the user with email: ${email}: ${error.message}` });
+        }
+    } catch (error) {
+        console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
+        console.log(logSuffix);
+        res.status(400).json({ message: 'Bad Request' });
+    }
+});
+
+app.get("/session-details/:email", verifyToken, async (req, res) => {
+    const startTimeRequest = Date.now();
+    try {
+        const email = req.params.email;
+        const sessionType = req.query.sessionType;
+        console.log(logPrefix);
+        try {
+            const data = await db.query(`SELECT * FROM user_session WHERE user_email=$1 AND session_Type=$2`, [email, sessionType]);
+            console.info({ message: `Successfully retrieved user session for the user with email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms` });
+            console.log(logSuffix);
+            res.status(200).json(data.rows);
+        } catch (error) {
+            console.error({ message: `Failed to retrieve user session for the user with email: ${email}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
+            console.log(logSuffix);
+            res.status(200).json({ message: `Unsuccessful in retrieving user session for the user with email: ${email}: ${error.message}` });
+        }
+    } catch (error) {
+        console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
+        console.log(logSuffix);
+        return res.status(200).json({ message: 'Bad Request' }); 
+    }
+})
+
 cron.schedule('0 0 * * *', async () => {
     const jobStartTime = Date.now();
     console.log(logPrefix);
@@ -958,6 +1028,12 @@ cron.schedule('0 0 * * *', async () => {
             }
         } catch (error) {
             console.error({ message: `Failed to update user statistics: for user: ${element.user_email}`, error: error.message});
+        } 
+        try {
+            await db.query("UPDATE user_session SET session_version = $1", ["o"]);
+            console.info({ message: `Updated session info for all users`, statusCode: 200, });
+        } catch (error) {
+            console.error({ message: `Failed to update session info for all users`, error: error.message});
         }
         try {
             if (users.length>0){

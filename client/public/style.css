@@ -1581,6 +1581,83 @@ table, th, td {
     font-weight: bolder;
 }
 
+.sessionAndBreakContainer{
+    display: flex;
+    flex-direction: row;
+    width: 620px;
+    justify-content: space-between;
+}
+
+.sessionDefault{
+    width: 300px;
+    background-color: teal;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    border: 0.1px solid black;
+}
+
+.sessionSubTab1{
+    width: 300px;
+    height: 60px;
+    display: flex;
+    flex-direction: row;
+    font-size: 20px;
+    border-top: 0.1px solid black;
+    border-bottom: 0.1px solid black;
+}
+
+.sessionSubTab2{
+    width: 299px;
+    height: 25px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    font-size: 10px;
+    background-color: rgb(255, 255, 144);
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.sessionTabs {
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    top: 85px;
+    transition: 150ms linear;
+    color: white;
+    height: 80vh;
+    width: 90vw;
+    gap: 40px;
+    overflow: scroll;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
+    flex-wrap: wrap;
+}
+
+.breakConDefault{
+    width: 20vw;
+    background-color: teal;
+    display: flex;
+    flex-direction: row;
+    border-radius: 10px;
+    text-align: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.breakContainer{
+    width: 300px;
+    background-color: teal;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    border: 0.1px solid black;
+}
+
 /* Form Styling Start */
 
 .sessionSetup{
