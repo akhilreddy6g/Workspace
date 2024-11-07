@@ -30,7 +30,7 @@ const logSuffix = "<––––––––––––––––Request End�
 db.connect();
 
 app.use(cors({
-    origin: 'http://localhost:5173', 
+    origin: ['http://localhost:5173', 'https://workspace-eikp.onrender.com'], 
     credentials: true                
   }));
 app.use(bodyParser.urlencoded({extended:true}));
