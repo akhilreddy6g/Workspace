@@ -1,13 +1,14 @@
 import {useReducer, useLayoutEffect, useRef, useEffect} from 'react';
-import Header from './Header/Header';
-import Features from './Sidebar/Features';
-import featuresTabHook,{dayStatus} from './Noncomponents';
-import Approuter from './Sidebar/Approuter';
-import Disclaimersetup from './Disclaimersetup';
-import { futureDate } from './Noncomponents';
-import Failedaction from './Failedaction';
-import { apiUrl } from './Noncomponents';
+import Header from './components/Header/Header';
+import Features from './components/Sidebar/Features';
+import featuresTabHook,{dayStatus} from './components/Noncomponents';
+import Approuter from './components/Sidebar/Approuter';
+import Disclaimersetup from './components/Disclaimersetup';
+import { futureDate } from './components/Noncomponents';
+import Failedaction from './components/Failedaction';
+import { apiUrl } from './components/Noncomponents';
 import { useNavigate, useLocation } from 'react-router-dom';
+import "./styles/style.css"
 
 export default function App() {
   const navigate = useNavigate();

@@ -113,15 +113,15 @@ export default function Activitytab(props){
         if (item) {
             const parsedItem = JSON.parse(item);
             if (parsedItem.action === "complete") {
-                return '/src/assets/greenok.svg';
+                return '/greenok.svg';
             } else if (parsedItem.action === "skip") {
-                return '/src/assets/redclose.svg';
+                return '/redclose.svg';
             }
         }
         if (props.status == "0") {
-            return '/src/assets/redclose.svg';
+            return '/redclose.svg';
         } else if (props.status == "1") {
-            return '/src/assets/greenok.svg';
+            return '/greenok.svg';
         }
     }
 
