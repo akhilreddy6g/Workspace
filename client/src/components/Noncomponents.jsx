@@ -1,5 +1,8 @@
 import { createContext } from "react";
 import axios from "axios";
+import { config } from "dotenv";
+
+config();
 
 const featuresTabHook = createContext();
 
@@ -70,7 +73,7 @@ export function minutesToHours(minutes) {
 }
 
 export const apiUrl = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: process.env.SERVER_API || "http://localhost:3000",
   withCredentials: true,
 });
 
