@@ -92,15 +92,15 @@ export default function Session(props){
         if (item) {
             const parsedItem = JSON.parse(item);
             if (parsedItem.action === "complete") {
-                return '/greenok.svg';
+                return 'client/public/assets/greenok.svg';
             } else if (parsedItem.action === "skip") {
-                return '/redclose.svg';
+                return 'client/public/assets/redclose.svg';
             }
         }
         if (props.status == "0") {
-            return '/redclose.svg';
+            return 'client/public/assets/redclose.svg';
         } else if (props.status == "1") {
-            return '/greenok.svg';
+            return 'client/public/assets/greenok.svg';
         }
     }
 

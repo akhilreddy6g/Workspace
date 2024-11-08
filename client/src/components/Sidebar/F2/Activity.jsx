@@ -36,7 +36,7 @@ export default function Activity(props) {
       actEndRef.current.contentEditable = "true";
       actPriorityRef.current.contentEditable = "true";
       deleteButtonRef.current.style.visibility = "hidden";
-      editButtonImgRef.current.src = "/ok.svg";
+      editButtonImgRef.current.src = "client/public/assets/ok.svg";
       editButtonRef.current.style.backgroundColor = "orange";
     } else {
       document.body.style.overflow = "auto";
@@ -93,7 +93,7 @@ export default function Activity(props) {
         actEndRef.current.contentEditable = "false";
         actPriorityRef.current.contentEditable = "false";
         deleteButtonRef.current.style.visibility = "visible";
-        editButtonImgRef.current.src = "/edit.svg";
+        editButtonImgRef.current.src = "client/public/assets/edit.svg";
         editButtonRef.current.style.backgroundColor = "teal";
       } catch (error) {
         alertMessage("Unable to add the activity");
@@ -158,10 +158,10 @@ export default function Activity(props) {
       <div className="activity ab" id="actPriority"> <p className="activityContent editable" ref={actPriorityRef}>{props.priority}</p> </div>
       <div className="activity ab abstatus"> <div className="activityStatus" style={{backgroundColor:getBackgroundColor()}} ></div></div>
       <button className="modifyIcon" id="editButton" ref={editButtonRef} onClick={(event) => editActivity(event, props.id)}>
-        <img id="editButtonImg" className="asset" src="/edit.svg" alt="edit" ref={editButtonImgRef}/>
+        <img id="editButtonImg" className="asset" src="client/public/assets/edit.svg" alt="edit" ref={editButtonImgRef}/>
       </button>
       <button type="button" className="modifyIcon" id="deleteButton" onClick={(event) => deleteActivity(event, props.id)} ref={deleteButtonRef}>
-        <img id="deleteButtonImg" className="asset" src="/trash.svg" alt="delete"/>
+        <img id="deleteButtonImg" className="asset" src="client/public/assets/trash.svg" alt="delete"/>
       </button>
     </div>
   );

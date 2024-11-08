@@ -38,7 +38,7 @@ export default function Futureactivity(props){
       actPriorityRef.current.contentEditable = "true";
       deleteButtonRef.current.style.visibility = "hidden";
       addButtonRef.current.style.visibility = "hidden";
-      editButtonImgRef.current.src = "/ok.svg";
+      editButtonImgRef.current.src = "client/public/assets/ok.svg";
       editButtonRef.current.style.backgroundColor = "orange";
       document.querySelector(".navbar").style.zIndex = 0
     } else {
@@ -98,7 +98,7 @@ export default function Futureactivity(props){
         actPriorityRef.current.contentEditable = "false";
         deleteButtonRef.current.style.visibility = "visible";
         addButtonRef.current.style.visibility = "visible";
-        editButtonImgRef.current.src = "/edit.svg";
+        editButtonImgRef.current.src = "client/public/assets/edit.svg";
         editButtonRef.current.style.backgroundColor = "teal";
         document.querySelector(".navbar").style.zIndex = "2"
       } catch (error) {
@@ -180,13 +180,13 @@ export default function Futureactivity(props){
       <div className="activity ab" id="actEnd"> <p className="activityContent editable" ref={actEndRef}>{props.endTime}</p> </div>
       <div className="activity ab" id="actPriority"> <p className="activityContent editable" ref={actPriorityRef}>{props.priority}</p> </div>
       <button className="modifyIcon" id="editButton" ref={editButtonRef} onClick={(event) => editActivity(event, props.id)}>
-        <img id="editButtonImg" className="asset" src="/edit.svg" alt="edit" ref={editButtonImgRef}/>
+        <img id="editButtonImg" className="asset" src="client/public/assets/edit.svg" alt="edit" ref={editButtonImgRef}/>
       </button>
       <button type="button" className="modifyIcon" id="deleteButton" onClick={(event) => deleteActivity(event, props.id)} ref={deleteButtonRef}>
-        <img id="deleteButtonImg" className="asset" src="/trash.svg" alt="delete"/>
+        <img id="deleteButtonImg" className="asset" src="client/public/assets/trash.svg" alt="delete"/>
       </button>
       <button className="modifyIcon" id="addButton" ref={addButtonRef} onClick={(event)=>{addActivityBack(event, props.id)}}>
-      <img id="editButtonImg" className="asset" src="/plus.svg" alt="edit"/>
+      <img id="editButtonImg" className="asset" src="client/public/assets/plus.svg" alt="edit"/>
     </button>
     </div> </>
     );

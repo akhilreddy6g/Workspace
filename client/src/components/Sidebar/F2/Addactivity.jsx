@@ -13,7 +13,7 @@ export default function Addactivity(){
       <div className="activityBar ab">End</div>
       <div className="activityBar ab">Priority</div>
       <div className="activityBar ab">Status </div>
-      {state.activityData.length>0 && <div className="activityBar abf"><img className="asset1" src="/controls.svg" alt="controls" onClick={() => {takeAction({type:"changeFilterButton", payload:!state.filterButton});}}/></div>}
+      {state.activityData.length>0 && <div className="activityBar abf"><img className="asset1" src="client/public/assets/controls.svg" alt="controls" onClick={() => {takeAction({type:"changeFilterButton", payload:!state.filterButton});}}/></div>}
     </div>
     <div className={`scrollHideBottom ${state.fthState? "scrollHideBottom1" : "scrollHideBottom2" } ${state.darkMode? "scrollHideBottomDark" : "scrollHideBottomNormal"}`}></div>
     <div className={`addActivityBar ${state.fthState? "addActivityBar1" : "addActivityBar2"}`}>
