@@ -5,7 +5,6 @@ import { apiUrl } from "../../Noncomponents";
 
 export default function Missedactivitysetup(){
     const { state, takeAction } = useContext(featuresTabHook);
-    const isFirstRender = useRef(true);
     const [dates, setDates] = useState([]);
     const [activities, setActivities] = useState([]);
 
@@ -34,16 +33,12 @@ export default function Missedactivitysetup(){
     }
 
     useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-        } else {
-            getData().then(records => {
-                setDates(records.dates);
-                setActivities(records.activities);
-            }).catch(error => {
-                console.error(`error is ${error}`);
-            });
-        }
+        getData().then(records => {
+            setDates(records.dates);
+            setActivities(records.activities);
+        }).catch(error => {
+            console.error(`error is ${error}`);
+        });
     }, [state.updateMissedActivity]);
 
     return (

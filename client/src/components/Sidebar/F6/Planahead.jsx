@@ -1,5 +1,5 @@
 import Weektabs from "./Weektabs"
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect} from "react";
 import featuresTabHook from "../../Noncomponents";
 import Addactivitybar from "./Addactivitybar";
 import Activityheader from "./Activityheader";
@@ -9,7 +9,6 @@ import { apiUrl } from "../../Noncomponents";
 
 export default function Planahead(){ 
     const {state, takeAction} = useContext(featuresTabHook);
-    const isFirstRender = useRef(true);
     const now = futureDate();
     const options = { year: 'numeric', month: 'long', day: 'numeric'}; 
     const data = state.upcomActivityData;
@@ -51,12 +50,8 @@ export default function Planahead(){
     };
 
     useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;}
-        else{
-            alterData();
-        };
-      },[state.updateUpcomActivity, state.actDate]);
+        alterData();
+    },[state.updateUpcomActivity, state.actDate]);
     
     return (<>{state.editUpcActivity && <div className="overLay1"></div>}
     <div className={`planAhead ${state.fthState? "planAhead1" : "planAhead2"}`}>

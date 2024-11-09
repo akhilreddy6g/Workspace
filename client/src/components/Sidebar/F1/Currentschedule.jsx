@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect} from "react";
 import featuresTabHook from "../../Noncomponents";
 import Activitytab from "./Activitytab";
 import Activityframe from "./Activityframe";
@@ -7,7 +7,6 @@ import { apiUrl } from "../../Noncomponents";
 
 export default function CurrentSchedule() {
     const { state, takeAction } = useContext(featuresTabHook);
-    const isFirstRender = useRef(true);
     var data = state.combinedActivityData;
     async function alterData() {
         try {
@@ -38,11 +37,7 @@ export default function CurrentSchedule() {
     }
 
     useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-        } else {
-            alterData();
-        }
+        alterData();
     }, [state.updateActivity]);
 
     if (!state.combinedActivityData || state.combinedActivityData.length === 0) {

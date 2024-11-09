@@ -1,7 +1,7 @@
 import featuresTabHook from "../../Noncomponents";
 import { timeToMinutes } from "../../Noncomponents";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from 'chart.js';
-import { useContext, useEffect, useRef } from 'react';
+import { useContext, useEffect} from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { minutesToHours } from "../../Noncomponents";
 import { apiUrl } from "../../Noncomponents";
@@ -22,7 +22,6 @@ export default function T1() {
     var highPriorityTime = 0;
     var maxhighPriorityTime = 0;
     const actColors = ['red', 'yellow', 'green'];
-    const isFirstRender = useRef(true);
     
     actData.forEach(element => {
         let p = element.activity_priority;
@@ -136,11 +135,7 @@ export default function T1() {
     };
 
     useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-        } else {
-            alterData();
-        }
+        alterData()
     }, [state.updateActivity]);
 
     return (state.trend == "0" && (actData.length > 0 ? (

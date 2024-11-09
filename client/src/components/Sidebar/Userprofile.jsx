@@ -4,7 +4,7 @@ import { useContext } from "react";
 
 export default function Userprofile(props){
     const {state} = useContext(featuresTabHook);
-    return (<div name={props.elementName} className={props.title}><img src={state.darkMode? "src/assets/white-user.svg":"src/assets/user.svg"} id="profilepic" className={`userPic  ${state.darkMode? "profilepic1" : "profilepic2"}`} alt="Profile Picture" /></div>);
+    return (<div name={props.elementName} className={props.title}><img src={state.darkMode? "./assets/white-user.svg":"./assets/user.svg"} id="profilepic" className={`userPic  ${state.darkMode? "profilepic1" : "profilepic2"}`} alt="Profile Picture" /></div>);
 };
 
 Userprofile.propTypes = {

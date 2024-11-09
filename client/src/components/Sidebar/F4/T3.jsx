@@ -1,10 +1,9 @@
-import React, { useEffect, useContext, useRef, useState } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import featuresTabHook from '../../Noncomponents';
 import { apiUrl } from '../../Noncomponents';
 import { BarChart } from '@mui/x-charts/BarChart';
 
 export default function T3() {
-    const isFirstRender = useRef(true);
     const [actData, changeData] = useState([]);
     const [actDates, changeDates] = useState([]);
     const { state } = useContext(featuresTabHook);
@@ -131,10 +130,7 @@ export default function T3() {
     }
 
     useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-            alterData(filter);
-        } else if (state.trend === "2") {
+        if (state.trend === "2") {
             alterData(filter);
         }
     }, [state.trend, filter]);

@@ -1,6 +1,6 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title} from 'chart.js';
 import featuresTabHook from './Noncomponents';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect} from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { timeToMinutes, currentTimeInMinutes } from './Noncomponents';
 import { apiUrl } from './Noncomponents';
@@ -34,7 +34,6 @@ export function Target() {
     const timePeriod = [];
     const borderColors = [];
     var count = 0;
-    const isFirstRender = useRef(true);
 
     actdata.forEach((element, index) => {
         actNames.push((index+1) + ". " + element.activity_name);
@@ -122,10 +121,7 @@ export function Target() {
     };
 
     useEffect(() => {
-        if (isFirstRender.current) {
-          isFirstRender.current = false;
-        } else {
-          alterData()};
+          alterData();
         },[]);  
 
     return (

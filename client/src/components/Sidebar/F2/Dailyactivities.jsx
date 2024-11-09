@@ -6,7 +6,6 @@ import { apiUrl } from "../../Noncomponents";
 export default function Dailyactivities(){
     const {state, takeAction} = useContext(featuresTabHook);
     var data = state.activityData;
-    const isFirstRender = useRef(true);
     async function alterData(){
       const sessionMail = sessionStorage.getItem('email');
       const mail = state.emailId? state.emailId : sessionMail
@@ -27,10 +26,7 @@ export default function Dailyactivities(){
     };
 
     useEffect(() => {
-      if (isFirstRender.current) {
-        isFirstRender.current = false;
-      } else {
-      alterData();}
+      alterData();
     },[state.updateActivity]);
 
     if (!state.activityData || state.activityData === 0) {

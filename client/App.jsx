@@ -1,4 +1,4 @@
-import {useReducer, useLayoutEffect, useRef, useEffect} from 'react';
+import {useReducer, useLayoutEffect} from 'react';
 import Header from './src/components/Header/Header';
 import Features from './src/components/Sidebar/Features';
 import featuresTabHook,{dayStatus} from './src/components/Noncomponents';

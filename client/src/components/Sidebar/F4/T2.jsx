@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useRef, useState } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import featuresTabHook from '../../Noncomponents';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
@@ -7,7 +7,6 @@ import { apiUrl } from '../../Noncomponents';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function T2() {
-    const isFirstRender = useRef(true);
     const [statData, changeData] = useState([]);
     const { state } = useContext(featuresTabHook);
     const [filter, changeFilter] = useState(7);
@@ -102,10 +101,7 @@ export default function T2() {
     };
 
     useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-            alterData(filter);
-        } else if (state.trend === "1") {
+        if (state.trend === "1"){
             alterData(filter);
         }
     }, [state.trend, filter]);
