@@ -1,5 +1,5 @@
 import Weektabs from "./Weektabs"
-import { useContext, useEffect} from "react";
+import { useContext, useEffect, useState} from "react";
 import featuresTabHook from "../../Noncomponents";
 import Addactivitybar from "./Addactivitybar";
 import Activityheader from "./Activityheader";
@@ -9,6 +9,7 @@ import { apiUrl } from "../../Noncomponents";
 
 export default function Planahead(){ 
     const {state, takeAction} = useContext(featuresTabHook);
+    const [loading, setLoading] = useState(true); 
     const now = futureDate();
     const options = { year: 'numeric', month: 'long', day: 'numeric'}; 
     const data = state.upcomActivityData;
@@ -23,10 +24,17 @@ export default function Planahead(){
     };
 
     async function alterData(){
-        const sessionMail = sessionStorage.getItem('email');
-        const mail = state.emailId? state.emailId : sessionMail
-        const res = await apiUrl.get(`/upcoming-activities/${mail}?date=${state.actDate}`);
-        takeAction({type:"changeUpcomActivityData", payload: res.data});
+        try {
+            setLoading(true); 
+            const sessionMail = sessionStorage.getItem('email');
+            const mail = state.emailId? state.emailId : sessionMail
+            const res = await apiUrl.get(`/upcoming-activities/${mail}?date=${state.actDate}`);
+            takeAction({type:"changeUpcomActivityData", payload: res.data});
+        } catch (error) {
+            console.error("Error fetching upcoming activities", error);
+        } finally {
+            setLoading(false); 
+        }
       };
   
     function activityMapping(object, index){
@@ -52,6 +60,10 @@ export default function Planahead(){
     useEffect(() => {
         alterData();
     },[state.updateUpcomActivity, state.actDate]);
+
+    if (loading) {
+        return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText">Loading, please wait...</p></div>;
+    }
     
     return (<>{state.editUpcActivity && <div className="overLay1"></div>}
     <div className={`planAhead ${state.fthState? "planAhead1" : "planAhead2"}`}>

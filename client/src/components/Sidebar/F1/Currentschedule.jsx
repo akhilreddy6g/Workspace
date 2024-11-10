@@ -1,4 +1,4 @@
-import { useContext, useEffect} from "react";
+import { useContext, useEffect, useState } from "react";
 import featuresTabHook from "../../Noncomponents";
 import Activitytab from "./Activitytab";
 import Activityframe from "./Activityframe";
@@ -7,19 +7,23 @@ import { apiUrl } from "../../Noncomponents";
 
 export default function CurrentSchedule() {
     const { state, takeAction } = useContext(featuresTabHook);
+    const [loading, setLoading] = useState(true); 
     var data = state.combinedActivityData;
     async function alterData() {
         try {
+            setLoading(true); 
             const sessionMail = sessionStorage.getItem('email');
-            const mail = state.emailId? state.emailId : sessionMail
+            const mail = state.emailId ? state.emailId : sessionMail;
             const combinedAct = await apiUrl.get(`/combined-activities/${mail}`);
             takeAction({ type: "changeCombinedActivityData", payload: combinedAct.data });
         } catch (error) {
-            console.error("Error fetching combined activities:", error);
+            console.error("Error fetching combined activities", error);
+        } finally {
+            setLoading(false); 
         }
     }
     function activityMapping(object, index) {
-        if (!object || !object.activity_uuid) return null; 
+        if (!object || !object.activity_uuid) return null;
 
         return (
             <Activitytab
@@ -40,11 +44,15 @@ export default function CurrentSchedule() {
         alterData();
     }, [state.updateActivity]);
 
+    if (loading) {
+        return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText">Loading, please wait...</p></div>;
+    }
+
     if (!state.combinedActivityData || state.combinedActivityData.length === 0) {
         return (
             <>
                 <div className={`scheduleDisclaimer ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`}>
-                    <p className="scheduleContext">No schedule to show. Add activities, to view schedule</p>
+                    <p className="scheduleContext">No schedule to show. Add activities to view the schedule.</p>
                 </div>
                 <Currentdayactivity />
             </>

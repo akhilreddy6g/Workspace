@@ -1,6 +1,6 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title} from 'chart.js';
 import featuresTabHook from './Noncomponents';
-import { useContext, useEffect} from 'react';
+import { useContext, useEffect, useState} from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { timeToMinutes, currentTimeInMinutes } from './Noncomponents';
 import { apiUrl } from './Noncomponents';
@@ -34,6 +34,7 @@ export function Target() {
     const timePeriod = [];
     const borderColors = [];
     var count = 0;
+    const [loading, setLoading] = useState(true); 
 
     actdata.forEach((element, index) => {
         actNames.push((index+1) + ". " + element.activity_name);
@@ -50,12 +51,15 @@ export function Target() {
 
     async function alterData(){
         try {
+            setLoading(true); 
             const sessionMail = sessionStorage.getItem('email');
             const mail = state.emailId? state.emailId : sessionMail
             const combinedAct = await apiUrl.get(`/combined-activities/${mail}`);
             takeAction({type:"changeCombinedActivityData", payload: combinedAct.data})
         } catch (error) {
             console.error("Error fetching combined activities:", error);
+        } finally {
+            setLoading(false); 
         }
       };
 
@@ -123,6 +127,10 @@ export function Target() {
     useEffect(() => {
           alterData();
         },[]);  
+
+    if (loading) {
+        return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText">Loading, please wait...</p></div>;
+    }
 
     return (
         <div className='currentTarget'>

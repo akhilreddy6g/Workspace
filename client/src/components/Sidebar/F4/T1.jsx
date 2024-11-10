@@ -1,7 +1,7 @@
 import featuresTabHook from "../../Noncomponents";
 import { timeToMinutes } from "../../Noncomponents";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from 'chart.js';
-import { useContext, useEffect} from 'react';
+import { useContext, useEffect, useState} from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { minutesToHours } from "../../Noncomponents";
 import { apiUrl } from "../../Noncomponents";
@@ -12,6 +12,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, Title, ChartDataLabels);
 export default function T1() {
     const { state, takeAction } = useContext(featuresTabHook);
     const actData = state.combinedActivityData;
+    const [loading, setLoading] = useState(true); 
     var lowPriority = 0;
     var midPriority = 0;
     var highPriority = 0;
@@ -64,11 +65,18 @@ export default function T1() {
     ];
 
     async function alterData() {
-        const sessionMail = sessionStorage.getItem('email');
-        const mail = state.emailId ? state.emailId : sessionMail;
-        const response = await apiUrl.get(`/combined-activities/${mail}`);
-        if(response.data.length>0){
-             takeAction({ type: "changeCombinedActivityData", payload: response.data });
+        try {
+            setLoading(true); 
+            const sessionMail = sessionStorage.getItem('email');
+            const mail = state.emailId ? state.emailId : sessionMail;
+            const response = await apiUrl.get(`/combined-activities/${mail}`);
+            if(response.data.length>0){
+                takeAction({ type: "changeCombinedActivityData", payload: response.data });
+            }
+        } catch (error) {
+            console.error("Error fetching combined activities", error);
+        } finally {
+            setLoading(false); 
         }
     };
 
@@ -137,6 +145,10 @@ export default function T1() {
     useEffect(() => {
         alterData()
     }, [state.updateActivity]);
+
+    if (loading) {
+        return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText">Loading, please wait...</p></div>;
+    }
 
     return (state.trend == "0" && (actData.length > 0 ? (
         <div className='tnpT1' style={{ width: "80vw", height: "70vh", position: "fixed", left: "38vw", top: "25vh"}}>

@@ -8,6 +8,7 @@ import { convertTimeToAmPm } from "../../Noncomponents";
 export default function Setyourday(){
     const {state, takeAction} = useContext(featuresTabHook);
     const [todaySessions, changeSessions] = useState([]);
+    const [loading, setLoading] = useState(true); 
 
     function scheduleSessions(startTimeStr, endTimeStr, breakTime, totalSessions) {
         const startTime = new Date(`1970-01-01T${startTimeStr}`);
@@ -43,15 +44,21 @@ export default function Setyourday(){
     }
 
     async function alterData(){
-        const sessionMail = sessionStorage.getItem('email');
-        const mail = state.emailId? state.emailId : sessionMail
-        const response = await apiUrl.get(`/session-details/${mail}?sessionType=d`);
-        console.log("response is: ", response.data[0]);
-        if(response.data.length>0 && response.data[0].session_version=='n' && response.data[0].session_type=='d'){
-            const sessions = scheduleSessions(response.data[0].session_start_time, response.data[0].session_end_time, response.data[0].break_time, response.data[0].total_sessions);
-            changeSessions(sessions);
-        } else {
-            console.log("Unable to set time period");
+        try {
+            setLoading(true); 
+            const sessionMail = sessionStorage.getItem('email');
+            const mail = state.emailId? state.emailId : sessionMail
+            const response = await apiUrl.get(`/session-details/${mail}?sessionType=d`);
+            if(response.data.length>0 && response.data[0].session_version=='n' && response.data[0].session_type=='d'){
+                const sessions = scheduleSessions(response.data[0].session_start_time, response.data[0].session_end_time, response.data[0].break_time, response.data[0].total_sessions);
+                changeSessions(sessions);
+            } else {
+                console.log("Unable to set time period");
+            }
+        } catch (error) {
+            console.error("Error setting up the day", error);
+        } finally {
+            setLoading(false); 
         }
     }
 
@@ -65,10 +72,14 @@ export default function Setyourday(){
         alterData()
     }, [state.stdState])
 
-     return <>  
-     {todaySessions.length==0 && <div className={`scheduleDisclaimer ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`}>
+    if (loading) {
+        return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText">Loading, please wait...</p></div>;
+    }
+
+    return <>  
+    {todaySessions.length==0 && <div className={`scheduleDisclaimer ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`}>
      <p className="scheduleContext">No sessions to show. Setup sessions and plan your day</p>
-    </div> }
+    </div>}
 
     <div className="sessionTabs" style={{left: state.fthState? "11.5vw" : "4.5vw"}}>
         {todaySessions && todaySessions.length>0 && todaySessions.map(mapping)}

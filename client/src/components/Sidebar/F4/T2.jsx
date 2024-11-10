@@ -10,6 +10,7 @@ export default function T2() {
     const [statData, changeData] = useState([]);
     const { state } = useContext(featuresTabHook);
     const [filter, changeFilter] = useState(7);
+    const [loading, setLoading] = useState(true); 
 
     const options = {
         plugins: {
@@ -72,11 +73,18 @@ export default function T2() {
     };
 
     async function alterData(days) {
-        const sessionMail = sessionStorage.getItem('email');
-        const mail = state.emailId || sessionMail;
-        const response = await apiUrl.get(`/user-statistics/${mail}?days=${days}`);
-        if (response.data.length > 0) {
-            changeData(response.data);
+        try {
+            setLoading(true); 
+            const sessionMail = sessionStorage.getItem('email');
+            const mail = state.emailId || sessionMail;
+            const response = await apiUrl.get(`/user-statistics/${mail}?days=${days}`);
+            if (response.data.length > 0) {
+                changeData(response.data);
+            }
+        } catch (error) {
+            console.error("Error fetching user statistics", error);
+        } finally {
+            setLoading(false); 
         }
     }
 
@@ -105,6 +113,10 @@ export default function T2() {
             alterData(filter);
         }
     }, [state.trend, filter]);
+
+    if (loading) {
+        return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText">Loading, please wait...</p></div>;
+    }
 
     return (
         state.trend === "1" && (statData.length > 0 ? (

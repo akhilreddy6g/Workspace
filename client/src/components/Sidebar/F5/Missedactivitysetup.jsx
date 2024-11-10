@@ -1,5 +1,5 @@
 import featuresTabHook from "../../Noncomponents";
-import { useContext, useEffect, useState, useRef} from "react";
+import { useContext, useEffect, useState} from "react";
 import Missedactivitiesdates from "./Missedactivitiesdates";
 import { apiUrl } from "../../Noncomponents";
 
@@ -7,20 +7,29 @@ export default function Missedactivitysetup(){
     const { state, takeAction } = useContext(featuresTabHook);
     const [dates, setDates] = useState([]);
     const [activities, setActivities] = useState([]);
+    const [loading, setLoading] = useState(true); 
 
     async function getData() {
-        const sessionMail = sessionStorage.getItem('email');
-        const mail = state.emailId? state.emailId : sessionMail
-        const [datesResponse, activitiesResponse] = await Promise.all([
-            apiUrl.get(`/missed-activities-dates/${mail}`),
-            apiUrl.get(`/missed-activities/${mail}`)
-        ]);
-        return {
-            dates: datesResponse.data,
-            activities: activitiesResponse.data
-        };
+        try {
+            setLoading(true); 
+            const sessionMail = sessionStorage.getItem('email');
+            const mail = state.emailId ? state.emailId : sessionMail;
+            const [datesResponse, activitiesResponse] = await Promise.all([
+                apiUrl.get(`/missed-activities-dates/${mail}`),
+                apiUrl.get(`/missed-activities/${mail}`)
+            ]);
+            return {
+                dates: datesResponse.data,
+                activities: activitiesResponse.data
+            };
+        } catch (error) {
+            console.error("Error fetching missed activities", error);
+            return { dates: [], activities: [] };
+        } finally {
+            setLoading(false); 
+        }
     }
-
+    
     function mapping(object, index) {
         const filteredActivities = activities.filter(activity => activity.activity_date.slice(0, 10) === object.activity_date.slice(0, 10));
         return (
@@ -40,6 +49,10 @@ export default function Missedactivitysetup(){
             console.error(`error is ${error}`);
         });
     }, [state.updateMissedActivity]);
+
+    if (loading) {
+        return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText">Loading, please wait...</p></div>;
+    }
 
     return (
         <> 

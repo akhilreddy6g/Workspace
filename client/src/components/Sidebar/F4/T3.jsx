@@ -10,33 +10,41 @@ export default function T3() {
     const [filter, changeFilter] = useState(7);
     const [activity, changeActivity] = useState(null);
     const [actStreaks, changeStreak] = useState(null);
+    const [loading, setLoading] = useState(true); 
     
     async function alterData(days) {
-        const sessionMail = sessionStorage.getItem('email');
-        const mail = state.emailId || sessionMail;
-        const response = await apiUrl.get(`/user-da-progress/${mail}?days=${days}`);
-        const unqDates = response.data.distDates;
-        const lastDate = response.data.lastDate;
-        const unqActivities = response.data.distActivities;
-        const allActivities = response.data.all;
-        const streaks = calculateStreaks(unqActivities, allActivities);
-        changeStreak(streaks);
-        let finalData = new Map();
-        changeData(unqActivities);
-        let unqActBook = {};
-        unqActivities.forEach((element, index) => {
-            unqActBook[element.activity_name] = index + 1;
-        });
-        allActivities.forEach(element => {
-            const index = unqActBook[element.activity_name];
-            const dateKey = element.date_completed.split("T")[0];
-            if (!finalData.has(dateKey)) {
-                finalData.set(dateKey, []);
-            }
-            finalData.get(dateKey).push(index);
-        });
-        const sortedData = Array.from(finalData, ([date, activities]) => ({ date, activities })).sort((a, b) => new Date(b.date) - new Date(a.date));
-        changeDates(sortedData);
+        try {
+            setLoading(true); 
+            const sessionMail = sessionStorage.getItem('email');
+            const mail = state.emailId || sessionMail;
+            const response = await apiUrl.get(`/user-da-progress/${mail}?days=${days}`);
+            const unqDates = response.data.distDates;
+            const lastDate = response.data.lastDate;
+            const unqActivities = response.data.distActivities;
+            const allActivities = response.data.all;
+            const streaks = calculateStreaks(unqActivities, allActivities);
+            changeStreak(streaks);
+            let finalData = new Map();
+            changeData(unqActivities);
+            let unqActBook = {};
+            unqActivities.forEach((element, index) => {
+                unqActBook[element.activity_name] = index + 1;
+            });
+            allActivities.forEach(element => {
+                const index = unqActBook[element.activity_name];
+                const dateKey = element.date_completed.split("T")[0];
+                if (!finalData.has(dateKey)) {
+                    finalData.set(dateKey, []);
+                }
+                finalData.get(dateKey).push(index);
+            });
+            const sortedData = Array.from(finalData, ([date, activities]) => ({ date, activities })).sort((a, b) => new Date(b.date) - new Date(a.date));
+            changeDates(sortedData);
+        } catch (error) {
+            console.error("Error fetching user daily progress", error);
+        } finally {
+            setLoading(false); 
+        } 
     }
 
     function calculateStreaks(unqActivities, allActivities) {
@@ -134,6 +142,10 @@ export default function T3() {
             alterData(filter);
         }
     }, [state.trend, filter]);
+
+    if (loading) {
+        return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText">Loading, please wait...</p></div>;
+    }
 
     return (
         state.trend === "2" && (actData && actData.length > 0 ? (

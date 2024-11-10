@@ -1,16 +1,24 @@
 import featuresTabHook from "../../Noncomponents";
 import Activity from "./Activity";
-import { useContext, useEffect, useRef} from "react";
+import { useContext, useEffect, useState} from "react";
 import { apiUrl } from "../../Noncomponents";
 
 export default function Dailyactivities(){
     const {state, takeAction} = useContext(featuresTabHook);
     var data = state.activityData;
+    const [loading, setLoading] = useState(true); 
     async function alterData(){
-      const sessionMail = sessionStorage.getItem('email');
-      const mail = state.emailId? state.emailId : sessionMail
-      const res = await apiUrl.get(`/activities/${mail}`);
-      takeAction({type:"changeActivityData", payload: res.data})
+        try {
+          setLoading(true); 
+          const sessionMail = sessionStorage.getItem('email');
+          const mail = state.emailId? state.emailId : sessionMail
+          const res = await apiUrl.get(`/activities/${mail}`);
+          takeAction({type:"changeActivityData", payload: res.data})
+        } catch (error) {
+            console.error("Error fetching daily activities", error);
+        } finally {
+            setLoading(false); 
+        }
     };
 
     function activityMapping(object, index){
@@ -28,6 +36,10 @@ export default function Dailyactivities(){
     useEffect(() => {
       alterData();
     },[state.updateActivity]);
+
+    if (loading) {
+      return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText">Loading, please wait...</p></div>;
+    }
 
     if (!state.activityData || state.activityData === 0) {
       return <><div className={`scheduleDisclaimer ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`}><p className="scheduleContext">No daily activities to show. Add activities, to view</p></div><Currentdayactivity /></>;

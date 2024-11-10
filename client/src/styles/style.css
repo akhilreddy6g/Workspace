@@ -1740,4 +1740,33 @@ table, th, td {
     background-color: white;
 }
 
+.loadingSpinner{
+    width: 80vw;
+    height: 80vh;
+    top: 85px;
+    transition: 150ms linear;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loadingText{
+    text-align: center; 
+    font-family: Cambria, Cochin, Georgia, 'Times New Roman', serif;
+    font-size: 16px;
+}
+
+.loadingScreen{
+    background-color: rgba(255, 255, 255, 0.5);
+    width: 100vw;
+    height: 100vh;
+    transition: 150ms linear;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
 /* Others end */
