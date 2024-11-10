@@ -14,7 +14,6 @@ export default function Features() {
 
     async function handleLogout(e) {
         e.preventDefault();
-        setIsLoggingOut(true);
         takeAction({ type: "changeCurrentAction", payload: "logout?" });
         
         const userResponse = await new Promise((resolve) => {
@@ -24,6 +23,7 @@ export default function Features() {
         });
 
         if (userResponse) {
+            setIsLoggingOut(true);
             takeAction({ type: "changeInitialComponentsState", payload: false });
             await apiUrl.post('/logout');
             sessionStorage.clear();
