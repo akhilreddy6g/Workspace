@@ -4,7 +4,6 @@ import { timeToMinutes } from "../../Noncomponents";
 
 export default function Session(props){
     const {state, takeAction} = useContext(featuresTabHook);
-    const [hover, setHover] = useState(false);
     const [progress, setProgress] = useState(0);
     const [remTime, setRemTime] = useState(0);
     const [remBreakTime, setRemBreakTime] = useState(0);
@@ -24,7 +23,7 @@ export default function Session(props){
         if (currentTimeMinutes >= endTimeMinutes) {
             setProgress(100);
             setRemTime('00 : 00');
-        } else if (currentTimeMinutes >= startTimeMinutes && currentTimeMinutes <= endTimeMinutes) {
+        } else if (currentTimeMinutes >= startTimeMinutes && currentTimeMinutes < endTimeMinutes) {
             const totalTime = endTimeMinutes - startTimeMinutes; 
             const timeElapsed = currentTimeMinutes - startTimeMinutes;
             const timeLeft = totalTime - timeElapsed;
@@ -48,7 +47,7 @@ export default function Session(props){
         if (currentTimeMinutes >= endTimeMinutes) {
             setBreakProgress(100);
             setRemBreakTime('00 : 00');
-        } else if (currentTimeMinutes >= startTimeMinutes && currentTimeMinutes <= endTimeMinutes) {
+        } else if (currentTimeMinutes >= startTimeMinutes && currentTimeMinutes < endTimeMinutes) {
             const totalTime = endTimeMinutes - startTimeMinutes; 
             const timeElapsed = currentTimeMinutes - startTimeMinutes;
             const timeLeft = totalTime - timeElapsed;
@@ -64,53 +63,25 @@ export default function Session(props){
         };
     }
 
-    const getBarWidth = (progress) => {
-        const item = sessionStorage.getItem(props.id);
-        return (props.status == null && item == null) ? `${progress}%` : "100%";
+    const getSessionBackgroundColor = () => {
+        if(progress==100){
+            return "black"
+        } else if(progress==0){
+            return "rgb(255, 255, 144)"
+        } else {
+            return "orange"
+        }
     };
 
-    const getBackgroundColor = () => {
-        const item = sessionStorage.getItem(props.id);
-        if (item) {
-            const parsedItem = JSON.parse(item);
-            if (parsedItem.action === "complete") {
-                return 'green';
-            } else if (parsedItem.action === "skip") {
-                return 'red';
-            }
+    const getBreakBackgroundColor = () => {
+        if(breakProgress==100){
+            return "black"
+        }else if(breakProgress==0){
+            return "rgb(255, 255, 144)"
+        } else {
+            return "orange"
         }
-        if (props.status == "0") {
-            return 'red';
-        } else if (props.status == "1") {
-            return 'green';
-        }
-        return 'orange';
     };
-
-    function imgOp(){
-        const item = sessionStorage.getItem(props.id);
-        if (item) {
-            const parsedItem = JSON.parse(item);
-            if (parsedItem.action === "complete") {
-                return './assets/greenok.svg';
-            } else if (parsedItem.action === "skip") {
-                return './assets/redclose.svg';
-            }
-        }
-        if (props.status == "0") {
-            return './assets/redclose.svg';
-        } else if (props.status == "1") {
-            return './assets/greenok.svg';
-        }
-    }
-
-    // function handleMouseEnter() {
-    //     setHover(true); 
-    // }
-
-    // function handleMouseLeave() {
-    //     setHover(false); 
-    // }
 
     function breakQuote(){
         const now = new Date();
@@ -118,19 +89,77 @@ export default function Session(props){
         const startTimeMinutes = timeToMinutes(props.breakStartTime24Hr); 
         const endTimeMinutes = timeToMinutes(props.breakEndTime24Hr); 
         if(remBreakTime=="00 : 00"){
-            return "Break Completed!"
+            return "Break completed!"
         } else if(currentTimeMinutes<startTimeMinutes) {
-            return "Break Yet to Begin!"
+            return "Break yet to begin!"
         } else {
-            return "Take, a Break and Rest Well Champ!"
+            return "Take a break!"
         }
     }
-    
+
+    function activityTab(element, idx){
+        return (
+            <div key={`actName-${idx}`} className="sessionActNames" style={{textAlign:"center", border:"0.1px solid black", backgroundColor:element[1], color:"white", fontSize:"12px"}}>{element[0]}</div>
+        )
+    }
+
+    function stimerBgImage(){
+        const now = new Date();
+        const ct = now.getHours() * 60 + now.getMinutes();
+        const st = timeToMinutes(props.startTime24Hr); 
+        const et = timeToMinutes(props.endTime24Hr); 
+        if(ct >= st && ct < et){
+            return 'linear-gradient(to right ,rgb(42, 42, 243), rgba(144, 10, 144, 0.925))'
+        } else if(remBreakTime=="00 : 00"){
+            return 'linear-gradient(to right, grey, lightgray, grey)'
+        } return '';
+    }
+
+    function stimerColor(){
+        const now = new Date();
+        const ct = now.getHours() * 60 + now.getMinutes();
+        const st = timeToMinutes(props.startTime24Hr); 
+        const et = timeToMinutes(props.endTime24Hr); 
+        if((ct >= st && ct <= et) || ct<st){
+            return 'white'
+        } else {
+            return 'black'
+        }
+    }
+
+    function btimerBgImage(){
+        const now = new Date();
+        const ct = now.getHours() * 60 + now.getMinutes();
+        const st = timeToMinutes(props.breakStartTime24Hr); 
+        const et = timeToMinutes(props.breakEndTime24Hr); 
+        if(ct >= st && ct < et){
+            return 'linear-gradient(to right ,rgb(42, 42, 243), rgba(144, 10, 144, 0.925))'
+        } else if(remBreakTime=="00 : 00"){
+            return 'linear-gradient(to right, grey, lightgray, grey)'
+        } return '';
+    }
+
+    function btimerColor(){
+        const now = new Date();
+        const ct = now.getHours() * 60 + now.getMinutes();
+        const st = timeToMinutes(props.breakStartTime24Hr); 
+        const et = timeToMinutes(props.breakEndTime24Hr); 
+        if((ct >= st && ct < et) || ct<st){
+            return 'white'
+        } else {
+            return 'black'
+        }
+    }
+
     useEffect(() => {
         updateProgress();
         updateBreakProgress();
-        const intervalId = setInterval(updateProgress, 15000); 
-        return () => clearInterval(intervalId);
+        const interval1 = setInterval(updateProgress, 15000); 
+        const interval2 = setInterval(updateBreakProgress, 15000); 
+        return () => {
+            clearInterval(interval1);
+            clearInterval(interval2);
+        };
     }, [props.startTime, props.endTime]);
 
     return (
@@ -139,34 +168,47 @@ export default function Session(props){
         <div className={`session-${props.id} sessionDefault`}>
             <div><p style={{textAlign:"center", margin:"0", backgroundColor:"rgb(255,255,144)", color: "black", borderTopRightRadius:"10px", borderTopLeftRadius:"10px", width:"299px", height:"20px"}}>Session-{props.session}</p></div>
             <div className={`session-c-1-${props.id} sessionSubTab1`}>
-                <div style={{display:"flex", flexDirection:"column", height:"60px", width:"225px", overflow:"scroll"}}>
-                    <div style={{textAlign:"center"}}>Act1</div>
-                    <div style={{textAlign:"center"}}>Act2</div>
-                </div>
+                {props.activityNames.length==0? 
+                <div className="testClass" style={{color:"white", textAlign:"center", display:"flex", alignSelf:"center"}}>
+                 No activities scheduled at this time
+                </div>:
+                <div style={{display:"flex", flexDirection:"column", height:"60px", width:"225px", overflow:"scroll", gap:"2px"}}>
+                    {props.activityNames.map(activityTab)}
+                </div> }
                 <div style={{display:"flex", justifyContent:"center", alignContent:"center", width:"74px", height:"60px", color:"black"}}>
-                    <div style={{textAlign:"center", backgroundColor:"orangered", display:"flex", flexDirection:"column", width:"75px", height:"60px", alignItems:"center", justifyContent:"center"}}><span style={{fontSize:"10px"}}>Time Left</span>{remTime}</div>
+                    <div style={{textAlign:"center", backgroundColor:"teal", display:"flex", flexDirection:"column", width:"75px", height:"59px", alignItems:"center", justifyContent:"center", borderLeft:"0.1px solid black", color:stimerColor(), backgroundImage:stimerBgImage()}}><span style={{fontSize:"10px", color:stimerColor()}}>Time Left</span>{remTime}</div>
                 </div>
             </div>
             <div className={`session-c-2-${props.id} sessionSubTab2`}>
                 <div style={{textAlign:"center", backgroundColor:"rgb(255,255,144)", color:"black", width:"85px", borderBottomLeftRadius:"10px", fontSize:"12px"}}>{props.startTime}</div>
-                <div style={{width:"120px", height:"8px", borderRadius:"5px", backgroundColor:"rgb(255,255,144)", boxShadow: "0 0 3px black" , display:"flex", alignSelf:"center"}}></div>
+                <div style={{width:"120px", height:"12px", borderRadius:"5px", backgroundColor:"rgb(255,255,144)", boxShadow: "0 0 0.1px black", border:"0.1px solid black", display:"flex", alignSelf:"center"}}>
+                    <div className="fillBar" style={{width: progress+'%', backgroundColor: getSessionBackgroundColor(), borderRadius:"5px"}}>
+                    {(progress>10 && <div className="activityCurrentStatus1" style={{backgroundColor:"white"}}></div>)}
+                    {progress==100 && <img className="activityStatusImg1" src='./assets/greenok.svg' alt="activityStatus" />}
+                    </div>
+                </div>
                 <div style={{textAlign:"center", backgroundColor:"rgb(255,255,144)", color:"black", width:"85px", borderBottomRightRadius:"10px", fontSize:"12px"}}>{props.endTime}</div>
             </div>
         </div>
         <div className="breakContainer">
             <div><p style={{textAlign:"center", margin:"0", backgroundColor:"rgb(255,255,144)", color: "black", borderTopRightRadius:"10px", borderTopLeftRadius:"10px", width:"299px", height:"20px"}}>Break-{props.session}</p></div>
             <div className={`session-c-2-${props.id} sessionSubTab1 breakSubT1`}>
-                <div style={{display:"flex", flexDirection:"column", width:"225px", height:"60px", justifyContent:"center", overflow:"scroll"}}>
+                <div style={{display:"flex", flexDirection:"column", width:"225px", height:"60px", justifyContent:"center", overflow:"scroll", gap:"2px"}}>
                     <div style={{textAlign:"center", display:"flex", alignSelf:"center"}}>{breakQuote()}</div>
                 </div>
                 <div style={{display:"flex", justifyContent:"center", alignContent:"center", width:"74px", height:"60px", color:"black"}}>
-                <div style={{textAlign:"center", backgroundColor:"orangered", display:"flex", flexDirection:"column", width:"75px", height:"60px", alignItems:"center", justifyContent:"center"}}><span style={{fontSize:"10px"}}>Time Left</span>{remBreakTime}</div>
+                <div style={{textAlign:"center", backgroundColor:"teal", display:"flex", flexDirection:"column", width:"75px", height:"59px", alignItems:"center", justifyContent:"center", borderLeft:"0.1px solid black",color:btimerColor(), backgroundImage:btimerBgImage()}}><span style={{fontSize:"10px", color:btimerColor()}}>Time Left</span>{remBreakTime}</div>
                 </div>
             </div>
             <div className={`session-c-2-${props.id} sessionSubTab2 breakSubT2`}>
-                <div style={{textAlign:"center", backgroundColor:"rgb(255,255,144)", color:"black", width:"6vw", borderBottomLeftRadius:"10px", fontSize:"12px"}}>{props.breakStartTime}</div>
-                <div style={{width:"8vw", height:"10px", borderRadius:"5px", backgroundColor:"rgb(255,255,144)", boxShadow: "0 0 3px black", display:"flex", alignSelf:"center"}}></div>
-                <div style={{textAlign:"center", backgroundColor:"rgb(255,255,144)", color:"black", width:"6vw", borderBottomRightRadius:"10px", fontSize:"12px"}}>{props.breakEndTime}</div>
+                <div style={{textAlign:"center", backgroundColor:"rgb(255,255,144)", color:"black", width:"85px", borderBottomLeftRadius:"10px", fontSize:"12px"}}>{props.breakStartTime}</div>
+                <div style={{width:"120px", height:"12px", borderRadius:"5px", backgroundColor:"rgb(255,255,144)", boxShadow: "0 0 0.1px black", border:"0.1px solid black", display:"flex", alignSelf:"center"}}>
+                    <div className="fillBar" style={{width: breakProgress+'%', backgroundColor: getBreakBackgroundColor(), borderRadius:"5px"}}>
+                    {(breakProgress>10 && <div className="activityCurrentStatus1" style={{backgroundColor:"white"}}></div>)}
+                    {breakProgress==100 && <img className="activityStatusImg1" src='./assets/greenok.svg' alt="activityStatus" />}
+                    </div>
+                </div>
+                <div style={{textAlign:"center", backgroundColor:"rgb(255,255,144)", color:"black", width:"85px", borderBottomRightRadius:"10px", fontSize:"12px"}}>{props.breakEndTime}</div>
             </div>
         </div>
     </div>

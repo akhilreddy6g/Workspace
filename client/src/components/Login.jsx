@@ -67,7 +67,7 @@ export default function Login() {
 
   return (loading ? (
     <div className="loadingScreen">
-      <p className='loadingText'>Logging you in...</p>
+      <p className='loadingText' style={{color: state.darkMode? 'white' : 'black'}}>Logging you in...</p>
     </div>
   ) : ( <div className='homepage'>
       <div className='appTitleContainer'>

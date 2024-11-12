@@ -1,14 +1,16 @@
-import {useContext, useState, useEffect} from "react";
+import {useContext, useState, useEffect, useRef} from "react";
 import featuresTabHook from "../../Noncomponents";
 import Sessionsetup from "./Sessionsetup";
 import Session from "./Session";
 import { apiUrl } from "../../Noncomponents";
 import { convertTimeToAmPm } from "../../Noncomponents";
+import { timeToMinutes } from "../../Noncomponents";
 
 export default function Setyourday(){
     const {state, takeAction} = useContext(featuresTabHook);
     const [todaySessions, changeSessions] = useState([]);
-    const [loading, setLoading] = useState(true); 
+    const [loading, setLoading] = useState(false); 
+    const tempActivities = useRef([]);
 
     function scheduleSessions(startTimeStr, endTimeStr, breakTime, totalSessions) {
         const startTime = new Date(`1970-01-01T${startTimeStr}`);
@@ -16,12 +18,42 @@ export default function Setyourday(){
         const totalMinutes = (endTime - startTime) / (1000 * 60);
         const totalBreakTime = breakTime * totalSessions;
         const sessionDuration = Math.floor((totalMinutes - totalBreakTime) / totalSessions);
-        let currentTime = new Date(startTime);
+        let currentTime = startTime;
+        let presentTime = new Date();
         const schedule = [];
         for (let i = 0; i < totalSessions; i++) {
             let sessionEndTime = new Date(currentTime.getTime() + sessionDuration * 60 * 1000);
             let breakStartTime = new Date(sessionEndTime);
             let breakEndTime = new Date(breakStartTime.getTime() + breakTime * 60 * 1000);
+            let activityInfo = [];
+            if(tempActivities.current.length>0){
+                tempActivities.current.forEach(element => {
+                    let nameAndColor = [];
+                    let ast = timeToMinutes(formatTime(new Date(`1970-01-01T${element.activity_start_time}`)));
+                    let aet = timeToMinutes(formatTime(new Date(`1970-01-01T${element.activity_end_time}`)));
+                    let bet = timeToMinutes(formatTime(breakEndTime));
+                    let sst = timeToMinutes(formatTime(currentTime));
+                    let set = timeToMinutes(formatTime(breakEndTime));
+                    let pt = timeToMinutes(formatTime(presentTime));
+                    if(ast>=sst && ast<bet){
+                        nameAndColor.push(element.activity_name);
+                        if(element.activity_status==1){
+                            nameAndColor.push('green');
+                        } else if(element.activity_status==0){
+                            nameAndColor.push('red');
+                        } else if(sst>pt){
+                            nameAndColor.push('black');
+                        } else if(pt>sst && pt<set) {
+                            nameAndColor.push('orange');
+                        } else if(element.activity_status!=1 && pt>set) {
+                            nameAndColor.push('red');
+                        }
+                    }
+                    if(nameAndColor.length>0){
+                        activityInfo.push(nameAndColor);
+                    }
+                });
+            }
             schedule.push({
                 session: i + 1,
                 sessionStart: convertTimeToAmPm(formatTime(currentTime)),
@@ -32,11 +64,13 @@ export default function Setyourday(){
                 sessionEnd24Hr: formatTime(sessionEndTime),
                 breakStart24Hr: formatTime(breakStartTime),
                 breakEnd24Hr: formatTime(breakEndTime),
+                activityList: activityInfo,
             });
             currentTime = new Date(breakEndTime);
         }
         return schedule;
     }
+
     function formatTime(date) {
         const hours = date.getHours().toString().padStart(2, '0');
         const minutes = date.getMinutes().toString().padStart(2, '0');
@@ -45,7 +79,6 @@ export default function Setyourday(){
 
     async function alterData(){
         try {
-            setLoading(true); 
             const sessionMail = sessionStorage.getItem('email');
             const mail = state.emailId? state.emailId : sessionMail
             const response = await apiUrl.get(`/session-details/${mail}?sessionType=d`);
@@ -62,18 +95,35 @@ export default function Setyourday(){
         }
     }
 
+    async function alterData1(){
+        try {
+            const sessionMail = sessionStorage.getItem('email');
+            const mail = state.emailId? state.emailId : sessionMail
+            const combinedAct = await apiUrl.get(`/combined-activities/${mail}`);
+            takeAction({ type: "changeCombinedActivityData", payload: combinedAct.data });
+            tempActivities.current = combinedAct.data;
+        } catch (error) {
+            console.error("Error retrieving the combined activities", error);
+        } finally {
+            setLoading(false); 
+        }
+    }
+
     function mapping(object, index){
         return (
-            <Session key={`sessionContainer-${index}`} id={index} session={object.session} startTime={object.sessionStart} endTime={object.sessionEnd} breakStartTime={object.breakStart} breakEndTime={object.breakEnd} startTime24Hr={object.sessionStart24Hr} endTime24Hr={object.sessionEnd24Hr} breakStartTime24Hr={object.breakStart24Hr} breakEndTime24Hr={object.breakEnd24Hr}></Session>
+            <Session key={`sessionContainer-${index}`} id={index} session={object.session} startTime={object.sessionStart} endTime={object.sessionEnd} breakStartTime={object.breakStart} breakEndTime={object.breakEnd} startTime24Hr={object.sessionStart24Hr} endTime24Hr={object.sessionEnd24Hr} breakStartTime24Hr={object.breakStart24Hr} breakEndTime24Hr={object.breakEnd24Hr} activityNames={object.activityList}></Session>
         )
     }
 
     useEffect(()=>{
-        alterData()
+        if(!state.stdState){
+            alterData();
+            alterData1();
+        }
     }, [state.stdState])
 
     if (loading) {
-        return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText">Loading, please wait...</p></div>;
+        return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText" style={{color: state.darkMode? 'white' : 'black'}}>Loading, please wait...</p></div>;
     }
 
     return <>  
@@ -81,7 +131,7 @@ export default function Setyourday(){
      <p className="scheduleContext">No sessions to show. Setup sessions and plan your day</p>
     </div>}
 
-    <div className="sessionTabs" style={{left: state.fthState? "11.5vw" : "4.5vw"}}>
+    <div className="sessionTabs" style={{left: state.fthState? "175px" : "75px"}}>
         {todaySessions && todaySessions.length>0 && todaySessions.map(mapping)}
     </div>
      {state.stdState? 

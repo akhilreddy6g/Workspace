@@ -58,7 +58,7 @@ const verifyToken = (req, res, next) => {
     });
   };
 
-  app.post("/authenticate/:email", async (req, res) => {
+app.post("/authenticate/:email", async (req, res) => {
     const startTimeRequest = Date.now();
     try {
         const email = req.params.email;
@@ -83,7 +83,7 @@ const verifyToken = (req, res, next) => {
             }
             const refreshToken = jwt.sign({ email: user.rows[0].user_email }, REFRESH_SECRET, { expiresIn: '30d' });
             const accessToken = jwt.sign({ email: user.rows[0].user_email }, JWT_SECRET, { expiresIn: '15m' });
-            res.cookie('_auth', refreshToken, { httpOnly: true, secure: true, sameSite: 'Strict', maxAge: 1000 * 60 * 60 * 24 * 30});
+            res.cookie('_auth', refreshToken, { httpOnly: true, secure: true, sameSite: 'Strict', maxAge: 1000 * 60 * 60 * 24});
             console.info({ message: "Authentication successful", email: email, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms` });
             console.log(logSuffix);
             return res.status(200).json({ isAuthenticated: true, token: accessToken});
@@ -941,6 +941,9 @@ app.post("/setup-sessions/:email", verifyToken, async (req, res) => {
     try {
         const email = req.params.email;
         const { startTime, endTime, totalSessions, breakTime, sessionType, sessionVersion } = req.body.data;
+        console.log("starttime:", startTime);
+        // updatedActDate.setHours(updatedActDate.getHours() - 4);
+        // const finalDate = updatedActDate.toISOString().split('T')[0];
         console.log(logPrefix);
         console.info({ message: 'Incoming request to schedule sessions for today', timestamp: new Date().toISOString(), method: req.method, path: req.originalUrl, params: req.params, queryParams: req.query, userAgent: req.headers['user-agent'] });
         try {
@@ -1004,6 +1007,22 @@ app.get("/session-details/:email", verifyToken, async (req, res) => {
         console.log(logSuffix);
         return res.status(200).json({ message: 'Bad Request' }); 
     }
+})
+
+app.post("/run-cron", async (req, res)=>{
+    try {
+        const reqApiKey = process.env.CRON_JOB_API_KEY;
+        const apiKey = req.headers['api-key'];
+        if (reqApiKey && apiKey && reqApiKey !== apiKey) {
+            return res.status(403).send('Unauthorized');
+        }
+        else {
+            return res.status(200).send('Successfully activated server');
+        }
+    } catch (error) {
+        return res.status(200).send('Failed to activate server: ', error);
+    }
+    
 })
 
 cron.schedule('0 0 * * *', async () => {

@@ -47,7 +47,7 @@ export default function Features(){
     <Feature id="6" featureName="planAhead" title="Plan Ahead" show="pa" path="/plan-ahead"></Feature>
     <Feature id="7" featureName="setYourDay" title="Set Your Day" show="syd" path="/set-your-day"></Feature></div>
     <div style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
-    <button className="submitActivity" onClick={(event)=>{handleLogout(event)}} style={{width:"100px", height:"30px", fontSize:"16px", position:"fixed", top:"90vh"}}>Log Out</button>
+    <button className="submitActivity" onClick={(event)=>{handleLogout(event)}} style={{width:"100px", height:"30px", fontSize:"16px", position:"fixed", top:"90vh", zIndex:"2"}}>Log Out</button>
     </div>
     </div>);
 }

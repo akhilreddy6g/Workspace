@@ -23,12 +23,14 @@ const DateTimeDisplay = () => {
 
   return (
     <div className="dateTimeDisplay">
+      <div className="dtdSubContainer">
       <Typography sx={{color:"orange", display: "flex",justifyContent: "center", fontFamily:"Cambria, Cochin, Georgia, Times, 'Times New Roman', serif", textShadow:"0 0 5px black"}} variant="h3">
         {currentDateTime.toLocaleTimeString()} 
       </Typography>
       <Typography sx={{color:"orange", display: "flex",justifyContent: "center", fontFamily:"Cambria, Cochin, Georgia, Times, 'Times New Roman', serif",  textShadow:"0 0 5px black"}} variant="h5">
         {`${currentDateTime.toLocaleDateString()}, ${getDayOfWeek(currentDateTime.getDay())}`} 
       </Typography>
+      </div>
     </div>
   );
 };

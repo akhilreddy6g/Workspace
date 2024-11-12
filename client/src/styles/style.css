@@ -218,6 +218,7 @@ label{
     width: 22px;
     height: 22px;
     margin: 5px;
+    cursor: pointer;
 }
 
 .targetContainer{
@@ -248,6 +249,10 @@ label{
 
 #titlelink{
     color: white;
+    display: flex;
+    flex-grow: 1;
+    justify-content: flex-end;
+    margin-left: 0;
 }
 
 #titlelink:hover{
@@ -264,7 +269,7 @@ label{
     overflow: auto;
     background-color: rgb(207, 206, 206);
     position: fixed;
-    z-index: -1;
+    z-index: 1;
     margin-top: 13px;
 }
 
@@ -490,9 +495,19 @@ label{
 /* Schedule Start */
 
 .dateTimeDisplay{
-    position: absolute;
-    left: 81vw;
-    width: 200px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: flex-end;
+    align-items: end;
+    padding-right: 20px;
+    width: 0px;
+}
+
+.dtdSubContainer{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
 
 .scheduleDisclaimer{
@@ -716,7 +731,6 @@ label{
     font-family: Cambria, Cochin, Georgia, 'Times New Roman', serif;
     font-size: 18px;
     border-radius: 10px;
-    transition: 150ms linear;
 }
 
 .addCurrentActivityButton{
@@ -1586,7 +1600,28 @@ table, th, td {
     flex-direction: row;
     width: 620px;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0;
 }
+
+@media (max-width: 670px) {
+    .sessionAndBreakContainer {
+        gap: 40px;
+    }
+}
+
+@media (max-width: 740px) {
+    .dateTimeDisplay{
+        display: none;
+    }
+}
+
+@media (max-width: 740px) {
+    #titlelink{
+        justify-content: center;
+    }
+}
+
 
 .sessionDefault{
     width: 300px;
@@ -1598,7 +1633,7 @@ table, th, td {
 }
 
 .sessionSubTab1{
-    width: 300px;
+    width: 299px;
     height: 60px;
     display: flex;
     flex-direction: row;
@@ -1636,6 +1671,7 @@ table, th, td {
     align-items: center;
     padding-top: 20px;
     flex-wrap: wrap;
+    align-content: flex-start;
 }
 
 .breakConDefault{
@@ -1657,6 +1693,24 @@ table, th, td {
     border-radius: 10px;
     border: 0.1px solid black;
 }
+
+.activityCurrentStatus1{
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: "white" !important;
+    border: 0.2px solid black;
+    display: flex;
+    justify-content: center;
+}
+
+.activityStatusImg1{
+    position: absolute;
+    height: 11px;
+    width: 11px;
+}
+
 
 /* Form Styling Start */
 
@@ -1744,11 +1798,11 @@ table, th, td {
     width: 80vw;
     height: 80vh;
     top: 85px;
-    transition: 150ms linear;
     position: fixed;
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: -1;
 }
 
 .loadingText{
@@ -1767,6 +1821,5 @@ table, th, td {
     align-items: center;
     justify-content: center;
 }
-
 
 /* Others end */
