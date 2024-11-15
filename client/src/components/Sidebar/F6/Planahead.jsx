@@ -66,11 +66,11 @@ export default function Planahead(){
     }
     
     return (<>{state.editUpcActivity && <div className="overLay1"></div>}
-    <div className={`planAhead ${state.fthState? "planAhead1" : "planAhead2"}`}>
+    <div className="planAhead">
         {dates.map(mapping)}
         <Activityheader></Activityheader>
-        {(state.addUpcActState ? <div className={`addActivityBar ${state.fthState? "addActivityBar1" : "addActivityBar2"}`}>
-        <Addactivitybar></Addactivitybar> </div> : <div className={`currentActivities ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`}>
-        <button className="addCurrentActivityButton" onClick={()=>{takeAction({type:"changeAddUpcActState", payload:true})}}><p  className="upcDate"> Add Activities on <span /*className="dateSpan"*/>{state.actDate.toLocaleDateString('en-US', options)}</span></p></button> </div>
-    )}</div> {data && data.length>0 && <div className={`activityContainer ${state.fthState? "activityContainer1" : "activityContainer2"} ${state.editUpcActivity && "activityContainer3"}`} style={{top: "225px"}} id="actContainer">{data.map(activityMapping)}</div>}</>)
+        {(state.addUpcActState ? <div className="addActivityBar">
+        <Addactivitybar></Addactivitybar> </div> : <div className="currentActivities">
+        <button className="addCurrentActivityButton" onClick={()=>{takeAction({type:"changeAddUpcActState", payload:true})}}><p  className="upcDate"> Add Activities on <span >{state.actDate.toLocaleDateString('en-US', options)}</span></p></button> </div>
+    )}</div> {data && data.length>0 && <div className={`activityContainer ${state.editUpcActivity && "activityContainer3"}`} style={{top: "225px"}} id="actContainer">{data.map(activityMapping)}</div>}</>)
 };

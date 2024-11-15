@@ -129,15 +129,17 @@ export function Target() {
         },[]);  
 
     if (loading) {
-        return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText" style={{color: state.darkMode? 'white' : 'black'}}>Loading, please wait...</p></div>;
+        return <div className="loadingSpinner" ><p className="loadingText" style={{color: state.darkMode? 'white' : 'black'}}>Loading, please wait...</p></div>;
     }
 
     return (
-        <div className='currentTarget'>
-            <Doughnut
-                data={data}
-                options={options}
-            />
+        <div className="currentTarget">
+            <div className="targetContainer" style={{width:"80vw", height:"80vh", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                <Doughnut
+                    data={data}
+                    options={options}
+                />
+            </div>
         </div>
     );
 };

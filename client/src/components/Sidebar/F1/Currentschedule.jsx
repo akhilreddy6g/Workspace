@@ -51,7 +51,7 @@ export default function CurrentSchedule() {
     if (!state.combinedActivityData || state.combinedActivityData.length === 0) {
         return (
             <>
-                <div className={`scheduleDisclaimer ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`}>
+                <div className="scheduleDisclaimer">
                     <p className="scheduleContext">No schedule to show. Add activities to view the schedule.</p>
                 </div>
                 <Currentdayactivity />
@@ -61,10 +61,11 @@ export default function CurrentSchedule() {
 
     return (
         <>
-            <div className={`activityListHView ${state.fthState ? "activityListHView1" : "activityListHView2"}`}>
-                {data && data.length > 0 && data.map(activityMapping)}
-            </div>
-            {data && data.length > 0 && (
+            <div className="activityListHViewFrame">
+                <div className="activityListHView">
+                    {data && data.length > 0 && data.map(activityMapping)}
+                </div>
+                {data && data.length > 0 && (
                 <Activityframe
                     id={state.csActivityIndex != null && state.combinedActivityData[state.csActivityIndex] ? state.combinedActivityData[state.csActivityIndex].activity_uuid : state.combinedActivityData[0]?.activity_uuid}
                     key={state.csActivityIndex != null && state.combinedActivityData[state.csActivityIndex] ? state.combinedActivityData[state.csActivityIndex].activity_uuid : state.combinedActivityData[0]?.activity_uuid}
@@ -77,6 +78,7 @@ export default function CurrentSchedule() {
                     status={ state.csActivityIndex != null && state.combinedActivityData[state.csActivityIndex] ? state.combinedActivityData[state.csActivityIndex].activity_status : state.combinedActivityData[0]?.activity_status }
                 />
             )}
+            </div>
             <Currentdayactivity />
         </>
     );

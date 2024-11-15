@@ -152,7 +152,7 @@ export default function Activity(props) {
   return (
     <div className={`soloActivityBar ${state.darkMode ? "soloActivityBarDark" : "soloActivityBarNormal"}`} id={`activity-${props.id}`} ref={activityRef}>
       <div className="activity abid" id="actNo"> <p className="activityContent">{props.sno}</p></div>
-      <div className="activity aba" id="actName"> <p className="activityContent editable" ref={actNameRef}>{props.activity}</p> </div>
+      <div className="activity aba" id="actName"> <p className="activityContent editable" id='specialElement' ref={actNameRef}>{props.activity}</p> </div>
       <div className="activity ab" id="actStart"> <p className="activityContent editable" ref={actStartRef}>{props.startTime}</p> </div>
       <div className="activity ab" id="actEnd"> <p className="activityContent editable" ref={actEndRef}>{props.endTime}</p> </div>
       <div className="activity ab" id="actPriority"> <p className="activityContent editable" ref={actPriorityRef}>{props.priority}</p> </div>

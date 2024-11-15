@@ -32,6 +32,7 @@ label{
     display: flex;
     flex-direction: row;
     font-family: Cambria, Cochin, Georgia, Times New Roman, serif;
+    overflow: scroll;
   }
   
 .appTitleContainer {
@@ -52,14 +53,12 @@ label{
 
 .appCaption{
     font-weight: bolder;
-    font-size: 22px;
     color: orange;
     text-shadow: 1px 1px 5px black;
 }
 
 .appTitle {
     color: white;
-    font-size: 120px;
     font-weight: bolder;
     text-shadow: 1px 1px 5px black;
     font-family: Cambria, Cochin, Georgia, Times New Roman, serif;
@@ -74,12 +73,12 @@ label{
 }
 
 .loginSetup {
-    height: 400px;
     width: 350px;
     gap: 30px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    min-width: 250px;
 }
 
 .loginTitle {
@@ -102,12 +101,6 @@ label{
     justify-content: space-evenly;
     width: 400 px;
 }
-
-/* .loginSubmitButton:hover{
-    transform: scale(1.02);
-    background-color: rgb(1, 105, 105);
-} */
-
 
 .emailContainer, .passwordContainer{
     display: flex;
@@ -154,8 +147,9 @@ label{
 .signUpNDemoContainer {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-around;
     gap: 20px;
+    width: 100%;
 }
 
 .signUpButton, .demoButton {
@@ -179,6 +173,77 @@ label{
     font-size: 22px;
 }
   
+@media (max-width: 1000px){
+    .homepage{
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .authContainer{
+        border-radius: 10px;
+    }
+}
+
+@media (max-width: 600px){
+    .appTitle{
+        font-size: 70px;
+    }
+    .authContainer{
+        min-width: 300px;
+    }
+    .emailContainer, .passwordContainer, .loginSubmitButtonContainer{
+        width: 250px;
+    }
+    .userInfoForm{
+        align-items: center;
+    }
+    .emailInput, .passwordInput, .loginSubmitButton{
+        font-size: 12px !important;
+    }
+
+    .loginTitle{
+        font-size: 25px !important;
+    }
+
+    .signUpNDemoContainer{
+        font-size: 10px !important;
+    }
+
+    .emailIcon{
+        margin-left: 4px;
+        margin-right: 4px;
+    }
+
+    .loginSetup{
+        height: 320px;
+    }
+}
+
+@media (max-width: 450px){
+    .emailContainer, .passwordContainer, .loginSubmitButtonContainer{
+        width: 250px;
+    }
+
+    .userInfoForm{
+        align-items: center;
+    }
+
+    .signUpNDemoContainer{
+        width: 250px;
+    }
+}
+
+@media (min-width: 600px){
+    .appTitle{
+        font-size: 120px;
+    }
+
+    .authContainer{
+        min-width: 400px;
+    }
+}
 
 /* Login End */
 
@@ -233,12 +298,13 @@ label{
 }
 
 .currentTarget{
-    width: 80vw;
-    height: 80vh;
+    width: 100vw;
+    height: 100vh;
     position: fixed;
-    left: 33vw;
-    top: 15vh;
-    overflow: clip;
+    top: 63px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #titlename{
@@ -383,13 +449,18 @@ label{
     display: flex;
     flex-direction: column;
     position: fixed;
-    top: calc(50% - 100px);
-    left: calc(50% - 100px);
     background-color: rgb(48,48,48);
     z-index: 10 !important;
     border: 1px solid black;
     border-radius: 25px;
     color: white;
+    top: 45vh;
+}
+
+.disclaimerFrame{
+    display: flex;
+    align-items: center; 
+    justify-content: center;
 }
 
 .disclaimerContainer1{
@@ -511,41 +582,31 @@ label{
 }
 
 .scheduleDisclaimer{
-    width: 80vw;
+    width: 100vw;
     height: 30px;
-    background-color: rgb(255, 255, 144);
-    border: 0.2px solid black;
     position: fixed;
     top: 85px;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    padding: 0;
-    font-size: 20px;
-    font-family : Cambria, Cochin, Georgia, 'Times New Roman', serif;
-    border-radius: 10px;
     transition: 150ms linear;
 }
 
-.scheduleDisclaimer1{
-    left: 17vw;
-}
-
-.scheduleDisclaimer2{
-    left: 10vw;
-}
-
 .scheduleContext{
-    display: flex;
-    align-items: center;
-    padding-top: 10px;
+    height: 100%;
+    margin: 0;
+    width: 80%;
+    background-color: rgb(255, 255, 144);
+    border: 0.2px solid black;
+    font-size: 20px;
+    font-family : Cambria, Cochin, Georgia, 'Times New Roman', serif;
+    border-radius: 10px;
+    text-align: center;
 }
 
 .activityListHView{
     width: 80vw;
-    position: fixed;
-    top: 76px;
     display: flex;
     flex-direction: row;
     gap: 10px;
@@ -559,13 +620,13 @@ label{
     transition: 150ms linear;
 }
 
-.activityListHView1{
-    left: 16.8vw;
-}
-
-.activityListHView2{
-    left: 9.8vw;
-}
+.activityListHViewFrame {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    top: 76px;
+    width: 100vw;
+  }
 
 .activityListHView::-webkit-scrollbar {
     width: 0;
@@ -584,6 +645,8 @@ label{
 }
 
 .activitiesInCurrentSchedule{
+    all: unset;
+    cursor: pointer;
     background-color:rgb(255, 255, 144);
     border-radius: 10px;
     border: 0.2px solid black;
@@ -629,7 +692,7 @@ label{
 
 .timeLeftContent{
     font-size: 10px; 
-    position: absolute; 
+    position: relative; 
     width: 90px;
 }
 
@@ -649,7 +712,7 @@ label{
 }
 
 .activityCurrentStatus {
-    position: absolute;
+    position: relative;
     width: 14px;
     height: 14px;
     border-radius: 50%;
@@ -685,22 +748,34 @@ label{
 }
 
 .prevActivity{
-    position:fixed; 
-    top: 55vh; 
     height:50px; 
     width:23px; 
     transition: 150ms linear;
 }
 
+.moveButtons{
+    width: 85vw;
+    display: flex;
+    justify-content: space-between;
+}
+
+.buttonContainer{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    position: fixed;
+    align-items: center;
+    justify-content: center;
+    z-index: -1;
+}
+
 .activityDescription{
-    position: absolute;
-    top: 38vh;
-    left: 69vw;
-    width: 10vw;
-    height: 23vh;
+    width: 150px;
+    height: 150px;
     overflow: scroll;
     text-align: start;
     border-radius: 10px;
+    margin-top: 10px;
 }
 
 .notes{
@@ -714,46 +789,54 @@ label{
 }
 
 .nextActivity{
-    position: fixed;
-    top: 55vh;
     height: 50px;
     width: 23px;
     transition: 150ms linear;
 }
 
 .currentActivities{
-    width: 80vw;
+    width: 100vw;
     position: fixed;
     top: 93vh ;
     text-align: center;
-    background-color: rgb(255, 255, 144);
-    border: 0.2px solid black;
-    font-family: Cambria, Cochin, Georgia, 'Times New Roman', serif;
-    font-size: 18px;
-    border-radius: 10px;
+    display: flex;
+    justify-content: center;
 }
 
 .addCurrentActivityButton{
     all: unset;
     cursor: pointer;
-    width: 100%;
+    width: 80%;
+    border: 0.2px solid black;
+    font-family: Cambria, Cochin, Georgia, 'Times New Roman', serif;
+    font-size: 18px;
+    border-radius: 10px;
+    background-color: rgb(255, 255, 144);
 }
 
 .csButtons{
     height: 30px;
-    width: 10vw;
+    width: 120px;
     border-radius: 10px;
     border: 0.2px solid black;
     font-family: Cambria, Cochin, Georgia, 'Times New Roman', serif;
+    min-width: 120px;
 }
 
 .csButtonsContainer{
     display: flex; 
     flex-direction: column; 
     gap: 1vh; 
-    position: relative; 
-    top: 2vh; 
-    left: 69vw;
+    width: fit-content;
+    justify-content: center;
+    align-items: center;
+    padding-top: 10px;
+    padding-right: 20px;
+}
+
+.csButtonsFrame{
+    display: flex;
+    justify-content: space-between;
 }
 
 .csInfoContainer{
@@ -796,13 +879,263 @@ label{
     border-top-right-radius: 10px
 }
 
+@media (max-width: 1250px){
+    .actFormElement{
+        height: 25px !important;
+        width: 100px !important;
+    }
+
+    .headingPopUp{
+        width: 90px !important;
+    }
+
+    .popUpBar{
+        gap: 1vw !important;
+    }
+
+    .emptyPopUp{
+        padding-right: 22px !important;
+    }
+
+    #abaElement{
+        flex-direction: column !important;
+        margin-bottom: 4px !important;
+        margin-left: 0 !important;
+    }
+
+    .missedActivityDate{
+        width: fit-content !important;
+        font-size: 16px !important;
+        height: 15px !important;
+    }
+}
+
+@media (max-width: 950px){
+    .abs, .abstatus{
+        display: none !important;
+    }
+
+    .asset1{
+        margin-left: 2vw !important;
+    }
+
+    .moveButtons{
+        width: 87vw;
+    }
+
+}
+
+@media(max-width: 500px){
+    .activityDescription{
+        height: 100px !important;
+        width: 200px !important;
+    }
+}
+
+@media (max-width : 780px){
+    .actFormElement{
+        height: 20px !important;
+        width: 80px !important;
+        font-size: 12px !important;
+    }
+
+    .submitActivity{
+        font-size: 12px !important;
+    }
+
+    .headingPopUp{
+        width: 75px !important;
+        font-size: 10px !important;
+    }
+
+    .popUpBar{
+        gap: 0.5vw !important;
+    }
+
+    .emptyPopUp{
+        padding-right: 30px !important;
+    }
+
+    .asset1{
+        margin-left: 4vw !important;
+    }
+
+    .moveButtons{
+        width: 90vw;
+    }
+}
+
+@media (max-width: 670px){
+    .addCurrentActivityButton, .upcDate, .dailyActivity, .soloActivityBar{
+        font-size: 14px !important;
+    }
+
+    .missedActivity{
+        font-size: 14px !important;
+    }
+
+    .missedActivityDate{
+        font-size: 9.8px !important;
+        margin-left: 2px !important;
+        margin-right: 2px !important;
+        height: 12px !important;
+    }
+
+    #specialElement{
+        width: 25vw !important;
+    }
+
+    .aba{
+        width: 25vw !important;
+    }
+
+    .ab, .activityContent {
+        width: 8vw !important;
+    }
+
+    #deleteButton, #editButton, #addButton {
+        height: 18px !important;
+        width: 18px !important;
+    }
+
+    .asset{
+        height: 16px !important;
+        width: 16px !important;
+    }
+
+    .weekTabs{
+        font-size: 16px !important;
+    }
+
+    .activityForm{
+        gap: 5px !important;
+    }
+
+    .actFormElement{
+        height: 15px !important;
+        width: 60px !important;
+        font-size: 10px !important;
+        overflow: scroll !important;
+    }
+
+    .submitActivity{
+        font-size: 10px !important;
+    }
+
+    .headingPopUp{
+        width: 55px !important;
+        font-size: 8px !important;
+        height: 10px !important;
+    }
+
+    .popUpBar{
+        gap: 0.2vw !important;
+    }
+
+    .asset1{
+        height: 15px !important;
+    }
+
+    #abaElement{
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+        text-align: center !important;
+        align-items: center !important;
+    }
+
+    .moveButtons{
+        width: 95vw;
+    }
+    
+    .csButtonsContainer{
+        padding-right: 0px !important;
+    }
+}
+
+@media (max-width: 500px){
+    #specialElement{
+        width: 20vw !important;
+    }
+
+    .aba{
+        width: 20vw !important;
+    }
+
+    .activityForm{
+        gap: 2px !important;
+    }
+
+    .actFormElement{
+        height: 12px !important;
+        width: 40px !important;
+        font-size: 10px !important;
+        overflow: scroll;
+    }
+
+    .submitActivity{
+        font-size: 8px !important;
+    }
+
+    .missedActivity{
+        font-size: 10px !important;
+    }
+
+    .missedActivityDate{
+        font-size: 7px !important;
+        margin: 0 !important;
+        height: 9px !important;
+        width: 80px !important;
+    }
+
+    .headingPopUp{
+        width: 35px !important;
+        font-size: 6px !important;
+        height: 10px !important;
+    }
+
+    .popUpBar{
+        gap: 1vw !important;
+    }
+
+    .asset1{
+        margin-left: 4vw !important;
+        height: 15px !important;
+        width: 5vw !important;
+    }
+
+    #abaElement{
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+        text-align: center !important;
+        align-items: center !important;
+        font-size: 7px !important;
+    }
+
+    .moveButtons{
+        width: 100vw;
+    }
+
+    .activityFrame{
+        height: 56vh;
+    }
+
+    .viewContent{
+        display: none !important;
+    }
+
+    .csButtonsFrame{
+        justify-content: center !important;
+        align-items: center !important;
+    }
+}
+
 /* Schedule End */
 
 /* Daily Activities Start */
 
 .scrollHide{ 
     height: 65px; 
-    width: 82vw; 
+    width: 100vw; 
     position: fixed; 
     top: 63.5px; 
     border-radius: 0; 
@@ -844,14 +1177,6 @@ label{
     transition: 150ms linear;
 }
 
-.filterContainer1{
-    left: 87vw;
-}
-
-.filterContainer2{
-    left: 80vw;
-}
-
 .filterField{
     border: 2px solid red;
 }
@@ -869,30 +1194,42 @@ input[type=radio] {
     margin-left: 10px;
 }
 
-.activityContainer{
+.dailyActivityContainer{
     background-color: rgba(206, 206, 207, 0);
     height: 100vh;
-    width: 80vw;
+    width: 100vw;
     top: 133px;
     position: relative;
     font-family : Cambria, Cochin, Georgia, 'Times New Roman', serif;
     border-radius: 10px;
     transition: 150ms linear;
     z-index: -1;
+    justify-content: flex-start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: scroll;
 }
 
-.activityContainer1{
-    left: 17vw;
-}
-
-.activityContainer2{
-    left: 10vw;
+.activityContainer{
+    background-color: rgba(206, 206, 207, 0);
+    height: 100vh;
+    width: 100vw;
+    top: 133px;
+    position: relative;
+    font-family : Cambria, Cochin, Georgia, 'Times New Roman', serif;
+    border-radius: 10px;
+    transition: 150ms linear;
+    z-index: -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: scroll;
 }
 
 .activityContainer3{
     z-index: auto;
 }
-
 
 .soloActivityBar{
     background-color: rgba(206, 206, 207, 0);
@@ -937,6 +1274,7 @@ input[type=radio] {
     background-color: teal;
     display: flex;
     align-items: center;
+    justify-content: center;
     height: 24px;
     width: 25px;
     border-radius: 50%;
@@ -950,6 +1288,7 @@ input[type=radio] {
     background-color: red;
     display: flex;
     align-items: center;
+    justify-content: center;
     height: 24px;
     width: 25px;
     border-radius: 50%;
@@ -963,6 +1302,7 @@ input[type=radio] {
     background-color: green;
     display: flex;
     align-items: center;
+    justify-content: center;
     height: 24px;
     width: 25px;
     border-radius: 50%;
@@ -982,7 +1322,7 @@ input[type=radio] {
 }
 
 .asset1{
-    width: 2vw;
+    width: 25px;
     height: 25px;
     background-color: orange;
     box-shadow: 0 0 2px black;
@@ -998,16 +1338,21 @@ input[type=radio] {
     transition: 150ms linear;
 }
 
-.addActivityBar1{
-    left: 17vw;
+.addActivityFrame{
+    width: 100vw;
+    height: fit-content;
+    display: flex;
+    justify-content: center;
 }
 
-.addActivityBar2{
-    left: 10vw;
+.dailyActAddBar{
+    width: 100vw;
+    display: flex;
+    justify-content: center;
 }
 
 .headingPopUp{
-    width: 6.5vw;
+    width: 130px;
     height: 15px;
     background-color: teal;
     clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
@@ -1024,8 +1369,8 @@ input[type=radio] {
     transition: 150ms linear;
     position: relative;
     bottom: 0.2px;
-    right: 2.8vw;
     z-index: -1;
+    gap: 2vw;
 }
 
 .addActivity{
@@ -1055,7 +1400,7 @@ input[type=radio] {
     font-size: 14px;
     border: 0;
     color: black;
-    width: 11vw;
+    width: 168px;
     border: 0.2px solid black;
     box-shadow: 0px 0px 2px black;
 }
@@ -1087,6 +1432,10 @@ input[type=radio] {
     font-family : Cambria, Cochin, Georgia, 'Times New Roman', serif;
 }
 
+#logOutButton{
+    font-size: 16px !important;
+}
+
 .submitActivity:hover{
     color: black;
 }
@@ -1095,19 +1444,11 @@ input[type=radio] {
 
 .scrollHideBottom{ 
     height: 100vh; 
-    width: 82vw; 
+    width: 100vw; 
     position: fixed; 
     top: 90.50vh;
     border-radius: 0;
     transition: left 150ms linear;
-}
-
-.scrollHideBottom1{
-    left: 16vw;
-}
-
-.scrollHideBottom2{
-    left: 9vw;
 }
 
 .scrollHideBottomNormal{
@@ -1401,6 +1742,21 @@ table, th, td {
     border: 0.2px solid black;
 }
 
+.missedActivityDate{
+    margin-left: 20px;
+    margin-bottom: 0;
+    margin-top: 4px;
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    color: white;
+    background-image: linear-gradient(to right, rgb(42, 42, 243), rgba(144, 10, 144, 0.925));
+    border-radius: 5px;
+}
+
 .missedActivitiesList{
     padding-top: 20px;
 }
@@ -1419,20 +1775,38 @@ table, th, td {
     transition: 150ms linear;
 }
 
-.dailyActivity1{
-    left: 17vw;
+.dailyActivityHolder{
+    width: 100vw;
+    display: flex;
+    justify-content: center;
 }
 
-.dailyActivity2{
-    left: 10vw;
+.maMainContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    transition: 150ms linear;
 }
+
+.maMainFrame{
+    height: 80vh;
+    width: 100vw;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+    top: 65px;
+    flex-direction: column;
+    gap: 20px;
+  }
 
 /* Missed Activities End */
 
 /* Plan Ahead Start */
 
 .planAhead{
-    width: 83vw;
+    width: 100vw;
+    height: 95px;
     position: fixed;
     top: 76px;
     display: flex;
@@ -1445,12 +1819,18 @@ table, th, td {
     padding-bottom: 10px;
     transition: 150ms linear;
     font-size: 20px;
+    overflow: scroll;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .weekTabs{
+    all: unset;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
-    width: 11vw;
+    width: 168px;
+    min-width: 168px;
     height: 84px;
     background-color:rgb(255, 255, 144);
     border-radius: 10px;
@@ -1459,8 +1839,9 @@ table, th, td {
     text-align: center;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
-
+    font-size: 18px;
+    font-weight: bold;
+    overflow: scroll;
 }
 
 .paTab{
@@ -1483,14 +1864,6 @@ table, th, td {
     box-shadow : 0 0 7px black;
     background-image : linear-gradient(to right ,rgb(42, 42, 243), rgba(144, 10, 144, 0.925));
     color : white;
-}
-
-.planAhead1{
-    left: 16.5vw;
-}
-
-.planAhead2{
-    left: 9.5vw;
 }
 
 .upcDate{
@@ -1604,24 +1977,14 @@ table, th, td {
     gap: 0;
 }
 
-@media (max-width: 670px) {
-    .sessionAndBreakContainer {
-        gap: 40px;
-    }
+.sessionTabsContainer{
+    height: 80vh;
+    width: 100vw;
+    position: fixed;
+    top: 85px;
+    display: flex;
+    justify-content: center;
 }
-
-@media (max-width: 740px) {
-    .dateTimeDisplay{
-        display: none;
-    }
-}
-
-@media (max-width: 740px) {
-    #titlelink{
-        justify-content: center;
-    }
-}
-
 
 .sessionDefault{
     width: 300px;
@@ -1631,6 +1994,110 @@ table, th, td {
     border-radius: 10px;
     border: 0.1px solid black;
 }
+
+.sessionNoText{
+    text-align: center;
+    margin: 0;
+    background-color: rgb(255, 255, 144);
+    color: black;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    width: 299px;
+    height: 20px;
+}
+
+.testClass {
+    color: white;
+    text-align: center;
+    display: flex;
+    align-self: center;
+}
+  
+.sessionActivities {
+    display: flex;
+    flex-direction: column;
+    height: 60px;
+    width: 225px;
+    overflow: scroll;
+    gap: 2px;
+}  
+
+.timeContainer {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    width: 74px;
+    height: 60px;
+    color: black;
+  }  
+
+.timer{
+    text-align: center;
+    background-color: teal;
+    display: flex;
+    flex-direction: column;
+    width: 75px;
+    height: 59px;
+    align-items: center;
+    justify-content: center;
+    border-left: 0.1px solid black;
+}
+
+.sessionStartTimeCont {
+    text-align: center;
+    background-color: rgb(255, 255, 144);
+    color: black;
+    width: 85px;
+    border-bottom-left-radius: 10px;
+    font-size: 12px;
+  }
+  
+.sessionProgressStatus {
+    width: 120px;
+    height: 12px;
+    border-radius: 5px;
+    background-color: rgb(255, 255, 144);
+    box-shadow: 0 0 0.1px black;
+    border: 0.1px solid black;
+    display: flex;
+    align-self: center;
+}
+
+.sessionEndTimeCont {
+    text-align: center;
+    background-color: rgb(255, 255, 144);
+    color: black;
+    width: 85px;
+    border-bottom-right-radius: 10px;
+    font-size: 12px;
+  }  
+
+.breakNo {
+    text-align: center;
+    margin: 0;
+    background-color: rgb(255, 255, 144);
+    color: black;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    width: 299px;
+    height: 20px;
+}
+
+.breakQuote {
+    display: flex;
+    flex-direction: column;
+    width: 225px;
+    height: 60px;
+    justify-content: center;
+    overflow: scroll;
+    gap: 2px;
+  }  
+
+.quote {
+    text-align: center;
+    display: flex;
+    align-self: center;
+} 
 
 .sessionSubTab1{
     width: 299px;
@@ -1659,12 +2126,10 @@ table, th, td {
 .sessionTabs {
     display: flex;
     flex-direction: row;
-    position: fixed;
-    top: 85px;
     transition: 150ms linear;
     color: white;
     height: 80vh;
-    width: 90vw;
+    width: 100vw;
     gap: 40px;
     overflow: scroll;
     justify-content: center;
@@ -1695,7 +2160,7 @@ table, th, td {
 }
 
 .activityCurrentStatus1{
-    position: absolute;
+    position: relative;
     width: 12px;
     height: 12px;
     border-radius: 50%;
@@ -1706,11 +2171,29 @@ table, th, td {
 }
 
 .activityStatusImg1{
-    position: absolute;
+    position: relative;
     height: 11px;
     width: 11px;
 }
 
+@media (max-width: 670px) {
+    .sessionAndBreakContainer {
+        gap: 40px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 740px) {
+    .dateTimeDisplay{
+        display: none;
+    }
+}
+
+@media (max-width: 740px) {
+    #titlelink{
+        justify-content: center;
+    }
+}
 
 /* Form Styling Start */
 
@@ -1795,8 +2278,8 @@ table, th, td {
 }
 
 .loadingSpinner{
-    width: 80vw;
-    height: 80vh;
+    width: 100vw;
+    height: 100vh;
     top: 85px;
     position: fixed;
     display: flex;

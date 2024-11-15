@@ -46,6 +46,6 @@ export default function Dailyactivities(){
     }
 
     return <>
-    <div className={`activityContainer ${state.fthState? "activityContainer1" : "activityContainer2"} ${state.editActivity && "activityContainer3"}`} id="actContainer">{data && data.length > 0 && data.map(activityMapping)}</div>
+    <div className={`dailyActivityContainer ${state.editActivity && "activityContainer3"}`} id="actContainer">{data && data.length > 0 && data.map(activityMapping)}</div>
     </>
 }

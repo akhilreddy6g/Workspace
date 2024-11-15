@@ -51,19 +51,21 @@ export default function Missedactivitysetup(){
     }, [state.updateMissedActivity]);
 
     if (loading) {
-        return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText" style={{color: state.darkMode? 'white' : 'black'}}>Loading, please wait...</p></div>;
+        return <div className="loadingSpinner" ><p className="loadingText" style={{color: state.darkMode? 'white' : 'black'}}>Loading, please wait...</p></div>;
     }
 
     return (
         <> 
-            <div className={`maMainContainer ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} style={{display: "flex", flexDirection: "column", position: "absolute", top: "85px", gap: "20px", transition: "150ms linear"}}>
-                {state.editMissedActivity && <div className="overLay1"></div>}
-                {dates.length > 0 ? dates.map(mapping) : (
-                    <div className={`scheduleDisclaimer ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`}>
-                        <p className="scheduleContext">Great Work! You have no missed activities</p>
-                    </div>
-                )}
+            <div className="maMainFrame">
+                <div className="maMainContainer">
+                    {state.editMissedActivity && <div className="overLay1"></div>}
             </div>
+                    {dates.length > 0 ? dates.map(mapping) : (
+                        <div className="scheduleDisclaimer">
+                            <p className="scheduleContext">Great Work! You have no missed activities</p>
+                        </div>
+                    )}
+                </div>
         </>
     );
 }

@@ -166,49 +166,47 @@ export default function Session(props){
     <>
     <div className="sessionAndBreakContainer">
         <div className={`session-${props.id} sessionDefault`}>
-            <div><p style={{textAlign:"center", margin:"0", backgroundColor:"rgb(255,255,144)", color: "black", borderTopRightRadius:"10px", borderTopLeftRadius:"10px", width:"299px", height:"20px"}}>Session-{props.session}</p></div>
+            <div className="sessionNo"><p className="sessionNoText">Session-{props.session}</p></div>
             <div className={`session-c-1-${props.id} sessionSubTab1`}>
                 {props.activityNames.length==0? 
-                <div className="testClass" style={{color:"white", textAlign:"center", display:"flex", alignSelf:"center"}}>
+                <div className="testClass">
                  No activities scheduled at this time
                 </div>:
-                <div style={{display:"flex", flexDirection:"column", height:"60px", width:"225px", overflow:"scroll", gap:"2px"}}>
+                <div className="sessionActivities">
                     {props.activityNames.map(activityTab)}
                 </div> }
-                <div style={{display:"flex", justifyContent:"center", alignContent:"center", width:"74px", height:"60px", color:"black"}}>
-                    <div style={{textAlign:"center", backgroundColor:"teal", display:"flex", flexDirection:"column", width:"75px", height:"59px", alignItems:"center", justifyContent:"center", borderLeft:"0.1px solid black", color:stimerColor(), backgroundImage:stimerBgImage()}}><span style={{fontSize:"10px", color:stimerColor()}}>Time Left</span>{remTime}</div>
+                <div className="timeContainer">
+                    <div className="timer" style={{color:stimerColor(), backgroundImage:stimerBgImage()}}><span style={{fontSize:"10px", color:stimerColor()}}>Time Left</span>{remTime}</div>
                 </div>
             </div>
             <div className={`session-c-2-${props.id} sessionSubTab2`}>
-                <div style={{textAlign:"center", backgroundColor:"rgb(255,255,144)", color:"black", width:"85px", borderBottomLeftRadius:"10px", fontSize:"12px"}}>{props.startTime}</div>
-                <div style={{width:"120px", height:"12px", borderRadius:"5px", backgroundColor:"rgb(255,255,144)", boxShadow: "0 0 0.1px black", border:"0.1px solid black", display:"flex", alignSelf:"center"}}>
+                <div className="sessionStartTimeCont">{props.startTime}</div>
+                <div className="sessionProgressStatus">
                     <div className="fillBar" style={{width: progress+'%', backgroundColor: getSessionBackgroundColor(), borderRadius:"5px"}}>
-                    {(progress>10 && <div className="activityCurrentStatus1" style={{backgroundColor:"white"}}></div>)}
-                    {progress==100 && <img className="activityStatusImg1" src='./assets/greenok.svg' alt="activityStatus" />}
+                    {(progress>10 && <div className="activityCurrentStatus1" style={{backgroundColor:"white"}}>{progress==100 && <img className="activityStatusImg1" src='./assets/greenok.svg' alt="activityStatus" />}</div>)}
                     </div>
                 </div>
-                <div style={{textAlign:"center", backgroundColor:"rgb(255,255,144)", color:"black", width:"85px", borderBottomRightRadius:"10px", fontSize:"12px"}}>{props.endTime}</div>
+                <div className="sessionEndTimeCont">{props.endTime}</div>
             </div>
         </div>
         <div className="breakContainer">
-            <div><p style={{textAlign:"center", margin:"0", backgroundColor:"rgb(255,255,144)", color: "black", borderTopRightRadius:"10px", borderTopLeftRadius:"10px", width:"299px", height:"20px"}}>Break-{props.session}</p></div>
+            <div><p className="breakNo">Break-{props.session}</p></div>
             <div className={`session-c-2-${props.id} sessionSubTab1 breakSubT1`}>
-                <div style={{display:"flex", flexDirection:"column", width:"225px", height:"60px", justifyContent:"center", overflow:"scroll", gap:"2px"}}>
-                    <div style={{textAlign:"center", display:"flex", alignSelf:"center"}}>{breakQuote()}</div>
+                <div className="breakQuote">
+                    <div className="quote">{breakQuote()}</div>
                 </div>
-                <div style={{display:"flex", justifyContent:"center", alignContent:"center", width:"74px", height:"60px", color:"black"}}>
-                <div style={{textAlign:"center", backgroundColor:"teal", display:"flex", flexDirection:"column", width:"75px", height:"59px", alignItems:"center", justifyContent:"center", borderLeft:"0.1px solid black",color:btimerColor(), backgroundImage:btimerBgImage()}}><span style={{fontSize:"10px", color:btimerColor()}}>Time Left</span>{remBreakTime}</div>
+                <div className="timeContainer">
+                <div className="timer" style={{color:btimerColor(), backgroundImage:btimerBgImage()}}><span style={{fontSize:"10px", color:btimerColor()}}>Time Left</span>{remBreakTime}</div>
                 </div>
             </div>
             <div className={`session-c-2-${props.id} sessionSubTab2 breakSubT2`}>
-                <div style={{textAlign:"center", backgroundColor:"rgb(255,255,144)", color:"black", width:"85px", borderBottomLeftRadius:"10px", fontSize:"12px"}}>{props.breakStartTime}</div>
-                <div style={{width:"120px", height:"12px", borderRadius:"5px", backgroundColor:"rgb(255,255,144)", boxShadow: "0 0 0.1px black", border:"0.1px solid black", display:"flex", alignSelf:"center"}}>
+                <div className="sessionStartTimeCont">{props.breakStartTime}</div>
+                <div className="sessionProgressStatus">
                     <div className="fillBar" style={{width: breakProgress+'%', backgroundColor: getBreakBackgroundColor(), borderRadius:"5px"}}>
-                    {(breakProgress>10 && <div className="activityCurrentStatus1" style={{backgroundColor:"white"}}></div>)}
-                    {breakProgress==100 && <img className="activityStatusImg1" src='./assets/greenok.svg' alt="activityStatus" />}
+                    {(breakProgress>10 && <div className="activityCurrentStatus1" style={{backgroundColor:"white"}}> {breakProgress==100 && <img className="activityStatusImg1" src='./assets/greenok.svg' alt="activityStatus" />}</div>)}
                     </div>
                 </div>
-                <div style={{textAlign:"center", backgroundColor:"rgb(255,255,144)", color:"black", width:"85px", borderBottomRightRadius:"10px", fontSize:"12px"}}>{props.breakEndTime}</div>
+                <div className="sessionEndTimeCont">{props.breakEndTime}</div>
             </div>
         </div>
     </div>

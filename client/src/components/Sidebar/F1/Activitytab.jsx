@@ -140,7 +140,7 @@ export default function Activitytab(props){
     }, [props.startTime, props.endTime]);
 
     return (<>
-        <div className={`activityTab-${props.id} atab-${props.sno} ${selectInitialTab()} ${selectCurrentActivityTab()} activitiesInCurrentSchedule ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ref={buttonRef} onClick={()=>{selectActivityTab(props.sno)}}>
+        <div className={`activityTab-${props.id} atab-${props.sno} ${selectInitialTab()} ${selectCurrentActivityTab()} activitiesInCurrentSchedule`} ref={buttonRef} onClick={()=>{selectActivityTab(props.sno)}}>
             <div className="csInfoContainer">
                 <p className="csInfo type" style={{backgroundColor: props.type=="d"? "teal" : "black"}}>{props.type=="d"? "Daily" : "Today"}</p>
                 <p className="sno" id={props.sno} style={{fontSize:"15px"}}>{props.sno}</p>

@@ -125,7 +125,7 @@ export default function Missedactivities(props){
           try {
               const sessionMail = sessionStorage.getItem('email');
               const mail = state.emailId? state.emailId : sessionMail
-              await apiUrl.delete(`/delete-missed-activity/${state.emailId}?id=${id}`);
+              await apiUrl.delete(`/delete-missed-activity/${mail}?id=${id}`);
               takeAction({type:"changeMissedActivityState", payload: !state.updateMissedActivity});
               alertMessage("Successfully deleted the activity")
           } catch (error) {
@@ -139,6 +139,9 @@ export default function Missedactivities(props){
 
   async function addActivityBack(e, id){
       e.preventDefault();
+      const activityElement = activityRef.current;
+      document.body.style.overflow = "hidden";
+      activityElement.style.backgroundImage = "linear-gradient(to right ,rgb(42, 42, 243), rgba(144, 10, 144, 0.925))";
       const now = new Date();
       const currentTimeMinutes = now.getHours() * 60 + now.getMinutes(); 
       const startTimeMinutes =  timeToMinutes(actStartRef.current.textContent); 
@@ -148,6 +151,8 @@ export default function Missedactivities(props){
         takeAction({ type: "changeDisclaimerButtons" });
         takeAction({ type: "setResolve", payload: resolve });
       });
+      document.body.style.overflow = "auto";
+      activityElement.style.backgroundImage = "none";
       if(userResponse){
         if (currentTimeMinutes<startTimeMinutes){
           try {
@@ -175,7 +180,7 @@ export default function Missedactivities(props){
   return <> 
   <div className={`soloActivityBar ${state.darkMode ? "soloActivityBarDark" : "soloActivityBarNormal"}`} id={`activity-${props.id}`} ref={activityRef}>
   <div className="activity abid" id="actNo"> <p className="activityContent">{props.sno}</p></div>
-  <div className="activity aba" id="actName"> <p className="activityContent editable" ref={actNameRef}>{props.activity}</p> </div>
+  <div className="activity aba" id="actName"> <p className="activityContent editable" id="specialElement" ref={actNameRef}>{props.activity}</p> </div>
   <div className="activity ab" id="actStart"> <p className="activityContent editable" ref={actStartRef}>{props.startTime}</p> </div>
   <div className="activity ab" id="actEnd"> <p className="activityContent editable" ref={actEndRef}>{props.endTime}</p> </div>
   <div className="activity ab" id="actPriority"> <p className="activityContent editable" ref={actPriorityRef}>{props.priority}</p> </div>

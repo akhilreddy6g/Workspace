@@ -72,16 +72,13 @@ export default function Login() {
   ) : ( <div className='homepage'>
       <div className='appTitleContainer'>
         <h1 className='appTitle'>Workspace</h1>
-        <div className='captionContainer'>
-        <p className='appCaption'>lan, Act, Complete, Enjoy</p>
-        </div>
       </div>
       <div className='authContainer' style={{ color: 'black'}}>
         <div className='loginSetup'>
           <h1 className='loginTitle'>{action.primary}</h1>
           <form className="userInfoForm" onSubmit={handleSubmit}>
             <div className='emailContainer'>
-              <FaEnvelope className='inputIcon' /> 
+              <FaEnvelope className='inputIcon emailIcon' /> 
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className='emailInput' placeholder='Enter Email Address'/>
             </div>
             <div className='passwordContainer'>

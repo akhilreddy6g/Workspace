@@ -123,16 +123,17 @@ export default function Setyourday(){
     }, [state.stdState])
 
     if (loading) {
-        return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText" style={{color: state.darkMode? 'white' : 'black'}}>Loading, please wait...</p></div>;
+        return <div className="loadingSpinner"><p className="loadingText" style={{color: state.darkMode? 'white' : 'black'}}>Loading, please wait...</p></div>;
     }
 
     return <>  
-    {todaySessions.length==0 && <div className={`scheduleDisclaimer ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`}>
+    {todaySessions.length==0 && <div className="scheduleDisclaimer">
      <p className="scheduleContext">No sessions to show. Setup sessions and plan your day</p>
     </div>}
-
-    <div className="sessionTabs" style={{left: state.fthState? "175px" : "75px"}}>
+    <div className="sessionTabsContainer">
+    <div className="sessionTabs">
         {todaySessions && todaySessions.length>0 && todaySessions.map(mapping)}
+    </div>
     </div>
      {state.stdState? 
         <div className="overLay">
@@ -144,7 +145,7 @@ export default function Setyourday(){
             <Sessionsetup></Sessionsetup>
         </div>
         </div> : 
-        <div className={`currentActivities ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`}>
+        <div className="currentActivities">
         <button className="addCurrentActivityButton" onClick={()=>{takeAction({type: "changeStdState"})}}>Setup Sessions</button> </div>
     }
     </>

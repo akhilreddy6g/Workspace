@@ -52,7 +52,7 @@ export default function Sessionsetup(){
                 alertMessage(`Unable to setup sessions: ${error}`);
             };
         } else {
-            alertMessage(`Invalid session start time. Start time and end time must be in the future and before 23:59 EST.`);
+            alertMessage(`Invalid session start time. Start time and end time must be in the future and before 11:59 pm.`);
         }
        
         takeAction({type:"changeStdState"})

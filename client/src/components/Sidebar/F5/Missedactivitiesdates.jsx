@@ -22,7 +22,7 @@ export default function Missedactivitiesdates(props) {
 
     return (
         <>
-            <div className={`missedActivityContainer ${state.fthState ? "dailyActivity1" : "dailyActivity2"}`}>
+            <div className="missedActivityContainer">
                 <div className="missedActivityHeaderTab">
                     <Missedactivityheader date={props.date.slice(0, 10)} />
                     <div className="missedActivitiesList">

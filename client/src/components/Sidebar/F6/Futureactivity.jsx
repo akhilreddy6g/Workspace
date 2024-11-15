@@ -1,6 +1,5 @@
 import { useContext, useRef } from "react";
 import featuresTabHook from "../../Noncomponents";
-import axios from "axios";
 import { timeToMinutes } from "../../Noncomponents";
 import { apiUrl } from "../../Noncomponents";
 
@@ -31,6 +30,9 @@ export default function Futureactivity(props){
       const activityElement = activityRef.current;
       activityElement.style.position = "relative";
       activityElement.style.zIndex = 3;
+      if(state.fthState){
+        takeAction({type: "changeFthState"})
+      }
       activityElement.style.backgroundImage = "linear-gradient(to right ,rgb(42, 42, 243), rgba(144, 10, 144, 0.925))";
       actNameRef.current.contentEditable = "true";
       actStartRef.current.contentEditable = "true";
@@ -114,6 +116,9 @@ export default function Futureactivity(props){
     document.body.style.overflow = "hidden";
     activityElement.style.backgroundImage = "linear-gradient(to right ,rgb(42, 42, 243), rgba(144, 10, 144, 0.925))";
     takeAction({ type: "changeCurrentAction", payload: "delete the activity"});
+    if(state.fthState){
+      takeAction({type: "changeFthState"})
+    }
     const userResponse = await new Promise((resolve) => {
       takeAction({ type: "changeDisclaimerState", payload: true });
       takeAction({ type: "changeDisclaimerButtons"});
@@ -139,15 +144,23 @@ export default function Futureactivity(props){
 
   async function addActivityBack(e, id){
     e.preventDefault();
+    const activityElement = activityRef.current;
+    document.body.style.overflow = "hidden";
+    activityElement.style.backgroundImage = "linear-gradient(to right ,rgb(42, 42, 243), rgba(144, 10, 144, 0.925))";
     const now = new Date();
     const currentTimeMinutes = now.getHours() * 60 + now.getMinutes(); 
     const startTimeMinutes =  timeToMinutes(actStartRef.current.textContent); 
+    if(state.fthState){
+      takeAction({type: "changeFthState"})
+    }
     takeAction({ type: "changeCurrentAction", payload: "add the activity to current schedule?"});
         const userResponse = await new Promise((resolve) => {
           takeAction({ type: "changeDisclaimerState", payload: true });
           takeAction({ type: "changeDisclaimerButtons" });
           takeAction({ type: "setResolve", payload: resolve });
         });
+    document.body.style.overflow = "auto";
+    activityElement.style.backgroundImage = "none";
     if(userResponse){
       if (currentTimeMinutes<startTimeMinutes){
         try {
@@ -175,7 +188,7 @@ export default function Futureactivity(props){
     return (
         <> <div className={`soloActivityBar ${state.darkMode ? "soloActivityBarDark" : "soloActivityBarNormal"}`} id={`activity-${props.id}`} ref={activityRef}>
       <div className="activity abid" id="actNo"> <p className="activityContent">{props.sno}</p></div>
-      <div className="activity aba" id="actName"> <p className="activityContent editable" ref={actNameRef}>{props.activity}</p> </div>
+      <div className="activity aba" id="actName"> <p className="activityContent editable" id="specialElement" ref={actNameRef}>{props.activity}</p> </div>
       <div className="activity ab" id="actStart"> <p className="activityContent editable" ref={actStartRef}>{props.startTime}</p> </div>
       <div className="activity ab" id="actEnd"> <p className="activityContent editable" ref={actEndRef}>{props.endTime}</p> </div>
       <div className="activity ab" id="actPriority"> <p className="activityContent editable" ref={actPriorityRef}>{props.priority}</p> </div>

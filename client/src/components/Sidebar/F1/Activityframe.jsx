@@ -163,33 +163,43 @@ export default function Activityframe(props) {
       
 
 
-  return (<> <button className="prevActivity" style={{left: state.fthState? "15vw": "8vw"}} onClick={(e)=>{changeIndex(e, -1)}} disabled={state.csActivityIndex==0} >{"<"}</button>
-      <div className={`activityFrame ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"} ${state.darkMode? "scheduleDark" :"scheduleNormal"}`} id={props.id}>
+  return (<> 
+      <div className={`activityFrame ${state.darkMode? "scheduleDark" :"scheduleNormal"}`} id={props.id}>
           <div className={`activityTitle  ${state.darkMode? "activityFrameDark" : "activityFrameNormal"}`} style={{borderTop:"0"}}>{state.csActivityIndex+1}. {props.activity}</div>
-          <div className="csButtonsContainer">
-          <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} 
-            onClick={(e)=>{skipActivity(e, props.id, props.type, props.status)}} 
-            disabled={props.status==0 || props.status ==1 || sessionStorage.getItem(props.id)!==null && (JSON.parse(sessionStorage.getItem(props.id)).action=="skip" ||  JSON.parse(sessionStorage.getItem(props.id)).action=="complete")} 
-            ref={skipRef} 
-            style={{backgroundColor:"red"}}>
-              Skip
-          </button>
-          <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} 
-            onClick={(e)=>{completeActivity(e, props.id, props.type, props.status)}} 
-            disabled={props.status==1 || sessionStorage.getItem(props.id) && JSON.parse(sessionStorage.getItem(props.id)).action=="complete"} 
-            ref={completeRef} 
-            style={{backgroundColor:"green"}}>
-            Complete
-          </button>
-          <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"orange"}}>Update</button>
-          <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"orange"}} onClick={(event)=>{deleteActivity(event, props.id, props.type)}}>Delete</button>
-          <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"teal"}}>Notes</button>
-          <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"teal"}}>Upload</button>
-          </div>
-          <div className={`activityDescription  ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`}>
+          <div className="csButtonsFrame">
+            <div className="viewContent">
+            </div>
+            <div className="csButtonsContainer">
+            <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} 
+              onClick={(e)=>{skipActivity(e, props.id, props.type, props.status)}} 
+              disabled={props.status==0 || props.status ==1 || sessionStorage.getItem(props.id)!==null && (JSON.parse(sessionStorage.getItem(props.id)).action=="skip" ||  JSON.parse(sessionStorage.getItem(props.id)).action=="complete")} 
+              ref={skipRef} 
+              style={{backgroundColor:"red"}}>
+                Skip
+            </button>
+            <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} 
+              onClick={(e)=>{completeActivity(e, props.id, props.type, props.status)}} 
+              disabled={props.status==1 || sessionStorage.getItem(props.id) && JSON.parse(sessionStorage.getItem(props.id)).action=="complete"} 
+              ref={completeRef} 
+              style={{backgroundColor:"green"}}>
+              Complete
+            </button>
+            <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"orange"}}>Update</button>
+            <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"orange"}} onClick={(event)=>{deleteActivity(event, props.id, props.type)}}>Delete</button>
+            <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"teal"}}>Notes</button>
+            <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"teal"}}>Upload</button>
+            <div className={`activityDescription  ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`}>
               <div className={`activityDescrHeading`} style={{borderBottom: state.darkMode? "0.2px solid white": "0.2px solid black"}}>Description</div>
               <p className="notes">{props.notes}</p></div>
-      </div> <button className="nextActivity" style={{left: state.fthState? "97.5vw": "90.5vw"}} onClick={(e)=>{changeIndex(e, 1)}} disabled={state.csActivityIndex==state.combinedActivityData.length-1}>{">"}</button>
+            </div>
+          </div>
+      </div> 
+      <div className="buttonContainer">
+      <div className="moveButtons">
+        <button className="prevActivity" onClick={(e)=>{changeIndex(e, -1)}} disabled={state.csActivityIndex==0} >{"<"}</button>
+        <button className="nextActivity" onClick={(e)=>{changeIndex(e, 1)}} disabled={state.csActivityIndex==state.combinedActivityData.length-1}>{">"}</button>
+      </div>
+      </div>
       </>
   )
 };

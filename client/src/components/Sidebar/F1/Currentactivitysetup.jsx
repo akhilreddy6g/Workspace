@@ -39,7 +39,7 @@ export default function Currentactivitysetup(){
     };
     
     return (<><Headingpopup></Headingpopup>
-            <div className={`addActivity ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} >
+            <div className="addActivity" >
                 <form className="activityForm" onSubmit={submitAddActivity}>
                     <input required  type="text" id="activityName" name="info" className="actFormElement" placeholder="Upto 40 char"/>
                     <input type="text" id="activityDesc" name="desc" className="actFormElement" placeholder="Upto 200 Char"/>

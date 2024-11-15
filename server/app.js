@@ -83,7 +83,7 @@ app.post("/authenticate/:email", async (req, res) => {
             }
             const refreshToken = jwt.sign({ email: user.rows[0].user_email }, REFRESH_SECRET, { expiresIn: '30d' });
             const accessToken = jwt.sign({ email: user.rows[0].user_email }, JWT_SECRET, { expiresIn: '15m' });
-            res.cookie('_auth', refreshToken, { httpOnly: true, secure: true, sameSite: 'Strict', maxAge: 1000 * 60 * 60 * 24});
+            res.cookie('_auth', refreshToken, { httpOnly: true, secure: true, sameSite: 'Strict', maxAge: 1000 * 60 * 60 * 24 * 30});
             console.info({ message: "Authentication successful", email: email, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms` });
             console.log(logSuffix);
             return res.status(200).json({ isAuthenticated: true, token: accessToken});
@@ -259,7 +259,6 @@ app.post("/add-activity/:email", verifyToken, async (req, res) => {
                 "INSERT INTO daily_activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time, user_email) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", 
                 [actName, actDescr, priority, startTime, endTime, email]
             )).rows[0].activity_uuid;
-            console.log("record", record);
             try {
                 await db.query(
                     "INSERT INTO global_activities (activity_name, activity_uuid, user_email) VALUES ($1, $2, $3)",
@@ -942,14 +941,12 @@ app.post("/setup-sessions/:email", verifyToken, async (req, res) => {
         const email = req.params.email;
         const { startTime, endTime, totalSessions, breakTime, sessionType, sessionVersion } = req.body.data;
         console.log("starttime:", startTime);
-        // updatedActDate.setHours(updatedActDate.getHours() - 4);
-        // const finalDate = updatedActDate.toISOString().split('T')[0];
         console.log(logPrefix);
         console.info({ message: 'Incoming request to schedule sessions for today', timestamp: new Date().toISOString(), method: req.method, path: req.originalUrl, params: req.params, queryParams: req.query, userAgent: req.headers['user-agent'] });
         try {
             const checkRecord = await db.query(
-                "SELECT * FROM user_session WHERE user_email = $1 AND session_type = $2 AND session_version = $3", 
-                [email, sessionType, sessionVersion]
+                "SELECT * FROM user_session WHERE user_email = $1 AND session_type = $2", 
+                [email, sessionType]
             );
             if (checkRecord.rowCount > 0) {
                 try {
@@ -1014,139 +1011,153 @@ app.post("/run-cron", async (req, res)=>{
         const reqApiKey = process.env.CRON_JOB_API_KEY;
         const apiKey = req.headers['api-key'];
         if (reqApiKey && apiKey && reqApiKey !== apiKey) {
+            console.log("No/wrong api key provided")
             return res.status(403).send('Unauthorized');
         }
         else {
-            return res.status(200).send('Successfully activated server');
+            console.log("Successfully activated the server");
+            return res.status(200);
         }
     } catch (error) {
-        return res.status(200).send('Failed to activate server: ', error);
+        return res.status(500);
     }
-    
 })
 
-cron.schedule('0 0 * * *', async () => {
-    const jobStartTime = Date.now();
-    console.log(logPrefix);
-    console.log('Running daily job at 12:00 AM');
-    console.info({ message: "Daily cron job started", timestamp: new Date().toISOString(), job: "Daily Task", scheduledTime: "12:00 AM" });
+app.post("/cron-job", async (req, res)=>{
     try {
-        const users = (await db.query("SELECT user_email FROM users")).rows;
-        try {
-            if (users.length>0){
-                users.forEach(async(element)=>{
-                    const totalActivities = (await db.query("SELECT * FROM daily_activities WHERE user_email = $1 UNION SELECT * FROM current_day_activities WHERE user_email = $1", [element.user_email])).rowCount;
-                    const completedActivities = (await db.query("SELECT * FROM daily_activities WHERE user_email = $1 AND activity_status = 1 UNION SELECT * FROM current_day_activities WHERE user_email = $1 AND activity_status = 1", [element.user_email])).rowCount;
-                    const skippedActivities = totalActivities - completedActivities;
-                    const now = new Date();
-                    now.setDate(now.getDate() - 1);
-                    try {
-                        await db.query("INSERT INTO user_statistics(user_email, date, skipped_activities, completed_activities) VALUES ($1, $2, $3, $4)", [element.user_email, now.toISOString().split('T')[0] , skippedActivities, completedActivities]);
-                        console.info({ message: `Updated Statistics for user: ${element.user_email}`, statusCode: 200, });
-                    } catch (error) {
-                        console.error({ message: `Failed to update user statistics: for user: ${element.user_email}`, error: error.message});
-                    };
-                });
-            }
-        } catch (error) {
-            console.error({ message: `Failed to update user statistics: for user: ${element.user_email}`, error: error.message});
-        } 
-        try {
-            await db.query("UPDATE user_session SET session_version = $1", ["o"]);
-            console.info({ message: `Updated session info for all users`, statusCode: 200, });
-        } catch (error) {
-            console.error({ message: `Failed to update session info for all users`, error: error.message});
+        const reqApiKey = process.env.CRON_JOB_API_KEY;
+        const apiKey = req.headers['api-key'];
+        if (reqApiKey && apiKey && reqApiKey !== apiKey) {
+            console.log("No/wrong api key provided, cron job failed");
+            return res.status(403).send('Unauthorized');
         }
-        try {
-            if (users.length>0){
-                const completedActivities = (await db.query("SELECT * FROM daily_activities WHERE activity_status = 1")).rows;
-                const now = new Date();
-                now.setDate(now.getDate() - 1);
+        else if(reqApiKey && apiKey && reqApiKey == apiKey) {
+            const jobStartTime = Date.now();
+            console.log(logPrefix);
+            console.log('Running daily job at 12:00 AM');
+            console.info({ message: "Daily cron job started", timestamp: new Date().toISOString(), job: "Daily Task", scheduledTime: "12:00 AM" });
+            try {
+                const users = (await db.query("SELECT user_email FROM users")).rows;
                 try {
-                    completedActivities.forEach(async(rec) => {
-                        await db.query("INSERT INTO daily_activities_progress (activity_name, activity_uuid, date_completed, user_email) VALUES ($1, $2, $3, $4)", [rec.activity_name, rec.activity_uuid, now.toISOString().split('T')[0], rec.user_email]); 
-                    });
-                    console.info({ message: `Updated daily activity progress for all users`, statusCode: 200, });
+                    if (users.length>0){
+                        users.forEach(async(element)=>{
+                            const totalActivities = (await db.query("SELECT * FROM daily_activities WHERE user_email = $1 UNION SELECT * FROM current_day_activities WHERE user_email = $1", [element.user_email])).rowCount;
+                            const completedActivities = (await db.query("SELECT * FROM daily_activities WHERE user_email = $1 AND activity_status = 1 UNION SELECT * FROM current_day_activities WHERE user_email = $1 AND activity_status = 1", [element.user_email])).rowCount;
+                            const skippedActivities = totalActivities - completedActivities;
+                            const now = new Date();
+                            now.setDate(now.getDate() - 1);
+                            try {
+                                await db.query("INSERT INTO user_statistics(user_email, date, skipped_activities, completed_activities) VALUES ($1, $2, $3, $4)", [element.user_email, now.toISOString().split('T')[0] , skippedActivities, completedActivities]);
+                                console.info({ message: `Updated Statistics for user: ${element.user_email}`, statusCode: 200, });
+                            } catch (error) {
+                                console.error({ message: `Failed to update user statistics: for user: ${element.user_email}`, error: error.message});
+                            };
+                        });
+                    }
+                } catch (error) {
+                    console.error({ message: `Failed to update user statistics: for user: ${element.user_email}`, error: error.message});
+                } 
+                try {
+                    await db.query("UPDATE user_session SET session_version = $1", ["o"]);
+                    console.info({ message: `Updated session info for all users`, statusCode: 200, });
+                } catch (error) {
+                    console.error({ message: `Failed to update session info for all users`, error: error.message});
+                }
+                try {
+                    if (users.length>0){
+                        const completedActivities = (await db.query("SELECT * FROM daily_activities WHERE activity_status = 1")).rows;
+                        const now = new Date();
+                        now.setDate(now.getDate() - 1);
+                        try {
+                            completedActivities.forEach(async(rec) => {
+                                await db.query("INSERT INTO daily_activities_progress (activity_name, activity_uuid, date_completed, user_email) VALUES ($1, $2, $3, $4)", [rec.activity_name, rec.activity_uuid, now.toISOString().split('T')[0], rec.user_email]); 
+                            });
+                            console.info({ message: `Updated daily activity progress for all users`, statusCode: 200, });
+                        } catch (error) {
+                            console.error({ message: `Failed to update daily activity progress`, error: error.message});
+                        };
+                    }
                 } catch (error) {
                     console.error({ message: `Failed to update daily activity progress`, error: error.message});
+                }
+            } catch (error) {
+                console.error({ message: `Failed to update user statistics`, error: error.message});
+            }
+            try {
+                const records = await db.query("SELECT * FROM current_day_activities WHERE activity_status IS NULL OR activity_status=0");
+                console.info({ message: `Fetched ${records.rows.length} current day activities with status null or 0`, statusCode: 200, });
+                if (records.rows.length > 0) {
+                    const now = new Date();
+                    now.setDate(now.getDate() - 1);
+                    const missedActivities = records.rows.map(record => ({
+                        ...record, 
+                        activity_date: now.toISOString().split('T')[0]  
+                    }));
+
+                    for (const element of missedActivities) {
+                        try {
+                            await db.query(
+                                "INSERT INTO missed_activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time, activity_date, user_email) VALUES ($1, $2, $3, $4, $5, $6, $7)", 
+                                [element.activity_name, element.activity_description, element.activity_priority, element.activity_start_time, element.activity_end_time, element.activity_date, element.user_email]
+                            );
+                            console.info({ message: `Inserted missed activity: ${element.activity_name} for user: ${element.user_email}`, statusCode: 200, });
+                        } catch (insertError) {
+                            console.error({ message: `Failed to insert missed activity: ${element.activity_name} for user: ${element.user_email}`, error: insertError.message, });
+                        }
+                    }
+                    console.log("Successfully added today's missed activities to `missed_activities`.");
+                    try {
+                        await db.query("DELETE FROM current_day_activities");
+                        console.info({ message: "Successfully deleted current day activities", statusCode: 200, });
+                    } catch (deleteError) {
+                        console.error({ message: "Failed to delete current day activities", error: deleteError.message, });
+                    }
+                } else {
+                    console.info({ message: "No missing activities to process", statusCode: 204, });
+                }
+                try {
+                    const now1 = new Date();
+                    const upcActDate = now1.toISOString().split('T')[0];
+                    const upcRecords = (await db.query("SELECT * FROM upcoming_activities WHERE activity_date=$1", [upcActDate])).rows;
+                    console.info({ message: `Fetched ${upcRecords.length} upcoming activities for today (${upcActDate})`, statusCode: 200, });
+                    for (const element of upcRecords) {
+                        try {
+                            await db.query(
+                                "INSERT INTO current_day_activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time, user_email) VALUES ($1, $2, $3, $4, $5, $6)", 
+                                [element.activity_name, element.activity_description, element.activity_priority, element.activity_start_time, element.activity_end_time, element.user_email]
+                            );
+                            console.info({ message: `Inserted upcoming activity: ${element.activity_name}`, statusCode: 201, });
+                        } catch (insertError) {
+                            console.error({ message: `Failed to insert upcoming activity: ${element.activity_name}`, error: insertError.message, });
+                        }
+                    }
+                    try {
+                        await db.query("DELETE FROM upcoming_activities WHERE activity_date=$1", [upcActDate]);
+                        console.info({ message: "Successfully deleted today's upcoming activities", statusCode: 200, });
+                    } catch (deleteError) {
+                        console.error({ message: "Failed to delete today's upcoming activities", error: deleteError.message, });
+                    }
+                } catch (upcError) {
+                    console.error({ message: "Failed to fetch upcoming activities", error: upcError.message, });
+                }
+                try {
+                    await db.query("UPDATE daily_activities SET activity_status = NULL");
+                    console.info({ message: "Successfully reset activity statuses", statusCode: 200, });
+                } catch (updateError) {
+                    console.error({ message: "Failed to update activity statuses", error: updateError.message, });
                 };
-            }
-        } catch (error) {
-            console.error({ message: `Failed to update daily activity progress`, error: error.message});
+            } catch (error) {
+                console.error({ message: "Error during daily cron job execution", error: error.message, });
+            } finally {
+                console.info({ message: "Daily cron job finished", jobDuration: `${Date.now() - jobStartTime}ms`, timestamp: new Date().toISOString() });
+            };
+            return res.status(200);
         }
     } catch (error) {
-        console.error({ message: `Failed to update user statistics`, error: error.message});
+        console.log("Something went wrong, Cron Job failed: ", error);
+        return res.status(500);
     }
-    try {
-        const records = await db.query("SELECT * FROM current_day_activities WHERE activity_status IS NULL OR activity_status=0");
-        console.info({ message: `Fetched ${records.rows.length} current day activities with status null or 0`, statusCode: 200, });
-        if (records.rows.length > 0) {
-            const now = new Date();
-            now.setDate(now.getDate() - 1);
-            const missedActivities = records.rows.map(record => ({
-                ...record, 
-                activity_date: now.toISOString().split('T')[0]  
-            }));
-
-            for (const element of missedActivities) {
-                try {
-                    await db.query(
-                        "INSERT INTO missed_activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time, activity_date, user_email) VALUES ($1, $2, $3, $4, $5, $6, $7)", 
-                        [element.activity_name, element.activity_description, element.activity_priority, element.activity_start_time, element.activity_end_time, element.activity_date, element.user_email]
-                    );
-                    console.info({ message: `Inserted missed activity: ${element.activity_name} for user: ${element.user_email}`, statusCode: 200, });
-                } catch (insertError) {
-                    console.error({ message: `Failed to insert missed activity: ${element.activity_name} for user: ${element.user_email}`, error: insertError.message, });
-                }
-            }
-            console.log("Successfully added today's missed activities to `missed_activities`.");
-            try {
-                await db.query("DELETE FROM current_day_activities");
-                console.info({ message: "Successfully deleted current day activities", statusCode: 200, });
-            } catch (deleteError) {
-                console.error({ message: "Failed to delete current day activities", error: deleteError.message, });
-            }
-        } else {
-            console.info({ message: "No missing activities to process", statusCode: 204, });
-        }
-        try {
-            const now1 = new Date();
-            const upcActDate = now1.toISOString().split('T')[0];
-            const upcRecords = (await db.query("SELECT * FROM upcoming_activities WHERE activity_date=$1", [upcActDate])).rows;
-            console.info({ message: `Fetched ${upcRecords.length} upcoming activities for today (${upcActDate})`, statusCode: 200, });
-            for (const element of upcRecords) {
-                try {
-                    await db.query(
-                        "INSERT INTO current_day_activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time, user_email) VALUES ($1, $2, $3, $4, $5, $6)", 
-                        [element.activity_name, element.activity_description, element.activity_priority, element.activity_start_time, element.activity_end_time, element.user_email]
-                    );
-                    console.info({ message: `Inserted upcoming activity: ${element.activity_name}`, statusCode: 201, });
-                } catch (insertError) {
-                    console.error({ message: `Failed to insert upcoming activity: ${element.activity_name}`, error: insertError.message, });
-                }
-            }
-            try {
-                await db.query("DELETE FROM upcoming_activities WHERE activity_date=$1", [upcActDate]);
-                console.info({ message: "Successfully deleted today's upcoming activities", statusCode: 200, });
-            } catch (deleteError) {
-                console.error({ message: "Failed to delete today's upcoming activities", error: deleteError.message, });
-            }
-        } catch (upcError) {
-            console.error({ message: "Failed to fetch upcoming activities", error: upcError.message, });
-        }
-        try {
-            await db.query("UPDATE daily_activities SET activity_status = NULL");
-            console.info({ message: "Successfully reset activity statuses", statusCode: 200, });
-        } catch (updateError) {
-            console.error({ message: "Failed to update activity statuses", error: updateError.message, });
-        };
-    } catch (error) {
-        console.error({ message: "Error during daily cron job execution", error: error.message, });
-    } finally {
-        console.info({ message: "Daily cron job finished", jobDuration: `${Date.now() - jobStartTime}ms`, timestamp: new Date().toISOString() });
-    };
-});
-
+})
 
 app.listen(port, () => {
     console.log(`Listening at port ${port}`);
