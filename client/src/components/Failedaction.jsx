@@ -1,4 +1,3 @@
-import Disclaimer from "./Disclaimer";
 import featuresTabHook from "./Noncomponents";
 import { useContext } from "react";
 

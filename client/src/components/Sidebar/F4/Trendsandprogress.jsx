@@ -18,8 +18,10 @@ export default function Trendsandprogress(){
 
     return (
         <>
-        <div className={`trends ${state.fthState? "planAhead1" : "planAhead2"} defaultTrends`} style={{}}>
-            {trends.map(mapping)}
+        <div className="tabsContainer">
+            <div className={`trends ${state.fthState? "planAhead1" : "planAhead2"}`} style={{}}>
+                {trends.map(mapping)}
+            </div>
         </div>
         {state.trend == "0" && <T1></T1>}
         {state.trend == "1" && <T2></T2>}

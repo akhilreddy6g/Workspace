@@ -890,7 +890,7 @@ app.get("/user-statistics/:email", verifyToken, async (req, res) => {
         console.log(logPrefix);
         try {
             const data = await db.query(`SELECT * FROM user_statistics WHERE user_email=$1 ORDER BY date DESC ${days!="Max" ? `LIMIT ${days}` : "" }`, [email]);
-            console.info({ message: `Successfully retrieved user statistics for the user with email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms` });
+            console.info({ message: `Successfully retrieved user statistics of last ${days} days for the user with email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms` });
             console.log(logSuffix);
             res.status(200).json(data.rows);
         } catch (error) {

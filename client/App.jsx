@@ -415,7 +415,7 @@ export default function App() {
   };
 
   const [state, takeAction] = useReducer(changeStateInfo, {
-    fthState:true, 
+    fthState:false, 
     stdState:false, 
     darkMode: dayStatus(), 
     schedulestate: false, 

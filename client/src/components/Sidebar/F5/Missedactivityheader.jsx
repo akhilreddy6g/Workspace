@@ -11,7 +11,7 @@ export default function Missedactivityheader(props){
     return <>
     <div className="missedActivity">
     <div className="activityBar abid"></div>
-    <div className="activityBar aba" id="abaElement" style={{display:"flex", flexDirection:"row"}}>Missed Activities on <p className="missedActivityDate">{dateObj.toLocaleDateString('en-US', options)}</p></div>
+    <div className="activityBar aba" id="abaElement"> <div className="missedActivityDate" style={{display:"flex", justifyContent:"center", alignItems:"center"}}><p className="missedActivityDateText">{dateObj.toLocaleDateString('en-US', options)}</p></div></div>
     <div className="activityBar ab">Start</div>
     <div className="activityBar ab">End</div>
     <div className="activityBar ab">Priority</div>

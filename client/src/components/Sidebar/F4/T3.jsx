@@ -150,85 +150,90 @@ export default function T3() {
     return (
         state.trend === "2" && (actData && actData.length > 0 ? (
                 <>
-                <div className='t3FilterContainer'>
-                    <select name="t3Filter" id="t3FilterIpBox" onChange={(e) => {
-                        const value = e.target.value;
-                        changeFilter(value);
-                    }}>
-                        <option value={7}>Last week</option>
-                        <option value={30}>Last month</option>
-                        <option value={90}>Last 3 months</option>
-                        <option value={180}>Last 6 months</option>
-                        <option value={365}>Last year</option>
-                        <option value="Max">Max</option>
-                    </select>
-                </div>
-                { activity!=null &&
-                <div className='streakStats' style={{color: state.darkMode? "white" : "black"}}>
-                <p style={{border: state.darkMode? "0.1px solid white" : "0.1px solid black", backgroundColor: actStreaks[actData[activity-1].activity_name].currentStreak>0 && "green"}}> Current Streak: {actStreaks!=null && actData!=null && activity!= null && actStreaks[actData[activity-1].activity_name].currentStreak} </p>
-                <p style={{border: state.darkMode? "0.1px solid white" : "0.1px solid black"}}> Max Streak: {actStreaks!=null && actData!=null && activity!= null && actStreaks[actData[activity-1].activity_name].maxStreak} </p>
-                </div>
-                }
-                <div className='tnpT3' style={{left:"18.5vw", border: `0.1 px solid ${state.darkMode? "white": "black"}`}}>
-                    <div className='streakContainer-1'>
-                        <div className='headingContainerInitial'>
-                            <div className='headingElement-1'>S.No</div>
-                            <div className='headingElement-2'>Date</div>
-                            <div className='headingElement-3'>Activities Completed</div>
+                <div className='t3Frame'>
+                    <div className='t3filterFrame'>
+                        <div className='t3FilterContainer'>
+                             <p style={{color:state.darkMode? "white" : "black", margin:0}}>Select Daily Streak for : </p> 
+                            <select name="t3Filter" value={filter} id="t3FilterIpBox" onChange={(e) => {
+                                const value = e.target.value;
+                                changeFilter(value);
+                            }}>
+                                <option value={7}>Last week</option>
+                                <option value={30}>Last month</option>
+                                <option value={90}>Last 3 months</option>
+                                <option value={180}>Last 6 months</option>
+                                <option value={365}>Last year</option>
+                                <option value="Max">Max</option>
+                            </select>
                         </div>
-                        {actDates!=null && actDates.length>0 && actDates.map(datesMapping)}
                     </div>
-                    <div className='streakContainer-2'>
-                        <div className='headingContainerFinal'>
-                            <div className='headingElement-4'>S.No</div>
-                            <div className='headingElement-5'>Activity Name</div>
+                    <div className='tnpT3' style={{border: `0.1 px solid ${state.darkMode? "white": "black"}`}}>
+                        <div className='streakContainer-1'>
+                            <div className='headingContainerInitial'>
+                                <div className='headingElement-1'>S.No</div>
+                                <div className='headingElement-2'>Date</div>
+                                <div className='headingElement-3'>Activities Completed</div>
+                            </div>
+                            {actDates!=null && actDates.length>0 && actDates.map(datesMapping)}
                         </div>
-                        {actData!=null && actData.length>0 && actData.map(activitiesMapping)}
+                        <div className='streakContainer-2'>
+                            <div className='headingContainerFinal'>
+                                <div className='headingElement-4'>S.No</div>
+                                <div className='headingElement-5'>Activity Name</div>
+                            </div>
+                            {actData!=null && actData.length>0 && actData.map(activitiesMapping)}
+                        </div>
                     </div>
-                </div>
-                <div
-                    className='t3barChart'
-                    >
-                    <BarChart
-                        xAxis={[
-                            {
-                                scaleType: 'band',
-                                data: Object.keys(actStreaks),
-                                label: 'Activities',
-                                labelStyle: { fill: state.darkMode? 'white' : 'black' }, 
-                                tickLabelStyle: { fill: state.darkMode? 'white' : 'black' }, 
-                            }
-                        ]}
-                        yAxis={[
-                            {
-                                label: "No of Days",
-                                labelStyle: { fill: state.darkMode? 'white' : 'black' }, 
-                                tickLabelStyle: { fill: state.darkMode? 'white' : 'black' }, 
-                            }
-                        ]}
-                        series={[
-                            {
-                                label: "Max Streak",
-                                labelStyle: { fill: state.darkMode? 'white' : 'black' }, 
-                                name: 'Max Streak',
-                                data: Object.keys(actStreaks).map((key) => actStreaks[key].maxStreak), 
-                                color: 'orangered',
-                            },
-                            {
-                                label: "Current Streak",
-                                labelStyle: { fill: state.darkMode? 'white' : 'black' }, 
-                                name: 'Current Streak',
-                                data: Object.keys(actStreaks).map((key) => actStreaks[key].currentStreak),
-                                color: 'green',
-                            }
-                        ]}
-                        width={1000}
-                        height={300}
-                    />
+                    { activity!=null &&
+                        <div className='streakStats' style={{color: state.darkMode? "white" : "black"}}>
+                            <p className='streakElements' style={{border: state.darkMode? "0.1px solid white" : "0.1px solid black", backgroundColor: actStreaks[actData[activity-1].activity_name].currentStreak>0 && "green"}}> Current Streak : {actStreaks!=null && actData!=null && activity!= null && actStreaks[actData[activity-1].activity_name].currentStreak} </p>
+                            <p className='streakElements' style={{border: state.darkMode? "0.1px solid white" : "0.1px solid black"}}> Max Streak : {actStreaks!=null && actData!=null && activity!= null && actStreaks[actData[activity-1].activity_name].maxStreak} </p>
+                        </div>
+                    }
+                    <div
+                        className='t3barChart'
+                        >
+                        <BarChart
+                            xAxis={[
+                                {
+                                    scaleType: 'band',
+                                    data: Object.keys(actStreaks),
+                                    label: 'Activities',
+                                    labelStyle: { fill: state.darkMode? 'white' : 'black' }, 
+                                    tickLabelStyle: { fill: state.darkMode? 'white' : 'black' }, 
+                                }
+                            ]}
+                            yAxis={[
+                                {
+                                    label: "No of Days",
+                                    labelStyle: { fill: state.darkMode? 'white' : 'black' }, 
+                                    tickLabelStyle: { fill: state.darkMode? 'white' : 'black' }, 
+                                }
+                            ]}
+                            series={[
+                                {
+                                    label: "Max Streak",
+                                    labelStyle: { fill: state.darkMode? 'white' : 'black' }, 
+                                    name: 'Max Streak',
+                                    data: Object.keys(actStreaks).map((key) => actStreaks[key].maxStreak), 
+                                    color: 'orangered',
+                                },
+                                {
+                                    label: "Current Streak",
+                                    labelStyle: { fill: state.darkMode? 'white' : 'black' }, 
+                                    name: 'Current Streak',
+                                    data: Object.keys(actStreaks).map((key) => actStreaks[key].currentStreak),
+                                    color: 'green',
+                                }
+                            ]}
+                            width={1000}
+                            height={300}
+                        />
+                    </div>
                 </div>
             </>
             ) : ( <>
-                    <div className={`scheduleDisclaimer`} style={{left: state.fthState? "16.5vw" : "9.5vw", top:"185px"}}>
+                    <div className={`scheduleDisclaimer`}>
                         <p className="scheduleContext">Schedule Activities Regularly to View this Trend</p>
                     </div>
             </> ))

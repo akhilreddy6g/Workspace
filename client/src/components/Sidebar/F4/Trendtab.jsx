@@ -18,12 +18,7 @@ export default function Trendtab(props) {
     }
 
     return (
-        <div
-            className="weekTabs"
-            id={props.index}
-            ref={trendTabRef}
-            onClick={handleClick}
-        >
+        <div className="weekTabs" id={props.index} ref={trendTabRef} onClick={handleClick}>
             <p className="paTab Date">{props.trend}</p>
         </div>
     );

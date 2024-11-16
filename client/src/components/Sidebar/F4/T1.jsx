@@ -123,8 +123,9 @@ export default function T1() {
                     weight: 'bold'
                 },
                 formatter: (value, context) => {
-                    return `${actTimePercent[context.dataIndex].toFixed(1)}%`;
-                },
+                    const percent = actTimePercent[context.dataIndex];
+                    return percent > 0 ? `${percent.toFixed(1)}%` : ''; 
+                },                
                 listeners: {
                     enter: function (context) {
                         return actCount[context.dataIndex];
@@ -151,7 +152,7 @@ export default function T1() {
     }
 
     return (state.trend == "0" && (actData.length > 0 ? (
-        <div className='tnpT1' style={{ width: "80vw", height: "70vh", position: "fixed", left: "38vw", top: "25vh"}}>
+        <div className='tnpT1'>
             <Doughnut
                 data={data}
                 options={options}

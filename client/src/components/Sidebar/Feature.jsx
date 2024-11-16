@@ -27,6 +27,9 @@ export default function Feature(props) {
             id={"feature" + props.id} 
             className={`feature ${state.darkMode && "featuredarkMode"} ${isSelected}`} 
             onClick={() => {
+                if(state.fthState){
+                    takeAction({type: "changeFthState"})
+                }
                 handleNavigation();
                 switch (props.show) {
                     case "cs":

@@ -454,7 +454,7 @@ label{
     border: 1px solid black;
     border-radius: 25px;
     color: white;
-    top: 45vh;
+    top: 42vh;
 }
 
 .disclaimerFrame{
@@ -490,11 +490,13 @@ label{
 .yesButton{
     background-color: green !important;
     border: 0;
+    border-radius: 5px;
 }
 
 .noButton{
     background-color: red !important;
     border: 0;
+    border-radius: 5px;
 }
 
 #staticDisclaimer{
@@ -517,7 +519,6 @@ label{
 
 .failedAction{
     text-align: center;
-    position: absolute;
     font-size: 15px;
     background-color: orange;
     z-index: 10 !important;
@@ -536,7 +537,7 @@ label{
     justify-content: center;
     align-items: start;
     height: 100vh;
-    width: 80vw;
+    width: 100vw;
     position: fixed;
     top: 120vh;
     text-align: center;
@@ -898,15 +899,29 @@ label{
     }
 
     #abaElement{
-        flex-direction: column !important;
         margin-bottom: 4px !important;
-        margin-left: 0 !important;
     }
 
     .missedActivityDate{
-        width: fit-content !important;
         font-size: 16px !important;
-        height: 15px !important;
+    }
+
+    #specialElement{
+        width: 80vw !important;
+    }
+
+    #actName{
+        overflow: auto !important;
+    }
+
+    #actName::-webkit-scrollbar {
+        width: 0;
+        height: 0; 
+        transition: width 0.3s ease, height 0.3s ease;
+    }
+    
+    #actName:hover::-webkit-scrollbar {
+        width: "auto"; 
     }
 }
 
@@ -923,13 +938,16 @@ label{
         width: 87vw;
     }
 
-}
+    .streakContainer-1{
+        min-width: 370px !important;
+        max-width: 450px !important;
+     }
 
-@media(max-width: 500px){
-    .activityDescription{
-        height: 100px !important;
-        width: 200px !important;
-    }
+     .streakContainer-2{
+        min-width: 370px !important;
+        max-width: 450px !important;
+     }
+
 }
 
 @media (max-width : 780px){
@@ -963,26 +981,32 @@ label{
     .moveButtons{
         width: 90vw;
     }
+
+    .streakContainer-1{
+        max-width: 360px;
+        min-width: 330px !important;
+     }
+
+     .streakContainer-2{
+        max-width: 360px;
+        min-width: 330px !important;
+     }
 }
 
 @media (max-width: 670px){
-    .addCurrentActivityButton, .upcDate, .dailyActivity, .soloActivityBar{
+    .addCurrentActivityButton, .upcDate, .dailyActivity, .soloActivityBar, .missedActivity{
         font-size: 14px !important;
     }
 
-    .missedActivity{
+    .scheduleContext{
         font-size: 14px !important;
+        height: fit-content;
     }
 
     .missedActivityDate{
-        font-size: 9.8px !important;
-        margin-left: 2px !important;
-        margin-right: 2px !important;
+        font-size: 12px !important;
         height: 12px !important;
-    }
-
-    #specialElement{
-        width: 25vw !important;
+        overflow: scroll;
     }
 
     .aba{
@@ -1036,13 +1060,6 @@ label{
         height: 15px !important;
     }
 
-    #abaElement{
-        padding-left: 2px !important;
-        padding-right: 2px !important;
-        text-align: center !important;
-        align-items: center !important;
-    }
-
     .moveButtons{
         width: 95vw;
     }
@@ -1050,13 +1067,31 @@ label{
     .csButtonsContainer{
         padding-right: 0px !important;
     }
+
+    .missedActivityDateText{ 
+        font-size: 8px;
+     }
+
+     .tnpT3{
+        flex-direction: column;
+        align-items: center;
+        height: fit-content;
+        min-height: 350px;
+        justify-content: flex-start !important;
+     }
+
+     .streakContainer-1{
+        min-width: 500px !important;
+        max-height: 175px !important;
+     }
+
+     .streakContainer-2{
+        max-height: 175px !important;
+        min-width: 500px !important;
+     }
 }
 
 @media (max-width: 500px){
-    #specialElement{
-        width: 20vw !important;
-    }
-
     .aba{
         width: 20vw !important;
     }
@@ -1076,15 +1111,10 @@ label{
         font-size: 8px !important;
     }
 
-    .missedActivity{
-        font-size: 10px !important;
-    }
 
-    .missedActivityDate{
-        font-size: 7px !important;
-        margin: 0 !important;
-        height: 9px !important;
-        width: 80px !important;
+    .scheduleContext{
+        font-size: 12px !important;
+        height: fit-content;
     }
 
     .headingPopUp{
@@ -1103,14 +1133,6 @@ label{
         width: 5vw !important;
     }
 
-    #abaElement{
-        padding-left: 4px !important;
-        padding-right: 4px !important;
-        text-align: center !important;
-        align-items: center !important;
-        font-size: 7px !important;
-    }
-
     .moveButtons{
         width: 100vw;
     }
@@ -1127,6 +1149,28 @@ label{
         justify-content: center !important;
         align-items: center !important;
     }
+
+    .activityDescription{
+        height: 100px !important;
+        width: 200px !important;
+    }
+
+    .csButtons{
+        width: 100%;
+    }
+
+    .missedActivityDateText{
+        font-size: 6px;
+     }
+
+     .streakContainer-1{
+        min-width: 320px !important;
+     }
+
+     .streakContainer-2{
+        min-width: 320px !important;
+     }
+
 }
 
 /* Schedule End */
@@ -1497,63 +1541,80 @@ input[type=radio] {
 
 /* Trends and Progress Start */
 
-.defaultTrends{
+.trends{
     display: flex;
     flex-direction: row;
-    height: 25vh;
-    width: 80vw;
-    top: 90px;
-    position: fixed;
+    justify-content: center;
+    align-items: center;
+    height: 95px;
+    width: 85vw;
     gap: 10px;
     transition: 150ms linear;
+    overflow: scroll;
+    flex-wrap: wrap;
 }
 
 .tnpT1 {
-    width: 80vw; 
+    position: fixed;
+    top: 180px;
     height: 70vh; 
-    position: fixed; 
-    left: 38vw;
-    top: 25vh;
-    overflow: cut;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.t2FilterContainer {
+.t2filterFrame{
     position: fixed;
-    top: 200px;
-    left: 88vw;
     z-index: 5;
+    display: flex;
+    width: 90vw;
+    top: 200px;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 20px;
 }
 
 .tnpT3{
     display: flex;
-    justify-content: start;
-    top: 200px;
-    width: 80vw;
-    position: fixed;
-    overflow: scroll;
+    justify-content: center;
+    width: 100vw;
+    max-height: 220px;
+    height: fit-content;
     border-radius: 10px;
     gap: 2vw;
 }
 
-.t3FilterContainer {
+.t3Frame{
     position: fixed;
     top: 200px;
-    left: 88vw;
-    z-index: 5;
+    width: 100vw;
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    overflow: scroll;
+}
+
+.t3FilterContainer{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
 }
 
 .streakStats{
-    position: fixed;
-    top: 300px;
-    left: 88vw;
-    z-index: 5;
     display: flex; 
-    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    width: 100vw;
 }
 
-.streakStats p {
+.streakElements{
     padding: 10px;
     border-radius: 10px;
+    width: 150px;
 }
 
 table, th, td {
@@ -1579,7 +1640,7 @@ table, th, td {
     display: flex;
     flex-direction: row;
     gap: 5px;
-    width: 23vw;
+    width: 350px;
     overflow: scroll;
     padding-right: 20px;
 }
@@ -1618,6 +1679,8 @@ table, th, td {
 .defaultD{
     width:100px;
     padding-right:20px; 
+    overflow: scroll;
+    height: 20px;
 }
 
 .defaultST{
@@ -1646,7 +1709,10 @@ table, th, td {
     display: flex;
     flex-direction: column;
     width: 35vw;
-    height: 36vh;
+    max-height: 220px;
+    height: fit-content;
+    overflow: scroll;
+    min-width: 450px;
 }
 
 .headingContainerInitial{
@@ -1677,7 +1743,7 @@ table, th, td {
 }
 
 .headingElement-3{
-    width: 150px;
+    width: 350px;
     padding-right: 20px;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -1688,8 +1754,11 @@ table, th, td {
     display: flex;
     flex-direction: column;
     width: 30vw;
-    height: 36vh;
+    max-height: 220px;
     overflow: scroll;
+    height: fit-content;
+    overflow: scroll;
+    min-width: 450px;
 }
 
 .headingContainerFinal{
@@ -1714,18 +1783,15 @@ table, th, td {
 }
 
 .headingElement-5{
-    width: 100px;
+    width: 300px;
     padding-left: 10px;
     padding-top: 5px;
     padding-bottom: 5px;
 }
 
 .t3barChart{
-    position: fixed;
-    top: 61vh;
-    width: 80vw;
+    width: 100vw;
     display: flex;
-    left: 18vw;
     justify-content: center;
 }
 
@@ -1743,11 +1809,7 @@ table, th, td {
 }
 
 .missedActivityDate{
-    margin-left: 20px;
-    margin-bottom: 0;
     margin-top: 4px;
-    padding-left: 10px;
-    padding-right: 10px;
     height: 20px;
     display: flex;
     align-items: center;
@@ -1755,6 +1817,14 @@ table, th, td {
     color: white;
     background-image: linear-gradient(to right, rgb(42, 42, 243), rgba(144, 10, 144, 0.925));
     border-radius: 5px;
+    width: fit-content;
+    overflow: auto;
+}
+
+.missedActivityDateText{
+    margin-bottom: 0; 
+    padding-left: 10px; 
+    padding-right: 10px
 }
 
 .missedActivitiesList{
@@ -1838,10 +1908,19 @@ table, th, td {
     z-index: 1;
     text-align: center;
     align-items: center;
-    justify-content: center;
     font-size: 18px;
     font-weight: bold;
     overflow: scroll;
+}
+
+.tabsContainer{
+    position: fixed;
+    width: 100vw;
+    top: 90px;
+    height: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .paTab{
@@ -2280,8 +2359,6 @@ table, th, td {
 .loadingSpinner{
     width: 100vw;
     height: 100vh;
-    top: 85px;
-    position: fixed;
     display: flex;
     align-items: center;
     justify-content: center;

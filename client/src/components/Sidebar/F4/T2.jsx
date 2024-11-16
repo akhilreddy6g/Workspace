@@ -109,37 +109,40 @@ export default function T2() {
     };
 
     useEffect(() => {
+        console.log("filter", filter);
         if (state.trend === "1"){
             alterData(filter);
         }
     }, [state.trend, filter]);
 
     if (loading) {
-        return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText" style={{color: state.darkMode? 'white' : 'black'}}>Loading, please wait...</p></div>;
+        return <div className="loadingSpinner" ><p className="loadingText" style={{color: state.darkMode? 'white' : 'black'}}>Loading, please wait...</p></div>;
     }
 
     return (
         state.trend === "1" && (statData.length > 0 ? (
             <> 
-                <div className='t2FilterContainer'>
-                    <select name="t2Filter" id="t2FilterIpBox" onChange={(e) => {
-                        const value = e.target.value;
-                        changeFilter(value);
-                    }}>
-                        <option value={7}>Last week</option>
-                        <option value={30}>Last month</option>
-                        <option value={90}>Last 3 months</option>
-                        <option value={180}>Last 6 months</option>
-                        <option value={365}>Last year</option>
-                        <option value="Max">Max</option>
-                    </select>
+                <div className='t2filterFrame'>
+                    <div className='t2FilterContainer'>
+                        <select name="t2Filter" value={filter} id="t2FilterIpBox" onChange={(e) => {
+                            const value = e.target.value;
+                            changeFilter(value);
+                        }}>
+                            <option value={7}>Last week</option>
+                            <option value={30}>Last month</option>
+                            <option value={90}>Last 3 months</option>
+                            <option value={180}>Last 6 months</option>
+                            <option value={365}>Last year</option>
+                            <option value="Max">Max</option>
+                        </select>
+                    </div>
                 </div>
-                <div className='tnpT1' style={{color: state.darkMode ? 'white' : 'black', left:"20vw"}}>
+                <div className='tnpT1' style={{color: state.darkMode ? 'white' : 'black'}}>
                     <Bar data={chartData} options={options} />
                 </div>
             </>
             ) : ( <>
-                    <div className={`scheduleDisclaimer`} style={{left: state.fthState? "16.5vw" : "9.5vw", top:"185px"}}>
+                    <div className={`scheduleDisclaimer`}>
                         <p className="scheduleContext">Schedule Activities Regularly to View this Trend</p>
                     </div>
             </> ))
