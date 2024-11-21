@@ -11,6 +11,13 @@ export default function T3() {
     const [activity, changeActivity] = useState(null);
     const [actStreaks, changeStreak] = useState(null);
     const [loading, setLoading] = useState(true); 
+
+    function alertMessage(message){
+        takeAction({type:"changeFailedAction", payload:message});
+        setTimeout(() => {
+            takeAction({type:"changeFailedAction"});
+        }, 3500);
+      }
     
     async function alterData(days) {
         try {
@@ -41,7 +48,7 @@ export default function T3() {
             const sortedData = Array.from(finalData, ([date, activities]) => ({ date, activities })).sort((a, b) => new Date(b.date) - new Date(a.date));
             changeDates(sortedData);
         } catch (error) {
-            console.error("Error fetching user daily progress", error);
+            alertMessage("Error while fetching daily progress");
         } finally {
             setLoading(false); 
         } 
@@ -233,8 +240,8 @@ export default function T3() {
                 </div>
             </>
             ) : ( <>
-                    <div className={`scheduleDisclaimer`}>
-                        <p className="scheduleContext">Schedule Activities Regularly to View this Trend</p>
+                    <div className="scheduleDisclaimer" style={{top:"185px"}}>
+                        <p className="scheduleContext">Schedule daily activities regularly to view this trend</p>
                     </div>
             </> ))
     );

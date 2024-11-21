@@ -1,6 +1,7 @@
 import {useContext} from "react";
 import featuresTabHook from "../../Noncomponents";
 import { apiUrl } from "../../Noncomponents";
+import { isValidSessionStartTime } from "../../Noncomponents";
 
 export default function Sessionsetup(){
     const {state, takeAction} = useContext(featuresTabHook);
@@ -11,24 +12,6 @@ export default function Sessionsetup(){
             takeAction({type:"changeFailedAction"});
         }, 3500);
       }
-
-    function isValidSessionStartTime(start, end) {
-        const now = new Date();
-        const offset = now.getTimezoneOffset() / 60;
-        const estOffset = offset - 5;
-        const currentEstTime = new Date(now.getTime() + estOffset * 60 * 60 * 1000);
-        const [hours, minutes] = start.split(":").map(Number);
-        const [hours1, minutes1] = end.split(":").map(Number);
-        const sessionStartTime = new Date(currentEstTime);
-        sessionStartTime.setHours(hours);
-        sessionStartTime.setMinutes(minutes);
-        sessionStartTime.setSeconds(0);
-        sessionStartTime.setMilliseconds(0);
-        const isFutureTime = sessionStartTime > currentEstTime;
-        const isEndFutureTime = hours1 < 24 && minutes1 < 60;
-        const isBeforeEndOfDay = hours < 24 && minutes < 60;
-        return isFutureTime && isBeforeEndOfDay && isEndFutureTime;
-    }
       
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -41,33 +24,59 @@ export default function Sessionsetup(){
             sessionType:'d',
             sessionVersion:'n'
         };
-        if(isValidSessionStartTime(data.startTime, data.endTime)){
+        if(isValidSessionStartTime(data.startTime, data.endTime, data.breakTime, data.totalSessions)){
+            try {
+                const sessionMail = sessionStorage.getItem('email');
+                const mail = state.emailId? state.emailId : sessionMail;
+                const currActivities = await apiUrl.post(`/setup-sessions/${mail}`, {data});
+                alertMessage("Session setup successful");
+            } catch (error) {
+                alertMessage(`Error while setting up sessions`);
+            };
+            takeAction({ type: "changeActivityState"});
+        } else {
+            alertMessage(`Invalid session start time. Each Session must be atleast 2 minutes and Start time and end time must be in the future and before 11:59 pm EST.`);
+        };
+        takeAction({type: "changeStdState", payload:false});
+    };
+
+    async function restoreLastVersion(e){
+        e.preventDefault();
+        takeAction({type: "changeStdState", payload: false})
+        takeAction({ type: "changeCurrentAction", payload: "recover the last session?"});
+        const userResponse = await new Promise((resolve) => {
+          takeAction({ type: "changeDisclaimerState", payload: true });
+          takeAction({ type: "changeDisclaimerButtons" });
+          takeAction({ type: "setResolve", payload: resolve });
+        });
+        if(userResponse){
             try {
                 const sessionMail = sessionStorage.getItem('email');
                 const mail = state.emailId? state.emailId : sessionMail
-                await apiUrl.post(`/setup-sessions/${mail}`, {data});
-                alertMessage("Session setup successful");
+                const response = await apiUrl.patch(`/recover-last-session/${mail}?sessionType=d`);
+                takeAction({ type: "changeActivityState"});
+                alertMessage(response.data.message)
             } catch (error) {
-                console.log("Something went wrong", error);
-                alertMessage(`Unable to setup sessions: ${error}`);
-            };
-        } else {
-            alertMessage(`Invalid session start time. Start time and end time must be in the future and before 11:59 pm.`);
+                alertMessage("Error while recovering the last session");
+                takeAction({type: "changeStdState", payload: true});
+            }
+        } else{
+            takeAction({type: "changeStdState", payload: true});
         }
-       
-        takeAction({type:"changeStdState"})
-    };
+    }
+
     return <div className={`sessionSetup sessform ${state.darkMode && "sessionSetup1"}`}>
         <form className="setDayForm" action="/set-your-day" method="post" onSubmit={handleSubmit}>
         <label className="sessionFormLabel" id="startTime" htmlFor="startTime">Start Time</label>
-        <input className="sessionFormInput" type="time" name="startTime" id="sessStart"/><br/>
+        <input className="sessionFormInput" required type="time" name="startTime" id="sessStart"/><br/>
         <label className="sessionFormLabel" id="endTime" htmlFor="endTime">End Time</label>
-        <input className="sessionFormInput" type="time" name="endTime" id="sessEnd" /><br/>
+        <input className="sessionFormInput" required type="time" name="endTime" id="sessEnd" /><br/>
         <label className="sessionFormLabel" id="sessions" htmlFor="sessions">Sessions</label>
-        <input className="sessionFormInput" type="number" name="sessions" id="sessCount"/><br/>
+        <input className="sessionFormInput" required type="number" name="sessions" id="sessCount"/><br/>
         <label className="sessionFormLabel" id="breakTime" htmlFor="breakTime">Break Time</label>
-        <input className="sessionFormInput" type="number" name="breakTime" id="sessBreakTime" placeholder="min"/><br/>
-        <button type="submit" id="submitSessionButton">Submit</button>
+        <input className="sessionFormInput" required type="number" min={2} name="breakTime" id="sessBreakTime" placeholder="min"/><br/>
+        <button type="submit" id="submitSessionButton" style={{marginLeft: state.dsCombinedSubActivityData.length>0 && "90px"}}>Submit</button>
+        {state.dsCombinedSubActivityData.length==0 && <button type="button" id="submitSessionButton" onClick={(e)=>{restoreLastVersion(e)}}>Recover</button>}
         </form>
     </div>
 }

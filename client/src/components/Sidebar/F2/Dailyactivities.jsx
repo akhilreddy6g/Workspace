@@ -7,6 +7,12 @@ export default function Dailyactivities(){
     const {state, takeAction} = useContext(featuresTabHook);
     var data = state.activityData;
     const [loading, setLoading] = useState(true); 
+    function alertMessage(message){
+      takeAction({type:"changeFailedAction", payload:message});
+      setTimeout(() => {
+          takeAction({type:"changeFailedAction"});
+      }, 3500);
+    }
     async function alterData(){
         try {
           setLoading(true); 
@@ -15,7 +21,7 @@ export default function Dailyactivities(){
           const res = await apiUrl.get(`/activities/${mail}`);
           takeAction({type:"changeActivityData", payload: res.data})
         } catch (error) {
-            console.error("Error fetching daily activities", error);
+          alertMessage("Error while fetching the activities")
         } finally {
             setLoading(false); 
         }
@@ -38,11 +44,7 @@ export default function Dailyactivities(){
     },[state.updateActivity]);
 
     if (loading) {
-      return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText" style={{color: state.darkMode? 'white' : 'black'}}>Loading, please wait...</p></div>;
-    }
-
-    if (!state.activityData || state.activityData.length === 0) {
-      return <><div className={`scheduleDisclaimer ${state.fthState? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`}><p className="scheduleContext">No daily activities to show. Add activities, to view</p></div><Currentdayactivity /></>;
+      return <div className="loadingSpinner" ><p className="loadingText" style={{color: state.darkMode? 'white' : 'black'}}>Loading, please wait...</p></div>;
     }
 
     return <>

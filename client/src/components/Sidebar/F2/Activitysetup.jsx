@@ -33,8 +33,7 @@ export default function Activitysetup(){
                 alertMessage("Unable to add the activity: Start time must be less than current time");
             }
         } catch (error) {
-            console.log("Something went wrong", error);
-            alertMessage(`Unable to add the activity: ${error}`);
+            alertMessage(`Error while adding the activity`);
         };
         event.target.reset();
     };

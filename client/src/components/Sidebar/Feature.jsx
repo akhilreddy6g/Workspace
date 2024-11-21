@@ -38,9 +38,6 @@ export default function Feature(props) {
                     case "da":
                         takeAction({type: "changeDailyActState"});
                         break;
-                    case "qa":
-                        takeAction({type: "changeQuickSessState"});
-                        break;
                     default:
                         break;
                 }

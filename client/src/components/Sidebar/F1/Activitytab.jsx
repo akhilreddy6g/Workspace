@@ -11,13 +11,13 @@ export default function Activitytab(props){
     const buttonRef = useRef(null);
 
     function selectActivityTab(sno){
-        takeAction({type:"changeActTabButtRef", payload:sno-1});
+        takeAction({type:props.flag? "changeActTabButtRef" : "changeqsActTabButtRef", payload:sno-1});
     };
 
     function selectInitialTab(){
         const index = props.sno-1;
-        const curr = state.csActivityIndex;
-        if (curr===null && state.activeTab===null) {
+        const curr = props.flag? state.csActivityIndex : state.qsActivityIndex;
+        if (curr===null && (props.flag? state.activeTab : state.qsActiveTab)===null) {
             if(props.sno==1){
                 return "specialTab";
             }
@@ -35,8 +35,8 @@ export default function Activitytab(props){
     };
 
     function selectCurrentActivityTab(){
-        if(state.activeTab==props.sno-1){
-            if(state.csActivityIndex==state.activeTab && buttonRef!=null && buttonRef.current!=null){
+        if((props.flag? state.activeTab : state.qsActiveTab)==props.sno-1){
+            if(((props.flag? state.csActivityIndex: state.qsActivityIndex)==(props.flag? state.activeTab : state.qsActiveTab)) && buttonRef!=null && buttonRef.current!=null){
                 buttonRef.current.scrollIntoView({
                     behavior: "smooth",
                     block: "nearest",
@@ -148,7 +148,7 @@ export default function Activitytab(props){
             </div>
             <div className="activityName" >{props.activity}</div>
             <div className="timeAndStatus">
-                <div className="activityStartTime">{props.startTime}</div>
+                <div className="activityStartTime">{props.startTimeAmPm}</div>
                 <div className="timeBarContainer">
                     <div className="timeBar" onMouseOver={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                         {hover && <p className="timeLeftContent"> {remTime} left</p>}
@@ -158,7 +158,7 @@ export default function Activitytab(props){
                     </div>
                 </div>
                 </div>
-            <div className="activityEndTime"> {props.endTime} </div>
+            <div className="activityEndTime"> {props.endTimeAmPm} </div>
             </div>
         </div>
         </>

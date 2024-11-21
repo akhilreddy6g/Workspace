@@ -12,6 +12,13 @@ export default function T2() {
     const [filter, changeFilter] = useState(7);
     const [loading, setLoading] = useState(true); 
 
+    function alertMessage(message){
+        takeAction({type:"changeFailedAction", payload:message});
+        setTimeout(() => {
+            takeAction({type:"changeFailedAction"});
+        }, 3500);
+      }
+
     const options = {
         plugins: {
             title: {
@@ -82,7 +89,7 @@ export default function T2() {
                 changeData(response.data);
             }
         } catch (error) {
-            console.error("Error fetching user statistics", error);
+            alertMessage("Error while fetching statistics");
         } finally {
             setLoading(false); 
         }
@@ -109,7 +116,6 @@ export default function T2() {
     };
 
     useEffect(() => {
-        console.log("filter", filter);
         if (state.trend === "1"){
             alterData(filter);
         }
@@ -142,8 +148,8 @@ export default function T2() {
                 </div>
             </>
             ) : ( <>
-                    <div className={`scheduleDisclaimer`}>
-                        <p className="scheduleContext">Schedule Activities Regularly to View this Trend</p>
+                    <div className="scheduleDisclaimer" style={{top:"185px"}}>
+                        <p className="scheduleContext">Schedule activities regularly to view this trend</p>
                     </div>
             </> ))
     );

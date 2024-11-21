@@ -31,6 +31,8 @@ export default function Login() {
         const accessToken = response.data.token;
         sessionStorage.setItem('token', accessToken);
         sessionStorage.setItem('email', mail);
+        const currentDate = new Date().toISOString().split('T')[0];
+        localStorage.setItem('lastClearedDate', JSON.stringify({date: currentDate, email: mail}));
         apiUrl.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
         const status = signIn({
           auth: {
@@ -48,7 +50,6 @@ export default function Login() {
         setError(response.data.message);
       }
     } catch (error) {
-      console.error("Authentication failed:", error);
       setError(error.response?.data?.message || "Login Failed, Please Try Again");
     } finally {
       setLoading(false); 

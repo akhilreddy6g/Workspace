@@ -30,10 +30,9 @@ export default function Addactivitybar(){
             takeAction({type:"changeUpcActivityState", payload:!state.updateUpcomActivity});
             alertMessage("Successfully added the activity");}
             else {
-                alertMessage("Unable to add the activity: Please enter valid information (start time must be less than current time)");
+                alertMessage("Please enter valid information. Start time must be less than current time");
             }
         } catch (error) {
-            console.log("Something went wrong", error);
             alertMessage("Please enter valid information. Start time must be less than end time")
         };
         event.target.reset();

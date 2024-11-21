@@ -1,41 +1,10 @@
 import {useContext} from "react";
-import { useNavigate } from "react-router-dom";
 import Feature from "./Feature";
 import featuresTabHook from "../Noncomponents";
 import Userprofile from "./Userprofile";
-import useSignOut from 'react-auth-kit/hooks/useSignOut';
-import { apiUrl } from "../Noncomponents";
 
 export default function Features(){
     let {state, takeAction} = useContext(featuresTabHook);
-    const signOut = useSignOut();
-    const navigate = useNavigate();
-
-    function alertMessage(message){
-        takeAction({type:"changeFailedAction", payload:message});
-        setTimeout(() => {
-            takeAction({type:"changeFailedAction"});
-        }, 3500);
-      };
-
-    async function handleLogout(e){
-        e.preventDefault();
-        takeAction({ type: "changeCurrentAction", payload: "logout?"});
-        const userResponse = await new Promise((resolve) => {
-            takeAction({ type: "changeDisclaimerState", payload: true });
-            takeAction({ type: "changeDisclaimerButtons"});
-            takeAction({ type: "setResolve", payload: resolve });
-          });
-        if(userResponse){
-            takeAction({type:"changeInitialComponentsState", payload:false});
-            await apiUrl.post('/logout');
-            sessionStorage.clear();
-            signOut(); 
-            navigate("/login"); 
-        } else {
-            console.log("Logout Cancelled by the User")
-        }
-    };
     return (<div className={`featureContainer ${state.fthState? "featureContainer1" : "featureContainer2"}`}>
         <div className={`background ${state.darkMode && "backgdarkMode"}`}>
     <Userprofile id="0" title="userPicture" src="src/assets/user.svg"></Userprofile>
@@ -46,9 +15,6 @@ export default function Features(){
     <Feature id="5" featureName="missedActivities" title="Missed Activities" show="ma" path="/missed-activities"></Feature>
     <Feature id="6" featureName="planAhead" title="Plan Ahead" show="pa" path="/plan-ahead"></Feature>
     <Feature id="7" featureName="setYourDay" title="Set Your Day" show="syd" path="/set-your-day"></Feature>
-    <div style={{display:"flex", justifyContent:"center", alignItems:"end", flexGrow:"1", marginTop:"20px"}}>
-    <button className="submitActivity" id="logOutButton" onClick={(event)=>{handleLogout(event)}} style={{width:"100px", height:"30px", fontSize:"16px"}}>Log Out</button>
-    </div>
     </div>
     </div>);
 }

@@ -4,11 +4,21 @@ import Activitytab from "./Activitytab";
 import Activityframe from "./Activityframe";
 import Currentdayactivity from "./Currentdayactivity";
 import { apiUrl } from "../../Noncomponents";
+import { convertTimeToAmPm } from "../../Noncomponents";
+import { formatTime } from "../../Noncomponents";
 
 export default function CurrentSchedule() {
     const { state, takeAction } = useContext(featuresTabHook);
     const [loading, setLoading] = useState(true); 
     var data = state.combinedActivityData;
+
+    function alertMessage(message){
+        takeAction({type:"changeFailedAction", payload:message});
+        setTimeout(() => {
+            takeAction({type:"changeFailedAction"});
+        }, 3500);
+      }
+
     async function alterData() {
         try {
             setLoading(true); 
@@ -17,7 +27,7 @@ export default function CurrentSchedule() {
             const combinedAct = await apiUrl.get(`/combined-activities/${mail}`);
             takeAction({ type: "changeCombinedActivityData", payload: combinedAct.data });
         } catch (error) {
-            console.error("Error fetching combined activities", error);
+            alertMessage("Error while retrieving the activities");
         } finally {
             setLoading(false); 
         }
@@ -33,9 +43,12 @@ export default function CurrentSchedule() {
                 activity={object.activity_name}
                 startTime={object.activity_start_time ? object.activity_start_time.slice(0, 5) : 'N/A'}
                 endTime={object.activity_end_time ? object.activity_end_time.slice(0, 5) : 'N/A'}
+                startTimeAmPm = {convertTimeToAmPm(formatTime(new Date(`1970-01-01T${object.activity_start_time}`)))}
+                endTimeAmPm = {convertTimeToAmPm(formatTime(new Date(`1970-01-01T${object.activity_end_time}`)))}
                 priority={object.activity_priority}
                 type={object.activity_type}
                 status={object.activity_status}
+                flag={true}
             />
         );
     }
@@ -45,14 +58,14 @@ export default function CurrentSchedule() {
     }, [state.updateActivity]);
 
     if (loading) {
-        return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText" style={{color: state.darkMode? 'white' : 'black'}}>Loading, please wait...</p></div>;
+        return <div className="loadingSpinner"><p className="loadingText" style={{color: state.darkMode? 'white' : 'black'}}>Loading, please wait...</p></div>;
     }
 
     if (!state.combinedActivityData || state.combinedActivityData.length === 0) {
         return (
             <>
                 <div className="scheduleDisclaimer">
-                    <p className="scheduleContext">No schedule to show. Add activities to view the schedule.</p>
+                    <p className="scheduleContext">No schedule yet. Add activities to get started!</p>
                 </div>
                 <Currentdayactivity />
             </>
@@ -76,6 +89,7 @@ export default function CurrentSchedule() {
                     notes={ state.csActivityIndex != null && state.combinedActivityData[state.csActivityIndex] ? state.combinedActivityData[state.csActivityIndex].activity_description : state.combinedActivityData[0]?.activity_description }
                     type={ state.csActivityIndex != null && state.combinedActivityData[state.csActivityIndex] ? state.combinedActivityData[state.csActivityIndex].activity_type : state.combinedActivityData[0]?.activity_type }
                     status={ state.csActivityIndex != null && state.combinedActivityData[state.csActivityIndex] ? state.combinedActivityData[state.csActivityIndex].activity_status : state.combinedActivityData[0]?.activity_status }
+                    flag={true}
                 />
             )}
             </div>

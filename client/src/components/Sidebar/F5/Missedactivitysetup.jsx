@@ -8,6 +8,13 @@ export default function Missedactivitysetup(){
     const [dates, setDates] = useState([]);
     const [activities, setActivities] = useState([]);
     const [loading, setLoading] = useState(true); 
+    
+    function alertMessage(message){
+        takeAction({type:"changeFailedAction", payload:message});
+        setTimeout(() => {
+            takeAction({type:"changeFailedAction"});
+        }, 3500);
+      }
 
     async function getData() {
         try {
@@ -23,7 +30,7 @@ export default function Missedactivitysetup(){
                 activities: activitiesResponse.data
             };
         } catch (error) {
-            console.error("Error fetching missed activities", error);
+            alertMessage("Error while fetching the missed activities")
             return { dates: [], activities: [] };
         } finally {
             setLoading(false); 
@@ -46,7 +53,7 @@ export default function Missedactivitysetup(){
             setDates(records.dates);
             setActivities(records.activities);
         }).catch(error => {
-            console.error(`error is ${error}`);
+            alertMessage("Error while retrieving the data")
         });
     }, [state.updateMissedActivity]);
 
@@ -62,7 +69,7 @@ export default function Missedactivitysetup(){
             </div>
                     {dates.length > 0 ? dates.map(mapping) : (
                         <div className="scheduleDisclaimer">
-                            <p className="scheduleContext">Great Work! You have no missed activities</p>
+                            <p className="scheduleContext">Great Work! You're all caught up!</p>
                         </div>
                     )}
                 </div>

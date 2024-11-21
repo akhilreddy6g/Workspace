@@ -6,8 +6,7 @@ import T2 from "./T2";
 import T3 from "./T3";
 
 export default function Trendsandprogress(){
-    var trends = [{trend: 'Time Sceduled based on Activity Priority', index: 0}, {trend: 'No of Activities Skipped and Completed Over Time', index: 1}, {trend: 'Daily Activity Streak', index: 2}, 
-    {trend: 'Productivity Levels', index:3}, {trend: 'Activities Scheduled vs Activities Completed on Time', index:4}, {trend:'Missed Activities Over Time', index:5}, {trend: 'Daily Activities Completed Over Time', index:6}]
+    var trends = [{trend: 'Time Sceduled based on Activity Priority', index: 0}, {trend: 'No of Activities Skipped and Completed Over Time', index: 1}, {trend: 'Daily Activity Streak', index: 2}]
     const {state, takeAction} = useContext(featuresTabHook);
 
     function mapping(object){
@@ -19,7 +18,7 @@ export default function Trendsandprogress(){
     return (
         <>
         <div className="tabsContainer">
-            <div className={`trends ${state.fthState? "planAhead1" : "planAhead2"}`} style={{}}>
+            <div className="trends">
                 {trends.map(mapping)}
             </div>
         </div>

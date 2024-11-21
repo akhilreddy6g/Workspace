@@ -23,6 +23,13 @@ export default function T1() {
     var highPriorityTime = 0;
     var maxhighPriorityTime = 0;
     const actColors = ['red', 'yellow', 'green'];
+
+    function alertMessage(message){
+        takeAction({type:"changeFailedAction", payload:message});
+        setTimeout(() => {
+            takeAction({type:"changeFailedAction"});
+        }, 3500);
+      }
     
     actData.forEach(element => {
         let p = element.activity_priority;
@@ -74,7 +81,7 @@ export default function T1() {
                 takeAction({ type: "changeCombinedActivityData", payload: response.data });
             }
         } catch (error) {
-            console.error("Error fetching combined activities", error);
+            alertMessage("Error while fetching activities");
         } finally {
             setLoading(false); 
         }
@@ -159,8 +166,8 @@ export default function T1() {
             />
         </div>
         ) : ( <>
-            <div className={`scheduleDisclaimer`} style={{left: state.fthState? "16.5vw" : "9.5vw", top:"185px"}}>
-                <p className="scheduleContext">Schedule Activities Regularly to View this Trend</p>
+            <div className="scheduleDisclaimer" style={{top:"185px"}}>
+                <p className="scheduleContext">Schedule activities regularly to view this trend</p>
             </div>
         </> ))
     );

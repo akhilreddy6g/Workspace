@@ -73,13 +73,13 @@ app.post("/authenticate/:email", async (req, res) => {
             if (user.rows.length === 0) {
                 console.warn({ message: "Invalid email / email does not exist", email: email, statusCode: 403});
                 console.log(logSuffix);
-                return res.status(200).json({ isAuthenticated: false, message: 'Invalid email / email does not exist' });
+                return res.status(403).json({ isAuthenticated: false, message: 'Invalid email / email does not exist' });
             }
-            const isPasswordValid = bcrypt.compare(password, user.rows[0].user_password);
+            const isPasswordValid = await bcrypt.compare(password, user.rows[0].user_password);
             if (!isPasswordValid) {
                 console.warn({ message: "Invalid credentials", email: email, statusCode: 403});
                 console.log(logSuffix);
-                return res.status(200).json({ isAuthenticated: false, message: 'Invalid credentials' });
+                return res.status(403).json({ isAuthenticated: false, message: 'Invalid credentials' });
             }
             const refreshToken = jwt.sign({ email: user.rows[0].user_email }, REFRESH_SECRET, { expiresIn: '30d' });
             const accessToken = jwt.sign({ email: user.rows[0].user_email }, JWT_SECRET, { expiresIn: '15m' });
@@ -90,12 +90,12 @@ app.post("/authenticate/:email", async (req, res) => {
         } catch (error) {
             console.error({ message: "Authentication error", error: error.message, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms` });
             console.log(logSuffix);
-            return res.status(200).json({ message: 'Internal server error' });
+            return res.status(500).json({ message: 'Internal server error' });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });
+        return res.status(400).json({ message: 'Bad Request' });
     }
 });
 
@@ -124,7 +124,7 @@ app.post("/refresh-token", (req, res) => {
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });
+        return res.status(400).json({ message: 'Bad Request' });
     }
 });
 
@@ -140,7 +140,7 @@ app.post("/logout", (req, res) => {
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });
+        return res.status(400).json({ message: 'Bad Request' });
     }
 });
 
@@ -154,7 +154,7 @@ app.post("/register/:email", async (req, res) => {
         try {
             const user = await db.query("SELECT * FROM users WHERE user_email=$1", [email]);
             if (user.rows.length === 0) {
-                const hashedPassword = bcrypt.hash(password, SALT_ROUNDS);
+                const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
                 await db.query(
                     "INSERT INTO users (user_email, user_password) VALUES ($1, $2)",
                     [email, hashedPassword]
@@ -162,13 +162,13 @@ app.post("/register/:email", async (req, res) => {
                 const refreshToken = jwt.sign({ email: email }, REFRESH_SECRET, { expiresIn: '30d' });
                 const accessToken = jwt.sign({ email: email }, JWT_SECRET, { expiresIn: '15m' });
                 res.cookie('_auth', refreshToken, { httpOnly: true, secure: true, sameSite: 'Strict', maxAge: 1000 * 60 * 60 * 24 * 30});
-                console.info({ message: "User registered successfully", email: email, statusCode: 201, requestDuration: `${Date.now() - startTimeRequest}ms` });
+                console.info({ message: "User registered successfully", email: email, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms` });
                 console.log(logSuffix);
                 return res.status(200).json({ isAuthenticated: true, token: accessToken});
             } else {
                 console.warn({ message: "Registration failed - User already exists", email: email, statusCode: 409, requestDuration: `${Date.now() - startTimeRequest}ms` });
                 console.log(logSuffix);
-                return res.status(200).json({ message: "Registration failed! User already exists", isAuthenticated: false });
+                return res.status(409).json({ message: "Registration failed! User already exists", isAuthenticated: false });
             }
         } catch (error) {
             console.error({ message: "Error registering user", error: error.message, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms` });
@@ -178,7 +178,7 @@ app.post("/register/:email", async (req, res) => {
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });
+        return res.status(400).json({ message: 'Bad Request' });
     }
 });
 
@@ -195,21 +195,21 @@ app.get("/activities/:email", verifyToken, async (req, res) => {
                 const logMessage = `No activities found for email ${email} with ${filter} filter`;
                 console.warn({message: logMessage, statusCode: 404, requestDuration: `${Date.now() - startTime}ms`, });
                 console.log(logSuffix);
-                return res.status(200).json({ message: logMessage });
+                return res.status(404).json({ message: logMessage });
             };
             console.info({ message: `Successfully retrieved activities for email ${email} using ${filter} filter`, statusCode: 200, requestDuration: `${Date.now() - startTime}ms`, rowCount: data.rows.length, });
             console.log(logSuffix);
-            res.json(data.rows);
+            return res.status(200).json(data.rows);
         } catch (error) {
             const errorMessage = `Error retrieving activities for email ${email} using ${filter} filter`;
             console.error({ message: errorMessage, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTime}ms`, });
             console.log(logSuffix);
-            return res.status(200).json({ message: errorMessage });
+            return res.status(500).json({ message: errorMessage });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });
+        return res.status(400).json({ message: 'Bad Request' });
     }
 });
 
@@ -228,22 +228,22 @@ app.get("/activity/:email", verifyToken, async (req, res) => {
                 const logMessage = `No activity found with id ${id} and email ${email}`;
                 console.warn({message: logMessage, statusCode: 404, requestDuration: `${Date.now() - startTime}ms`, });
                 console.log(logSuffix);
-                return res.status(200).json({ message: logMessage });
+                return res.status(404).json({ message: logMessage });
             }
             console.info({message: `Successfully retrieved daily activity with id ${id}`, statusCode: 200, requestDuration: `${Date.now() - startTime}ms`});
             console.log(logSuffix);
-            res.json(data.rows);
+            return res.status(200).json(data.rows);
         } catch (error) {
             const errorMessage = `Error retrieving activity with id ${id} for email ${email}`;
             console.error({ message: errorMessage, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTime}ms`,
             });
             console.log(logSuffix);
-            res.status(200).json({ message: errorMessage });
+            return res.status(500).json({ message: errorMessage });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });
+        return res.status(400).json({ message: 'Bad Request' });
     }
 });
 
@@ -267,19 +267,20 @@ app.post("/add-activity/:email", verifyToken, async (req, res) => {
                 console.info({ message: `Successfully added activity with name: ${actName} to global activity db`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`,email});
             } catch (error) {
                 console.error({ message: `Failed to add activity with name: ${actName} to global activity db`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
+                return res.status(500).json({ message: `Failed to add activity with name: ${actName} to global activity db`, flag:false });
             }
             console.info({ message: `Successfully added activity with name: ${actName}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`,email});
             console.log(logSuffix);
-            res.status(200).json({ message: `Successfully added the daily activity with name: ${actName}`, flag:true });
+            return res.status(200).json({ message: `Successfully added the daily activity with name: ${actName}`, flag:true });
         } catch (error) {
             console.error({ message: `Failed to add activity with name: ${actName}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in adding the daily activity with name ${actName}: ${error.message}`, flag:false });
+            return res.status(500).json({ message: `Unsuccessful in adding the daily activity with name ${actName}: ${error.message}`, flag:false });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });
+        return res.status(400).json({ message: 'Bad Request' });
     }
 });
 
@@ -298,16 +299,16 @@ app.post("/update-da-status/:email", verifyToken, async (req, res) => {
             );
             console.info({ message: `Successfully updated the activity status for activity ID: ${actId}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`, email, newStatus: actStatus,});
             console.log(logSuffix);
-            res.status(200).json({ message: `Successfully updated the activity status for activity ID: ${actId}` });
+            return res.status(200).json({ message: `Successfully updated the activity status for activity ID: ${actId}` });
         } catch (error) {
             console.error({message: `Failed to update the activity status for activity ID: ${actId}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in updating the activity status for activity ID: ${actId}: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in updating the activity status for activity ID: ${actId}: ${error.message}` });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });
+        return res.status(400).json({ message: 'Bad Request' });
     }
 });
 
@@ -334,16 +335,16 @@ app.patch("/edit-activity/:email", verifyToken, async (req, res) => {
             );
             console.info({ message: `Successfully updated activity with ID: ${id}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`, email, updatedFields: { actName, actStart, actEnd, actPriority }});
             console.log(logSuffix);
-            res.status(200).json({ message: `Successfully updated the daily activity with ID: ${id}` });
+            return res.status(200).json({ message: `Successfully updated the daily activity with ID: ${id}` });
         } catch (error) {
             console.error({message: `Failed to update activity with ID: ${id}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`,});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in updating the daily activity with ID: ${id}: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in updating the daily activity with ID: ${id}: ${error.message}` });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });
+        return res.status(400).json({ message: 'Bad Request' });
     }
 });
 
@@ -360,22 +361,22 @@ app.delete("/delete-activity/:email", verifyToken, async (req, res) => {
                 await db.query("DELETE FROM daily_activities WHERE activity_uuid = $1 AND user_email = $2", [id, email]);
                 console.info({message: `Successfully deleted activity with ID: ${id}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`, email});
                 console.log(logSuffix);
-                res.status(200).json({ message: `Successfully deleted the daily activity with id ${id}` });
+                return res.status(200).json({ message: `Successfully deleted the daily activity with id ${id}` });
             } else {
                 console.warn({ message: `No activity found with ID: ${id}`, statusCode: 404, email, requestDuration: `${Date.now() - startTimeRequest}ms`});
                 console.log(logSuffix);
-                res.status(200).json({ message: `No activity found with id ${id}` });
+                return res.status(404).json({ message: `No activity found with id ${id}` });
             }
         } catch (error) {
             console.error({ message: `Failed to delete activity with ID: ${id}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`,});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in deleting the daily activity with id ${id}: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in deleting the daily activity with id ${id}: ${error.message}` });
         };
     
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });
+        return res.status(400).json({ message: 'Bad Request' });
     }
 });
 
@@ -389,16 +390,16 @@ app.get("/current-activities/:email", verifyToken, async (req, res) => {
             const data = await db.query('SELECT * FROM current_day_activities WHERE user_email=$1 ORDER BY activity_start_time', [email]);
             console.info({ message: `Successfully retrieved current activities for email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`, numberOfActivities: data.rows.length});
             console.log(logSuffix);
-            res.status(200).json(data.rows);
+            return res.status(200).json(data.rows);
         } catch (error) {
             console.error({ message: `Failed to retrieve current activities for email: ${email}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in retrieving today's activities: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in retrieving today's activities: ${error.message}` });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });
+        return res.status(400).json({ message: 'Bad Request' });
     }
 });
 
@@ -412,16 +413,16 @@ app.get("/current-day-missed-activities/:email", verifyToken, async (req, res) =
             const data = await db.query('SELECT * FROM current_day_activities WHERE user_email = $1 AND activity_status = 0 ORDER BY activity_start_time', [email]);
             console.info({ message: `Successfully retrieved missed activities for email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`, numberOfMissedActivities: data.rows.length});
             console.log(logSuffix);
-            res.status(200).json(data.rows);
+            return res.status(200).json(data.rows);
         } catch (error) {
             console.error({ message: `Failed to retrieve missed activities for email: ${email}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in retrieving today's missed activities: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in retrieving today's missed activities: ${error.message}` });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });
+        return res.status(400).json({ message: 'Bad Request' });
     }
 });
 
@@ -439,16 +440,16 @@ app.post("/add-current-day-activity/:email", verifyToken, async (req, res) => {
             );
             console.info({message: `Successfully added activity "${actName}" to current day schedule`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`, activityDetails: { actName, actDescr, priority, startTime, endTime, email }});
             console.log(logSuffix);
-            res.status(200).json({ message: `Successfully added the activity "${actName}" to today's schedule`, flag: true });
+            return res.status(200).json({ message: `Successfully added the activity "${actName}" to today's schedule`, flag: true });
         } catch (error) {
             console.error({ message: `Failed to add activity "${actName}" to current day schedule`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in adding the activity "${actName}" to today's schedule: ${error.message}`, flag: false });
+            return res.status(500).json({ message: `Unsuccessful in adding the activity "${actName}" to today's schedule: ${error.message}`, flag: false });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });
+        return res.status(400).json({ message: 'Bad Request' });
     }
 });
 
@@ -467,16 +468,16 @@ app.post("/update-ca-status/:email", verifyToken, async (req, res) => {
             );
             console.info({ message: `Successfully updated status of activity with ID: ${actId}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`, updatedStatus: actStatus});
             console.log(logSuffix);
-            res.status(200).json({ message: `Successfully updated the activity status of today's activity with id: ${actId}` });
+            return res.status(200).json({ message: `Successfully updated the activity status of today's activity with id: ${actId}` });
         } catch (error) {
             console.error({ message: `Failed to update status of activity with ID: ${actId}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in updating the activity status of today's activity with id: ${actId}: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in updating the activity status of today's activity with id: ${actId}: ${error.message}` });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });       
+        return res.status(400).json({ message: 'Bad Request' });       
     }
 });
 
@@ -492,21 +493,21 @@ app.delete("/delete-current-activity/:email", verifyToken, async (req, res) => {
             if (result.rowCount > 0) {
                 console.info({ message: `Successfully deleted current activity with ID: ${id}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
                 console.log(logSuffix);
-                res.status(200).json({ message: `Successfully deleted today's activity with id: ${id}` });
+                return res.status(200).json({ message: `Successfully deleted today's activity with id: ${id}` });
             } else {
                 console.warn({ message: `No activity found with ID: ${id}`, statusCode: 404, requestDuration: `${Date.now() - startTimeRequest}ms`});
                 console.log(logSuffix);
-                res.status(200).json({ message: `No activity found with id: ${id}` });
+                return res.status(404).json({ message: `No activity found with id: ${id}` });
             }
         } catch (error) {
             console.error({ message: `Failed to delete activity with ID: ${id}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in deleting today's activity with id: ${id}: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in deleting today's activity with id: ${id}: ${error.message}` });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });  
+        return res.status(400).json({ message: 'Bad Request' });  
     }
     
 });
@@ -521,16 +522,16 @@ app.delete("/delete-current-activities/:email", verifyToken, async (req, res) =>
             await db.query("DELETE FROM current_day_activities WHERE user_email=$1", [email]);
             console.info({ message: `Successfully deleted all current day activities for email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: "Successfully deleted today's activities" });
+            return res.status(200).json({ message: "Successfully deleted today's activities" });
         } catch (error) {
             console.error({ message: `Failed to delete all current day activities for email: ${email}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in deleting today's activities: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in deleting today's activities: ${error.message}` });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });  
+        return res.status(400).json({ message: 'Bad Request' });  
     }
 });
 
@@ -544,16 +545,16 @@ app.get("/combined-activities/:email", verifyToken, async (req, res) => {
             const data = await db.query('SELECT * FROM daily_activities WHERE user_email = $1 UNION SELECT * FROM current_day_activities WHERE user_email = $1 ORDER BY activity_start_time, activity_end_time', [email]);
             console.info({message: `Successfully retrieved combined daily and current day activities for email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json(data.rows);
+            return res.status(200).json(data.rows);
         } catch (error) {
             console.error({ message: `Failed to retrieve combined daily and current day activities for email: ${email}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in retrieving today's and daily activities: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in retrieving today's and daily activities: ${error.message}` });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' }); 
+        return res.status(400).json({ message: 'Bad Request' }); 
     }
 });
 
@@ -567,16 +568,16 @@ app.get("/missed-activities/:email", verifyToken, async (req, res) => {
             const data = await db.query('SELECT * FROM missed_activities WHERE user_email = $1', [email]);
             console.info({ message: `Successfully retrieved missed activities for email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json(data.rows);
+            return res.status(200).json(data.rows);
         } catch (error) {
             console.error({ message: `Failed to retrieve missed activities for email: ${email}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in retrieving missed activities: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in retrieving missed activities: ${error.message}` });
         }; 
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' }); 
+        return res.status(400).json({ message: 'Bad Request' }); 
     }
 });
 
@@ -592,21 +593,21 @@ app.get("/missed-activity/:email", verifyToken, async (req, res) => {
             if (data.rows.length > 0) {
                 console.info({ message: `Successfully retrieved missed activity with ID: ${id}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
                 console.log(logSuffix);
-                res.status(200).json(data.rows);
+                return res.status(200).json(data.rows);
             } else {
                 console.warn({ message: `No missed activity found with ID: ${id}`, statusCode: 404, requestDuration: `${Date.now() - startTimeRequest}ms`});
                 console.log(logSuffix);
-                res.status(200).json({ message: `No missed activity found with id: ${id}` });
+                return res.status(404).json({ message: `No missed activity found with id: ${id}` });
             }
         } catch (error) {
             console.error({ message: `Failed to retrieve missed activity with ID: ${id}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in retrieving the missed activity with id: ${id}: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in retrieving the missed activity with id: ${id}: ${error.message}` });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' }); 
+        return res.status(400).json({ message: 'Bad Request' }); 
     }
 });
 
@@ -620,16 +621,16 @@ app.get("/missed-activities-dates/:email", verifyToken, async (req, res) => {
             const data = await db.query('SELECT DISTINCT activity_date FROM missed_activities WHERE user_email = $1 ORDER BY activity_date DESC', [email]);
             console.info({ message: `Successfully retrieved missed activity dates for email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json(data.rows);
+            return res.status(200).json(data.rows);
         } catch (error) {
-            console.error({ message: `Failed to retrieve missed activity dates for email: ${email}`, error: error.message, stack: error.stack, statusCode: 404, requestDuration: `${Date.now() - startTimeRequest}ms`});
+            console.error({ message: `Failed to retrieve missed activity dates for email: ${email}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in retrieving missed activity dates: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in retrieving missed activity dates: ${error.message}` });
         };    
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' }); 
+        return res.status(400).json({ message: 'Bad Request' }); 
     }
 });
 
@@ -657,16 +658,16 @@ app.post("/add-missed-activities/:email", verifyToken, async (req, res) => {
         } catch (error) {
             if (error.code === '23505') {
                 console.warn({ message: `Duplicate activity: Activity with ID: ${id} already exists in the current schedule`, statusCode: 409, requestDuration: `${Date.now() - startTimeRequest}ms`});
-                return res.status(200).json({ message: `The activity with id ${id} already exists in the current schedule.` });
+                return res.status(409).json({ message: `The activity with id ${id} already exists in the current schedule.` });
             }
             console.error({ message: `Failed to add missed activity with ID: ${id} back to the current schedule`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            return res.status(200).json({ message: `Error while adding missed activity with id ${id} back to the current schedule: ${error.message}` });
+            return res.status(500).json({ message: `Error while adding missed activity with id ${id} back to the current schedule: ${error.message}` });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' }); 
+        return res.status(400).json({ message: 'Bad Request' }); 
     }
 });
 
@@ -684,16 +685,16 @@ app.patch("/edit-missed-activity/:email", verifyToken, async (req, res) => {
             );
             console.info({ message: `Successfully updated missed activity with id: ${id}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Successfully updated missed activity with id ${id}` });
+            return res.status(200).json({ message: `Successfully updated missed activity with id ${id}` });
         } catch (error) {
             console.error({ message: `Failed to update missed activity with id: ${id}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in updating the missed activity with id ${id}: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in updating the missed activity with id ${id}: ${error.message}` });
         }
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' }); 
+        return res.status(400).json({ message: 'Bad Request' }); 
     }
 });
 
@@ -708,16 +709,16 @@ app.delete("/delete-missed-activity/:email", verifyToken, async (req, res) => {
             await db.query("DELETE FROM missed_activities WHERE activity_uuid=$1 AND user_email=$2", [id, email]);
             console.info({ message: `Successfully deleted missed activity with id: ${id}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Successfully deleted missed activity with id ${id}` });
+            return res.status(200).json({ message: `Successfully deleted missed activity with id ${id}` });
         } catch (error) {
             console.error({ message: `Failed to delete missed activity with id: ${id}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in deleting the missed activity with id ${id}: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in deleting the missed activity with id ${id}: ${error.message}` });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' }); 
+        return res.status(400).json({ message: 'Bad Request' }); 
     }
 });
 
@@ -732,16 +733,16 @@ app.get("/upcoming-activities/:email", verifyToken, async (req, res) => {
             const data = await db.query("SELECT * FROM upcoming_activities WHERE user_email=$1 AND activity_date=$2 ORDER BY activity_start_time", [email, date]);
             console.info({ message: `Successfully retrieved upcoming activities on date: ${date}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms` });
             console.log(logSuffix);
-            res.status(200).json(data.rows);
+            return res.status(200).json(data.rows);
         } catch (error) {
             console.error({ message: `Failed to retrieve upcoming activities on date: ${date}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in retrieving the upcoming activities on date ${date}: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in retrieving the upcoming activities on date ${date}: ${error.message}` });
         }
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' }); 
+        return res.status(400).json({ message: 'Bad Request' }); 
     }
 });
 
@@ -756,16 +757,16 @@ app.get("/upcoming-activity/:email", verifyToken, async (req, res) => {
             const data = await db.query("SELECT * FROM upcoming_activities WHERE activity_uuid=$1 AND user_email=$2 ORDER BY activity_start_time", [id, email]);
             console.info({ message: `Successfully retrieved upcoming activity with id: ${id}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json(data.rows);
+            return res.status(200).json(data.rows);
         } catch (error) {
             console.error({ message: `Failed to retrieve upcoming activity with id: ${id}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in retrieving the upcoming activity with id ${id}: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in retrieving the upcoming activity with id ${id}: ${error.message}` });
         }; 
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });  
+        return res.status(400).json({ message: 'Bad Request' });  
     }
 });
 
@@ -786,16 +787,16 @@ app.post("/add-upcoming-activities/:email", verifyToken, async (req, res) => {
             );
             console.info({ message: `Successfully added the upcoming activity: ${actName} on ${finalDate}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Successfully added the upcoming activity with name ${actName} on ${finalDate}.`, flag: true });
+            return res.status(200).json({ message: `Successfully added the upcoming activity with name ${actName} on ${finalDate}.`, flag: true });
         } catch (error) {
             console.error({ message: `Unsuccessful in adding the upcoming activity: ${actName} on ${finalDate}`, error: error.message, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in adding the upcoming activity with name ${actName} on ${finalDate}: ${error.message}`, flag:false });
+            return res.status(500).json({ message: `Unsuccessful in adding the upcoming activity with name ${actName} on ${finalDate}: ${error.message}`, flag:false });
         }  
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });  
+        return res.status(400).json({ message: 'Bad Request' });  
     }
 });
 
@@ -816,17 +817,17 @@ app.post("/add-upcoming-activity/:email", verifyToken, async (req, res) => {
             );
             console.info({ message: `Successfully added the upcoming activity with id: ${id} to today’s schedule`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Successfully added the upcoming activity with id ${id} to today's schedule` });
+            return res.status(200).json({ message: `Successfully added the upcoming activity with id ${id} to today's schedule` });
         } catch (error) {
             console.error({ message: `Failed to add the upcoming activity with id ${id} to today’s schedule`, error: error.message, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`
             });
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in adding the upcoming activity with id ${id} to today's schedule: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in adding the upcoming activity with id ${id} to today's schedule: ${error.message}` });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });  
+        return res.status(400).json({ message: 'Bad Request' });  
     }
 });
 
@@ -844,16 +845,16 @@ app.patch("/edit-upcoming-activity/:email", verifyToken, async (req, res) => {
             );
             console.info({ message: `Successfully updated the upcoming activity with id ${id}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Successfully updated the upcoming activity with id ${id}` });
+            return res.status(200).json({ message: `Successfully updated the upcoming activity with id ${id}` });
         } catch (error) {
             console.error({ message: `Failed to update the upcoming activity with id: ${id}`, error: error.message, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms` });
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in updating the upcoming activity with id ${id}: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in updating the upcoming activity with id ${id}: ${error.message}` });
         }; 
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });  
+        return res.status(400).json({ message: 'Bad Request' });  
     }
 });
 
@@ -869,16 +870,16 @@ app.delete("/delete-upcoming-activity/:email", verifyToken, async (req, res) => 
             await db.query("DELETE FROM upcoming_activities WHERE user_email = $1 AND activity_date=$2 AND activity_uuid=$3", [email, actDate, id]);
             console.info({ message: `Successfully deleted the upcoming activity with id: ${id}, scheduled on ${actDate}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Successfully deleted the upcoming activity with id ${id} scheduled on ${actDate}.` });
+            return res.status(200).json({ message: `Successfully deleted the upcoming activity with id ${id} scheduled on ${actDate}.` });
         } catch (error) {
             console.error({ message: `Failed to delete the upcoming activity with id: ${id}, scheduled on ${actDate}`, error: error.message, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms` });
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in deleting the upcoming activity with id ${id} scheduled on ${actDate}: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in deleting the upcoming activity with id ${id} scheduled on ${actDate}: ${error.message}` });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' });  
+        return res.status(400).json({ message: 'Bad Request' });  
     }
 });
 
@@ -892,21 +893,22 @@ app.get("/user-statistics/:email", verifyToken, async (req, res) => {
             const data = await db.query(`SELECT * FROM user_statistics WHERE user_email=$1 ORDER BY date DESC ${days!="Max" ? `LIMIT ${days}` : "" }`, [email]);
             console.info({ message: `Successfully retrieved user statistics of last ${days} days for the user with email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms` });
             console.log(logSuffix);
-            res.status(200).json(data.rows);
+            return res.status(200).json(data.rows);
         } catch (error) {
             console.error({ message: `Failed to retrieve user statistics for the user with email: ${email}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in retrieving user statistics for the user with email: ${email}: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in retrieving user statistics for the user with email: ${email}: ${error.message}` });
         }
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' }); 
+        return res.status(400).json({ message: 'Bad Request' }); 
     }
 })
 
 app.get("/user-da-progress/:email", async(req, res)=> {
     const startTimeRequest = Date.now();
+    console.log(logPrefix);
     try {
         const email = req.params.email;
         const days = req.query.days;
@@ -917,108 +919,203 @@ app.get("/user-da-progress/:email", async(req, res)=> {
                 const distinctActivities = await db.query(`SELECT DISTINCT activity_name from daily_activities_progress WHERE user_email = $1 and date_completed >= $2  ORDER BY activity_name ASC`,[email, lastDate]);
                 const activities = await db.query('SELECT activity_name, date_completed from daily_activities_progress WHERE user_email = $1 and date_completed >= $2  ORDER BY activity_name ASC',[email, lastDate]);
                 console.info({ message: `Successfully retrieved daily activity progress for the user with email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms` });
-                res.status(200).json({distDates: dates.rows, lastDate: lastDate, distActivities: distinctActivities.rows, all: activities.rows});
+                return res.status(200).json({distDates: dates.rows, lastDate: lastDate, distActivities: distinctActivities.rows, all: activities.rows});
             } catch (error) {
                 console.error({ message: `Failed to retrieve daily activity progress for the user with email: ${email}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
                 console.log(logSuffix);
-                res.status(200).json({ message: `Unsuccessful in retrieving daily activity progress for the user with email: ${email}: ${error.message}` });
+                return res.status(500).json({ message: `Unsuccessful in retrieving daily activity progress for the user with email: ${email}: ${error.message}` });
             }
         } catch (error) {
             console.error({ message: `Failed to retrieve daily activity progress for the user with email: ${email}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in retrieving daily activity progress for the user with email: ${email}: ${error.message}` });
+            return res.status(500).json({ message: `Unsuccessful in retrieving daily activity progress for the user with email: ${email}: ${error.message}` });
         }
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' }); 
+        return res.status(400).json({ message: 'Bad Request' }); 
     }
 })
 
 app.post("/setup-sessions/:email", verifyToken, async (req, res) => {
     const startTimeRequest = Date.now();
+    console.log(logPrefix);
     try {
         const email = req.params.email;
         const { startTime, endTime, totalSessions, breakTime, sessionType, sessionVersion } = req.body.data;
-        console.log("starttime:", startTime);
-        console.log(logPrefix);
-        console.info({ message: 'Incoming request to schedule sessions for today', timestamp: new Date().toISOString(), method: req.method, path: req.originalUrl, params: req.params, queryParams: req.query, userAgent: req.headers['user-agent'] });
+        console.info({ message: "Incoming request to schedule sessions", email, timestamp: new Date().toISOString(), method: req.method, path: req.originalUrl,});
         try {
             const checkRecord = await db.query(
-                "SELECT * FROM user_session WHERE user_email = $1 AND session_type = $2", 
+                "SELECT * FROM user_session WHERE user_email = $1 AND session_type = $2",
                 [email, sessionType]
             );
             if (checkRecord.rowCount > 0) {
-                try {
-                    await db.query(
-                        "UPDATE user_session SET session_start_time = $1, session_end_time = $2, break_time = $3, total_sessions = $4 WHERE session_type = $5 AND session_version = $6 AND user_email = $7", 
-                        [startTime, endTime, breakTime, totalSessions, sessionType, sessionVersion, email]
-                    );
-                    console.info({ message: `Successfully updated user record and scheduled sessions for the user with email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
-                } catch (error) {
-                    console.error({ message: `Error updating user record for email: ${email}`, error: error.message, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms` });
+                const updateResult = await db.query(
+                    "UPDATE user_session SET session_start_time = $1, session_end_time = $2, break_time = $3, session_version = $4,  total_sessions = $5 WHERE session_type = $6 AND user_email = $7 RETURNING *",
+                    [startTime, endTime, breakTime, sessionVersion, totalSessions, sessionType, email]
+                );
+                if (updateResult.rowCount === 0) {
+                    console.log(logSuffix);
+                    return res.status(200).json({ message: "Failed to update session record" });
                 }
+                console.info({ message: "Session updated successfully", email });
             } else {
-                try {
-                    await db.query(
-                        "INSERT INTO user_session (user_email, session_start_time, session_end_time, break_time, total_sessions, session_type, session_version) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-                        [email, startTime, endTime, breakTime, totalSessions, sessionType, sessionVersion]
-                    );
-                    console.info({ message: `Successfully scheduled sessions for the user with email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms` });
-                } catch (error) {
-                    console.error({ message: `Error inserting new session for email: ${email}`, error: error.message, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms` });
+                const insertResult = await db.query(
+                    "INSERT INTO user_session (user_email, session_start_time, session_end_time, break_time, total_sessions, session_type, session_version) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+                    [email, startTime, endTime, breakTime, totalSessions, sessionType, sessionVersion]
+                );
+                if (insertResult.rowCount === 0) {
+                    console.log(logSuffix);
+                    return res.status(500).json({ message: "Failed to insert new session" });
                 }
+                console.info({ message: "Session inserted successfully", email });
             }
-            console.log(logSuffix);
-            res.status(200).json({ message: `Successfully scheduled sessions for the user with email: ${email}` });
+            return res.status(200).json({ message:"Session setup for the day successful"});
         } catch (error) {
-            console.error({ message: `Failed to schedule sessions for the user with email: ${email}`, error: error.message, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms` });
+            console.error({ message: "Error in scheduling sessions", email, error: error.message, stack: error.stack,});
             console.log(logSuffix);
-            res.status(500).json({ message: `Unsuccessful in scheduling sessions for the user with email: ${email}: ${error.message}` });
+            return res.status(500).json({ message: "Internal server error" });
         }
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        res.status(400).json({ message: 'Bad Request' });
-    }
+        return res.status(400).json({ message: 'Bad Request' }); 
+    };
 });
 
 app.get("/session-details/:email", verifyToken, async (req, res) => {
     const startTimeRequest = Date.now();
+    console.log(logPrefix);
     try {
         const email = req.params.email;
         const sessionType = req.query.sessionType;
-        console.log(logPrefix);
+        console.info({ message: "Incoming request to retrieve session details", email, sessionType, timestamp: new Date().toISOString()});
         try {
-            const data = await db.query(`SELECT * FROM user_session WHERE user_email=$1 AND session_Type=$2`, [email, sessionType]);
-            console.info({ message: `Successfully retrieved user session for the user with email: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms` });
+            const data = await db.query( "SELECT * FROM user_session WHERE user_email = $1 AND session_type = $2", [email, sessionType]);
+            if (data.rowCount === 0) {
+                console.log(logSuffix);
+                return res.status(404).json({ message: "No session details found" });
+            }
+            console.info({ message: "Successfully retrieved session details", email, duration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            res.status(200).json(data.rows);
+            return res.status(200).json(data.rows);
         } catch (error) {
-            console.error({ message: `Failed to retrieve user session for the user with email: ${email}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
+            console.error({ message: "Error in retrieving session details", email, error: error.message, stack: error.stack});
             console.log(logSuffix);
-            res.status(200).json({ message: `Unsuccessful in retrieving user session for the user with email: ${email}: ${error.message}` });
+            return res.status(500).json({ message: "Internal server error" });
         }
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
         console.log(logSuffix);
-        return res.status(200).json({ message: 'Bad Request' }); 
+        return res.status(400).json({ message: 'Bad Request' }); 
     }
-})
+});
+
+app.get("/session-data/:email", verifyToken, async (req, res) => {
+    const startTimeRequest = Date.now();
+    console.log(logPrefix);
+    try {
+        const email = req.params.email;
+        const sessionType = req.query.sessionType;
+        console.info({ message: "Incoming request to retrieve quick session data", email, sessionType, timestamp: new Date().toISOString()});
+        try {
+            const session = await db.query(
+                "SELECT * FROM user_session WHERE user_email = $1 AND session_type = $2 AND session_version = $3",
+                [email, sessionType, "n"]
+            );
+            if (session.rowCount === 0) {
+                console.info({ message: `No session found for the user`, email, sessionType, statusCode: 500,
+                });
+                console.log(logSuffix);
+                return res.status(500).json({ message: "No session data found for the user" });
+            }
+            const { session_start_time: ast, session_end_time: aet } = session.rows[0];
+            const data = await db.query(
+                "SELECT * FROM daily_activities WHERE user_email = $1 AND activity_start_time > $2 AND activity_start_time < $3 " +
+                "UNION SELECT * FROM current_day_activities WHERE user_email = $1 AND activity_start_time > $2 AND activity_start_time < $3 " +
+                "ORDER BY activity_start_time",
+                [email, ast, aet]
+            );
+            console.info({ message: "Successfully retrieved quick session data", email, activityCount: data.rowCount, duration: `${Date.now() - startTimeRequest}ms`});
+            console.log(logSuffix);
+            return res.status(200).json(data.rows);
+        } catch (error) {
+            console.error({ message: "Error retrieving quick session data", email, error: error.message, stack: error.stack, statusCode: 500, duration: `${Date.now() - startTimeRequest}ms`, });
+            console.log(logSuffix);
+            return res.status(500).json({ message: "Internal server error" });
+        }
+    } catch (error) {
+        console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
+        console.log(logSuffix);
+        return res.status(400).json({ message: 'Bad Request' }); 
+    }
+});
+
+app.patch("/recover-last-session/:email", verifyToken, async (req, res) => {
+    const startTimeRequest = Date.now();
+    console.log(logPrefix);
+    try {
+        const email = req.params.email;
+        const sessionType = req.query.sessionType;
+        console.info({ message: 'Incoming request to recover the last session', timestamp: new Date().toISOString(), method: req.method, path: req.originalUrl, params: req.params, bodyData: req.body.data, userAgent: req.headers['user-agent']});
+        try {
+            const reqdata = await db.query("SELECT * FROM user_session WHERE user_email = $1 and session_type = $2", [email, sessionType]);
+            if(reqdata.rowCount>0){
+                if(reqdata.rows[0].session_version=="o"){
+                    try {
+                        await db.query(
+                            "UPDATE user_session SET session_version=$1  WHERE session_type = $2 and user_email = $3",
+                            ["n", sessionType, email]
+                        );
+                        console.info({ message: `Successfully recovered the last session for the user: ${email}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`});
+                        console.log(logSuffix);
+                        return res.status(200).json({ message: `Successfully recovered the last session`, output: true });
+                    } catch (error) {
+                        console.error({ message: `Failed to recover the last session during the process for the user ${email}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
+                        console.log(logSuffix);
+                        return res.status(500).json({ message: `Failed to recover the last session during the process`, output: false });
+                    }
+                } else {
+                    console.error({ message: `Session alredy active at the moment for the user ${email}`, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
+                    console.log(logSuffix);
+                    return res.status(500).json({ message: `Session alredy active at the moment. Set up a new one`, output: false});
+                } 
+            } else {
+                console.error({ message: `No previous sessions found for the user ${email}`, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
+                console.log(logSuffix);
+                return res.status(500).json({ message: `No previous sessions found. Set up a new one`, output: false});
+            }
+        } catch (error) {
+            console.error({ message: `Failed to recover the last session for the user ${email}`, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
+            console.log(logSuffix);
+            return res.status(500).json({ message: `Failed to recover the last session`, output: false });
+        }
+       
+    } catch (error) {
+        console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
+        console.log(logSuffix);
+        return res.status(400).json({ message: 'Bad Request', output: false }); 
+    }
+});
+
 
 app.post("/run-cron", async (req, res)=>{
+    console.log(logPrefix);
     try {
         const reqApiKey = process.env.CRON_JOB_API_KEY;
         const apiKey = req.headers['api-key'];
         if (reqApiKey && apiKey && reqApiKey !== apiKey) {
             console.log("No/wrong api key provided")
+            console.log(logSuffix);
             return res.status(403).send('Unauthorized');
         }
         else {
             console.log("Successfully activated the server");
+            console.log(logSuffix);
             return res.status(200);
         }
     } catch (error) {
+        console.log(logSuffix);
         return res.status(500);
     }
 })

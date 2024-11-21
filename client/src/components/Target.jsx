@@ -8,6 +8,13 @@ import { convertTimeToAmPm } from './Noncomponents';
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
+function alertMessage(message){
+    takeAction({type:"changeFailedAction", payload:message});
+    setTimeout(() => {
+        takeAction({type:"changeFailedAction"});
+    }, 3500);
+  }
+
 function getColor(status, startTime, endTime, statusList) {
     if (status == 0) {
         statusList.push("Skipped");
@@ -19,7 +26,7 @@ function getColor(status, startTime, endTime, statusList) {
         statusList.push("In Progress");
         return 'orange';
     } else if (status == null) {
-        statusList.push("Not Yet Started");
+        statusList.push("Not Started Yet");
         return 'black';
     }
 }
@@ -57,7 +64,7 @@ export function Target() {
             const combinedAct = await apiUrl.get(`/combined-activities/${mail}`);
             takeAction({type:"changeCombinedActivityData", payload: combinedAct.data})
         } catch (error) {
-            console.error("Error fetching combined activities:", error);
+            alertMessage("Error while fetching the activities");
         } finally {
             setLoading(false); 
         }
@@ -98,7 +105,7 @@ export function Target() {
                         const labels = [
                             { text: 'Completed', fillStyle: 'green', fontColor:state.darkMode? 'white' : 'rgb(48,48,48)', padding: 20, borderColor:'green'},
                             { text: 'Skipped', fillStyle: 'red', fontColor:state.darkMode? 'white' : 'rgb(48,48,48)', padding: 20, borderColor:'red'},
-                            { text: 'Not Yet Started', fillStyle: 'black', fontColor:state.darkMode? 'white' : 'rgb(48,48,48)', padding: 20, borderColor:''},
+                            { text: 'Not Started Yet', fillStyle: 'black', fontColor:state.darkMode? 'white' : 'rgb(48,48,48)', padding: 20, borderColor:''},
                             { text: 'In Progress', fillStyle: 'orange', fontColor:state.darkMode? 'white' : 'rgb(48,48,48)', padding: 20, borderColor:'orange'}
                         ];
                         return labels;

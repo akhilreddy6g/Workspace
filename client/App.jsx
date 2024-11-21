@@ -27,15 +27,13 @@ export default function App() {
       case "changeStdState":
         return {
           ...state,
-          stdState: !state.stdState,
+          stdState: action.payload? action.payload : !state.stdState,
           schedulestate: false,
           addCurrentDayActivity: false,
           activityTabButtRef: null,
           dailyactstate: false,
           addDailyActState: false,
           addUpcActState: false,
-          qastate: false,
-          updateActivity:false,
           updateMissedActivity: false,
           updateUpcomActivity:false,
           disclaimerButtons:false,
@@ -75,34 +73,57 @@ export default function App() {
       case "changeCsActivityIndex":
         return {
           ...state,
-          stdState: false,
           csActivityIndex: state.csActivityIndex+action.payload,
           dailyactstate: false,
           addDailyActState: false,
           addUpcActState: false,
-          qastate: false,
           disclaimerButtons:false,
         }
+      case "changeqsActivityIndex":
+        return {
+          ...state,
+          qsActivityIndex: state.qsActivityIndex+action.payload,
+          dailyactstate: false,
+          addDailyActState: false,
+          addUpcActState: false,
+          disclaimerButtons:false,
+        }
+        
       case "changeActTabButtRef":
         return {
           ...state,
-          stdState: false,
           csActivityIndex: action.payload,
           dailyactstate: false,
           addDailyActState: false,
           addUpcActState: false,
-          qastate: false,
           disclaimerButtons:false,
         }
+      case "changeqsActTabButtRef":
+        return {
+          ...state,
+          qsActivityIndex: action.payload,
+          dailyactstate: false,
+          addDailyActState: false,
+          addUpcActState: false,
+          disclaimerButtons:false,
+          }
       case "changeActiveTab":
         return {
           ...state,
-          stdState: false,
           activeTab: action.payload,
           dailyactstate: false,
           addDailyActState: false,
           addUpcActState: false,
-          qastate: false,
+          disclaimerButtons:false,
+        }
+
+      case "changeqsActiveTab":
+        return {
+          ...state,
+          qsActiveTab: action.payload,
+          dailyactstate: false,
+          addDailyActState: false,
+          addUpcActState: false,
           disclaimerButtons:false,
         }
 
@@ -177,18 +198,16 @@ export default function App() {
       case "changeQuickSessState":
         return {
           ...state,
-          stdState: false,
           schedulestate: false,
           addCurrentDayActivity: false,
           activityTabButtRef: null,
           dailyactstate: false,
           addDailyActState: false,
           addUpcActState: false,
-          qastate: !state.qastate,
+          qastate: action.payload? action.payload : !state.qastate,
           updateActivity:false,
           updateMissedActivity: false,
           updateUpcomActivity:false,
-          disclaimerButtons:false,
           filterButton : false
         };
       case "changeActivityData":
@@ -214,6 +233,31 @@ export default function App() {
           addUpcActState: false,
           qastate: false,
           combinedActivityData: action.payload,
+          disclaimerButtons:false,
+          filterButton : false
+        };
+      case "changeQsCombinedSubActivityData":
+        return{
+          ...state,
+          stdState: false,
+          schedulestate: false,
+          activityTabButtRef: null,
+          dailyactstate: false,
+          addDailyActState: false,
+          addUpcActState: false,
+          qsCombinedSubActivityData: action.payload,
+          disclaimerButtons:false,
+          filterButton : false
+        };
+      case "changeDsCombinedSubActivityData":
+        return{
+          ...state,
+          schedulestate: false,
+          activityTabButtRef: null,
+          dailyactstate: false,
+          addDailyActState: false,
+          addUpcActState: false,
+          dsCombinedSubActivityData: action.payload,
           disclaimerButtons:false,
           filterButton : false
         };
@@ -261,12 +305,10 @@ export default function App() {
       case "changeActivityState":
         return{
           ...state,
-          stdState: false,
           schedulestate: false,
           activityTabButtRef: null,
           dailyactstate: true,
-          qastate: false,
-          updateActivity: action.payload,
+          updateActivity: action.payload? action.payload : !state.updateActivity,
           updateMissedActivity: false,
           updateUpcomActivity:false,
           editActivity: false,
@@ -337,30 +379,24 @@ export default function App() {
       case "changeDisclaimerState":
         return{
           ...state,
-          stdState: false,
           schedulestate: false,
           addCurrentDayActivity: false,
-          qastate: false,
           disclaimerState: action.payload,
           filterButton : false
         }
       case "changeDisclaimerButtons":
         return {
           ...state,
-          stdState: false,
           schedulestate: false,
           addCurrentDayActivity: false,
-          qastate: false,
           disclaimerButtons: !state.disclaimerButtons,
           filterButton : false
         }
       case "changeCurrentAction":
         return {
           ...state,
-          stdState: false,
           schedulestate: false,
           addCurrentDayActivity: false,
-          qastate: false,
           filterButton : false,
           currentAction : action.payload,
         }
@@ -373,10 +409,8 @@ export default function App() {
       case "setResolve":
         return {
           ...state,
-          stdState: false,
           schedulestate: false,
           addCurrentDayActivity: false,
-          qastate: false,
           resolve: action.payload,
           filterButton : false
         }
@@ -421,7 +455,9 @@ export default function App() {
     schedulestate: false, 
     addCurrentDayActivity: false,
     csActivityIndex: null,
+    qsActivityIndex: null,
     activeTab: null,
+    qsActiveTab: null,
     dailyactstate:false, 
     addDailyActState: false,
     addUpcActState: false,
@@ -430,6 +466,8 @@ export default function App() {
     qastate:false, 
     activityData:[],
     combinedActivityData:[],
+    qsCombinedSubActivityData:[],
+    dsCombinedSubActivityData: [],
     missedActivities:[],
     upcomActivityData:[],
     updateActivity:false,
@@ -449,6 +487,41 @@ export default function App() {
     initialComponentState: false,
     emailId: null,
   });
+
+  function clearSessionStorageDaily() {
+    const sessionMail = sessionStorage.getItem('email');
+    const mail = state.emailId? state.emailId : sessionMail
+    const currentDate = new Date().toISOString().split('T')[0];
+    const lastClearedDate = localStorage.getItem('lastClearedDate');
+    if(lastClearedDate){
+     const {email, date} = JSON.parse(lastClearedDate);
+     if ( email !==mail || date !== currentDate) {
+      sessionStorage.clear();
+      localStorage.setItem('lastClearedDate', {date: currentDate, email: mail});
+      };
+    } else {
+      sessionStorage.clear();
+    }
+  };
+
+  function alertMessage(message){
+    takeAction({type:"changeFailedAction", payload:message});
+    setTimeout(() => {
+        takeAction({type:"changeFailedAction"});
+    }, 3500);
+  }
+
+  setInterval(()=>{
+    const now = new Date();
+        const currentTimeMinutes = now.getHours() * 60 + now.getMinutes(); 
+        if(currentTimeMinutes==0 && now.getSeconds() == 1){
+            sessionStorage.clear();
+        };
+  },1000);
+
+  setInterval(() => {
+    clearSessionStorageDaily();
+  }, 1000 * 60 * 60);
 
   useLayoutEffect(() => {
     const requestInterceptor = apiUrl.interceptors.request.use(function(config){
@@ -482,6 +555,10 @@ export default function App() {
             navigate('/login');
             return Promise.reject(refreshError);
           }
+        } if (error.response!=null && error.response.status === 500) {
+          //Request not processed
+        } else if (error.response!=null && error.response.status === 404) {
+          alertMessage("Resource Unavailable");
         } else {
           navigate('/login');
         }
@@ -492,14 +569,6 @@ export default function App() {
       apiUrl.interceptors.response.eject(responseInterceptor);
     };
   }, []);
-
-  setInterval(()=>{
-    const now = new Date();
-        const currentTimeMinutes = now.getHours() * 60 + now.getMinutes(); 
-        if(currentTimeMinutes==0 && now.getSeconds() == 1){
-            sessionStorage.clear();
-        };
-  },1000);
   
   return (
     <featuresTabHook.Provider value={{state, takeAction}}>

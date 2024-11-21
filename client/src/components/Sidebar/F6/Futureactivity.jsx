@@ -72,8 +72,7 @@ export default function Futureactivity(props){
               await apiUrl.patch(`/edit-upcoming-activity/:${mail}`, { data });
               alertMessage("Successfully edited the activity")
             } catch (error) {
-              alertMessage("Unable to edit the activity: Enter unique activity name");
-              console.error("Something went wrong", error);
+              alertMessage("Error while editing the activity: Enter unique activity name");
             }
             actNameRef.current.textContent = correctedActName;
             actStartRef.current.textContent = actStart;
@@ -87,7 +86,6 @@ export default function Futureactivity(props){
             actPriorityRef.current.textContent = actualActivity.activity_priority;
           }
         } else {
-          console.log("Please provide correct information");
           alertMessage("Unable to add the activity: please enter valid information")
           actNameRef.current.textContent = actualActivity.activity_name;
           actStartRef.current.textContent = actualActivity.activity_start_time.slice(0,5);
@@ -104,8 +102,7 @@ export default function Futureactivity(props){
         editButtonRef.current.style.backgroundColor = "teal";
         document.querySelector(".navbar").style.zIndex = "2"
       } catch (error) {
-        alertMessage("Unable to add the activity")
-        console.error("Something went wrong", error);
+        alertMessage("Error while editing the activity")
       }
     }
   }
@@ -134,12 +131,9 @@ export default function Futureactivity(props){
             takeAction({type:"changeUpcActivityState", payload: !state.updateUpcomActivity});
             alertMessage("Successfully deleted the activity")
         } catch (error) {
-            console.log(`Something went wrong while deleting the missed activitiy: ${error}`);
-            alertMessage("Unable to delete the activity")
+            alertMessage("Error while deleting the missed activitiy")
         };
-    } else {
-      console.log("Activity deletion was canceled by user.");
-    };
+    }
   };
 
   async function addActivityBack(e, id){
@@ -170,17 +164,12 @@ export default function Futureactivity(props){
             await apiUrl.delete(`/delete-upcoming-activity/${mail}?date=${state.actDate}&id=${id}`)
             takeAction({type:"changeUpcActivityState", payload: !state.updateUpcomActivity});
             alertMessage("Successfully added the missed activity to current schedule");
-            console.log("Successfully added the upcoming activity to current schedule");
         } catch (error) {
-            console.log(`Something went wrong while adding upcoming activity to current schedule: ${error}`);
-            alertMessage("Unable to add the missed activity back to current schedule");
+            alertMessage("Error while adding upcoming activity to current schedule");
         }
       } else{
-          console.log("Cannot add upcoming activity back");
           alertMessage("Unable to add the missed activity back to current schedule: start time must be less than current time")
       };
-    } else {
-      console.log("Action canceled by the user");
     }
     
 }

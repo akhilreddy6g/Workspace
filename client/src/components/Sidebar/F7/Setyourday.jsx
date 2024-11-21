@@ -5,6 +5,7 @@ import Session from "./Session";
 import { apiUrl } from "../../Noncomponents";
 import { convertTimeToAmPm } from "../../Noncomponents";
 import { timeToMinutes } from "../../Noncomponents";
+import { formatTime } from "../../Noncomponents";
 
 export default function Setyourday(){
     const {state, takeAction} = useContext(featuresTabHook);
@@ -71,25 +72,16 @@ export default function Setyourday(){
         return schedule;
     }
 
-    function formatTime(date) {
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        return `${hours}:${minutes}`;
-    }
-
     async function alterData(){
         try {
             const sessionMail = sessionStorage.getItem('email');
             const mail = state.emailId? state.emailId : sessionMail
-            const response = await apiUrl.get(`/session-details/${mail}?sessionType=d`);
-            if(response.data.length>0 && response.data[0].session_version=='n' && response.data[0].session_type=='d'){
-                const sessions = scheduleSessions(response.data[0].session_start_time, response.data[0].session_end_time, response.data[0].break_time, response.data[0].total_sessions);
-                changeSessions(sessions);
-            } else {
-                console.log("Unable to set time period");
-            }
+            setLoading(true); 
+            const combinedAct = await apiUrl.get(`/session-data/${mail}?sessionType=d`);
+            takeAction({ type: "changeDsCombinedSubActivityData", payload: combinedAct.data});
+            tempActivities.current = combinedAct.data;
         } catch (error) {
-            console.error("Error setting up the day", error);
+            //No data to fetch
         } finally {
             setLoading(false); 
         }
@@ -99,11 +91,16 @@ export default function Setyourday(){
         try {
             const sessionMail = sessionStorage.getItem('email');
             const mail = state.emailId? state.emailId : sessionMail
-            const combinedAct = await apiUrl.get(`/combined-activities/${mail}`);
-            takeAction({ type: "changeCombinedActivityData", payload: combinedAct.data });
-            tempActivities.current = combinedAct.data;
+            setLoading(true); 
+            const response = await apiUrl.get(`/session-details/${mail}?sessionType=d`);
+            if(response.data.length>0 && response.data[0].session_version=='n' && response.data[0].session_type=='d'){
+                const sessions = scheduleSessions(response.data[0].session_start_time, response.data[0].session_end_time, response.data[0].break_time, response.data[0].total_sessions);
+                changeSessions(sessions);
+            } else {
+               //No session data found for the user
+            }
         } catch (error) {
-            console.error("Error retrieving the combined activities", error);
+            //Cannot set up the day
         } finally {
             setLoading(false); 
         }
@@ -116,11 +113,11 @@ export default function Setyourday(){
     }
 
     useEffect(()=>{
-        if(!state.stdState){
-            alterData();
-            alterData1();
-        }
-    }, [state.stdState])
+        (async () => {
+            await alterData(); 
+            await alterData1();
+        })();
+    }, [state.updateActivity])
 
     if (loading) {
         return <div className="loadingSpinner"><p className="loadingText" style={{color: state.darkMode? 'white' : 'black'}}>Loading, please wait...</p></div>;
@@ -128,7 +125,7 @@ export default function Setyourday(){
 
     return <>  
     {todaySessions.length==0 && <div className="scheduleDisclaimer">
-     <p className="scheduleContext">No sessions to show. Setup sessions and plan your day</p>
+     <p className="scheduleContext">No sessions yet. Setup sessions and plan your day!</p>
     </div>}
     <div className="sessionTabsContainer">
     <div className="sessionTabs">

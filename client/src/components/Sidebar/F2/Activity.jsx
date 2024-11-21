@@ -1,5 +1,4 @@
 import React, { useContext, useRef } from 'react';
-import axios from 'axios';
 import featuresTabHook from "../../Noncomponents";
 import { timeToMinutes } from '../../Noncomponents';
 import { apiUrl } from '../../Noncomponents';
@@ -67,8 +66,7 @@ export default function Activity(props) {
             await apiUrl.patch(`/edit-activity/${mail}`, { data });
             alertMessage("Successfully edited the activity");
           } catch (error) {
-            alertMessage("Unable to edit the activity: Enter unique activity name");
-            console.error("Something went wrong", error);
+            alertMessage("Error while editing the activity: Enter unique activity name");
           }
           actNameRef.current.textContent = correctedActName;
           actStartRef.current.textContent = actStart;
@@ -96,8 +94,7 @@ export default function Activity(props) {
         editButtonImgRef.current.src = "./assets/edit.svg";
         editButtonRef.current.style.backgroundColor = "teal";
       } catch (error) {
-        alertMessage("Unable to add the activity");
-        console.error("Something went wrong", error);
+        alertMessage("Error while adding the activity");
       }
     }
   }
@@ -123,11 +120,8 @@ export default function Activity(props) {
         takeAction({ type: "changeActivityState", payload: false });
         alertMessage("Successfully deleted the activity");
       } catch (error) {
-        console.error("Something went wrong", error);
-        alertMessage("Unable to delete the activity");
+        alertMessage("Error while deleting the activity");
       }
-    } else {
-      console.log("Action canceled by the user.");
     }
   }
 

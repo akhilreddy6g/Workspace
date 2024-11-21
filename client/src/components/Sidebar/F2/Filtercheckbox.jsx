@@ -1,11 +1,18 @@
 import { useContext, useState } from "react"
 import featuresTabHook from "../../Noncomponents"
-import axios from "axios";
 import { apiUrl } from "../../Noncomponents";
 
 export default function Filtercheckbox(){
     const {state, takeAction} = useContext(featuresTabHook);
     const [filter, changeFilter] = useState("activity_start_time");
+
+    function alertMessage(message){
+        takeAction({type:"changeFailedAction", payload:message});
+        setTimeout(() => {
+            takeAction({type:"changeFailedAction"});
+        }, 3500);
+      }
+
     const alterFilter = async (event) => {
         changeFilter(event.target.value)
         if(filter!=event.target.value){
@@ -15,7 +22,7 @@ export default function Filtercheckbox(){
                 const res = await apiUrl.get(`/activities/${mail}?filter=${event.target.value}`);
                 takeAction({type:"changeActivityData", payload: res.data});
             } catch (error) {
-                console.log("Something went wrong", error);
+                alertMessage("Error while fetching the activities using filter")
             };
         };
     };

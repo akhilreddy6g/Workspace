@@ -62,6 +62,7 @@ label{
     font-weight: bolder;
     text-shadow: 1px 1px 5px black;
     font-family: Cambria, Cochin, Georgia, Times New Roman, serif;
+    margin: 0px;
 }
 
 .authContainer {
@@ -231,7 +232,7 @@ label{
     }
 
     .signUpNDemoContainer{
-        width: 250px;
+        width: 300px;
     }
 }
 
@@ -380,6 +381,7 @@ label{
 }
 
 .feature{
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: left;
@@ -591,7 +593,6 @@ label{
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    transition: 150ms linear;
 }
 
 .scheduleContext{
@@ -667,7 +668,6 @@ label{
 .timeAndStatus {
     display: flex;
     justify-content: space-between;
-    gap: 10px;
     padding: 5px;
 }
 
@@ -675,6 +675,7 @@ label{
     margin-left: 5px;
     padding-right: 5px;
     font-size: 15px;
+    width: 70px;
 }
 
 .timeBarContainer {
@@ -727,6 +728,7 @@ label{
     margin-right: 5px;
     padding-left: 5px;
     font-size: 15px;
+    width: 70px;
 }
 
 .activityFrame {
@@ -856,6 +858,15 @@ label{
     align-items: center;
 }
 
+.viewContent{
+    width: 67vw;
+    height: 55vh;
+    margin-left: 15px;
+    margin-top: 15px;
+    text-align: center;
+    overflow: auto;
+}
+
 .scheduleDark{
     border: 0.2px solid white;
     box-shadow: 0 0 3px rgba(255, 255, 255, 0.677)
@@ -896,14 +907,6 @@ label{
 
     .emptyPopUp{
         padding-right: 22px !important;
-    }
-
-    #abaElement{
-        margin-bottom: 4px !important;
-    }
-
-    .missedActivityDate{
-        font-size: 16px !important;
     }
 
     #specialElement{
@@ -994,19 +997,18 @@ label{
 }
 
 @media (max-width: 670px){
-    .addCurrentActivityButton, .upcDate, .dailyActivity, .soloActivityBar, .missedActivity{
+    .addCurrentActivityButton, .upcDate, .dailyActivity, .soloActivityBar, .missedActivityDate{
         font-size: 14px !important;
     }
 
     .scheduleContext{
         font-size: 14px !important;
-        height: fit-content;
+        height: fit-content !important;
     }
 
-    .missedActivityDate{
-        font-size: 12px !important;
-        height: 12px !important;
-        overflow: scroll;
+    .missedActivity{
+        font-size: 14px !important;
+        max-height: 20px !important;
     }
 
     .aba{
@@ -1069,7 +1071,8 @@ label{
     }
 
     .missedActivityDateText{ 
-        font-size: 8px;
+        max-width: 150px;
+        max-height: 20px;
      }
 
      .tnpT3{
@@ -1158,10 +1161,6 @@ label{
     .csButtons{
         width: 100%;
     }
-
-    .missedActivityDateText{
-        font-size: 6px;
-     }
 
      .streakContainer-1{
         min-width: 320px !important;
@@ -1809,14 +1808,13 @@ table, th, td {
 }
 
 .missedActivityDate{
-    margin-top: 4px;
-    height: 20px;
+    height: fit-content;
     display: flex;
     align-items: center;
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     color: white;
     background-image: linear-gradient(to right, rgb(42, 42, 243), rgba(144, 10, 144, 0.925));
-    border-radius: 5px;
+    border-radius: 10px;
     width: fit-content;
     overflow: auto;
 }
@@ -1824,7 +1822,8 @@ table, th, td {
 .missedActivityDateText{
     margin-bottom: 0; 
     padding-left: 10px; 
-    padding-right: 10px
+    padding-right: 10px;
+    overflow: auto;
 }
 
 .missedActivitiesList{
@@ -2319,7 +2318,7 @@ table, th, td {
 }
 
 #submitSessionButton{
-    margin-left: 90px;
+    margin-left: 45px;
     margin-top: 20px;
     background-color: white;
     border:  1px solid black;

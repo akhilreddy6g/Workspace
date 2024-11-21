@@ -29,11 +29,10 @@ export default function Currentactivitysetup(){
                 takeAction({type:"changeActivityState", payload:!state.updateActivity});
                 alertMessage("Successfully added the activity");
             } else {
-                alertMessage("Unable to add the activity: Start time must be less than current time");
+                alertMessage("Unable to add the activity: Start time must be ahead of current time");
             }
         } catch (error) {
-            console.log("Something went wrong", error);
-            alertMessage(`Unable to add the activity: ${error}`);
+            alertMessage(`Error while adding the activitiy`);
         };
     event.target.reset();
     };

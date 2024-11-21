@@ -15,6 +15,13 @@ export default function Planahead(){
     const data = state.upcomActivityData;
     var dates = [];
 
+    function alertMessage(message){
+        takeAction({type:"changeFailedAction", payload:message});
+        setTimeout(() => {
+            takeAction({type:"changeFailedAction"});
+        }, 3500);
+      }
+
     for (var i = 0; i < 7; i++) {
         dates.push({
             date: now.toLocaleDateString('en-US', options),
@@ -31,7 +38,7 @@ export default function Planahead(){
             const res = await apiUrl.get(`/upcoming-activities/${mail}?date=${state.actDate}`);
             takeAction({type:"changeUpcomActivityData", payload: res.data});
         } catch (error) {
-            console.error("Error fetching upcoming activities", error);
+            alertMessage("Error while fetching the upcoming activities");
         } finally {
             setLoading(false); 
         }
@@ -62,7 +69,7 @@ export default function Planahead(){
     },[state.updateUpcomActivity, state.actDate]);
 
     if (loading) {
-        return <div className={`loadingSpinner ${state.fthState ? "scheduleDisclaimer1" : "scheduleDisclaimer2"}`} ><p className="loadingText" style={{color: state.darkMode? 'white' : 'black'}}>Loading, please wait...</p></div>;
+        return <div className="loadingSpinner"><p className="loadingText" style={{color: state.darkMode? 'white' : 'black'}}>Loading, please wait...</p></div>;
     }
     
     return (<>{state.editUpcActivity && <div className="overLay1"></div>}

@@ -71,8 +71,7 @@ export default function Missedactivities(props){
                 await apiUrl.patch(`/edit-missed-activity/${mail}`, { data });
                 alertMessage("Successfully edited the activity");
               } catch (error) {
-                alertMessage("Unable to add the activity: Enter unique activity name");
-                console.error("Something went wrong", error);
+                alertMessage("Error while editing the activity: Enter unique activity name");
               };
               actNameRef.current.textContent = correctedActName;
               actStartRef.current.textContent = actStart;
@@ -102,8 +101,7 @@ export default function Missedactivities(props){
           editButtonRef.current.style.backgroundColor = "teal";
           document.querySelector(".navbar").style.zIndex = "2"
         } catch (error) {
-          alertMessage("Unable to add the activity")
-          console.error("Something went wrong", error);
+          alertMessage("Error while editing the activity")
         }
       }
     }
@@ -129,11 +127,8 @@ export default function Missedactivities(props){
               takeAction({type:"changeMissedActivityState", payload: !state.updateMissedActivity});
               alertMessage("Successfully deleted the activity")
           } catch (error) {
-              console.log(`Something went wrong while deleting the missed activitiy: ${error}`);
-              alertMessage("Unable to delete the activity")
+              alertMessage("Error while deleting the activity")
           };
-      } else {
-        console.log("Activity deletion was canceled by user.");
       }
   };
 
@@ -162,19 +157,13 @@ export default function Missedactivities(props){
               await apiUrl.delete(`/delete-missed-activity/${mail}?id=${id}`);
               takeAction({type:"changeMissedActivityState", payload:!state.updateMissedActivity});
               alertMessage("Successfully added the missed activity to current schedule");
-              console.log("Successfully added the missed activity to current schedule");
           } catch (error) {
-              console.log(`Something went wrong while adding missed activitiy back to current schedule: ${error}`)
-              alertMessage("Unable to add the missed activity back to current schedule")
+              alertMessage("Error while adding the missed activity back to current schedule")
           }
         } else{
-            console.log("Cannot add activity back");
-            alertMessage("Unable to add the missed activity back to current schedule: start time must be less than current time");
+            alertMessage("Error while adding the missed activity back to current schedule: start time must be less than current time");
         };
-      } else {
-          console.log("Action canceled by the user");
-      }
-      
+      } 
   }
 
   return <> 

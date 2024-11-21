@@ -74,4 +74,35 @@ export const apiUrl = axios.create({
   withCredentials: true,
 });
 
+export function formatTime(date) {
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
+
+export function isValidSessionStartTime(start, end, breakTime, totalSessions) {
+  const now = new Date();
+  const offset = now.getTimezoneOffset() / 60;
+  const estOffset = offset - 5;
+  const currentEstTime = new Date(now.getTime() + estOffset * 60 * 60 * 1000);
+  const startTime = new Date(`1970-01-01T${start}`);
+  const endTime = new Date(`1970-01-01T${end}`);
+  const totalMinutes = (endTime - startTime) / (1000 * 60);
+  const totalBreakTime = breakTime * totalSessions;
+  const sessionDuration = Math.floor((totalMinutes - totalBreakTime) / totalSessions);
+  const [hours, minutes] = start.split(":").map(Number);
+  const [hours1, minutes1] = end.split(":").map(Number);
+  const sessionStartTime = new Date(currentEstTime);
+  sessionStartTime.setHours(hours);
+  sessionStartTime.setMinutes(minutes);
+  sessionStartTime.setSeconds(0);
+  sessionStartTime.setMilliseconds(0);
+  const isFutureTime = sessionStartTime > currentEstTime;
+  const isEndFutureTime = hours1 < 24 && minutes1 < 60;
+  const isBeforeEndOfDay = hours < 24 && minutes < 60;
+  const breakConstraint = breakTime > 1
+  const sessionConstraint = sessionDuration > 1
+  return isFutureTime && isBeforeEndOfDay && isEndFutureTime && breakConstraint && sessionConstraint;
+}
+
 export default featuresTabHook;
