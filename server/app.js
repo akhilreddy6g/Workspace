@@ -62,7 +62,8 @@ app.post("/authenticate/:email", async (req, res) => {
     const startTimeRequest = Date.now();
     try {
         const email = req.params.email;
-        const password = req.query.password;
+        const demoPassword = email=='demouser@gmail.com'? process.env.DEMO_PASS: '';
+        const password = req.query.password || demoPassword;
         console.log(logPrefix);
         if (!password || !email) {
             return res.status(200).json({ error: 'Email and password are required.' });

@@ -20,14 +20,13 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); 
     try {
       const authRoute = action.primary === login ? "authenticate" : "register";
       const sessionMail = sessionStorage.getItem('email');
       const mail = sessionMail ? sessionMail : email.toLowerCase();
       const response = await apiUrl.post(`/${authRoute}/${mail}?password=${password}`);
-
       if (response.data.isAuthenticated) {
+        setLoading(true); 
         const accessToken = response.data.token;
         sessionStorage.setItem('token', accessToken);
         sessionStorage.setItem('email', mail);
@@ -58,6 +57,42 @@ export default function Login() {
       setPassword('');
     }
   };
+
+  const demoAuth = async (e) => {
+    e.preventDefault();
+    try {
+      const mail = 'demouser@gmail.com'
+      const response = await apiUrl.post(`/authenticate/${mail}`);
+      if (response.data.isAuthenticated) {
+        setLoading(true); 
+        const accessToken = response.data.token;
+        sessionStorage.setItem('token', accessToken);
+        sessionStorage.setItem('email', mail);
+        const currentDate = new Date().toISOString().split('T')[0];
+        localStorage.setItem('lastClearedDate', JSON.stringify({date: currentDate, email: mail}));
+        apiUrl.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        const status = signIn({
+          auth: {
+            token: accessToken,
+            type: "Bearer",
+          },
+          userState: { id: mail },
+        });
+        takeAction({ type: "changeEmailId", payload: mail });
+        if (status) {
+          navigate("/current-schedule");
+        }
+      } else {
+        setError(response.data.message);
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || "Login Failed, Please Try Again");
+    } finally {
+      setLoading(false); 
+      setEmail('');
+      setPassword('');
+    }
+  }
 
   function changeUserAuth(e) {
     e.preventDefault();
@@ -98,7 +133,7 @@ export default function Login() {
           </form>
           <div className='signUpNDemoContainer'>
             <button className='signUpButton' style={{borderBottom: '1px solid black'}} onClick={changeUserAuth}>{action.secondary}</button>
-            <button className='demoButton' style={{borderBottom: '1px solid black'}} >Demo</button>
+            <button className='demoButton' style={{borderBottom: '1px solid black'}} onClick={demoAuth}>Demo</button>
           </div>
           <div className='authFailContainer'>
             {error && <p className='errorText'>{error}</p>}

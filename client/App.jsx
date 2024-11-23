@@ -558,7 +558,7 @@ export default function App() {
         } if (error.response!=null && error.response.status === 500) {
           //Request not processed
         } else if (error.response!=null && error.response.status === 404) {
-          alertMessage("Resource Unavailable");
+          //Request not processed
         } else {
           navigate('/login');
         }
