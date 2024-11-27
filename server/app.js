@@ -313,6 +313,33 @@ app.post("/update-da-status/:email", verifyToken, async (req, res) => {
     }
 });
 
+app.post("/update-notes/:email", verifyToken, async (req, res) => {
+    const startTimeRequest = Date.now();
+    try {
+        const email = req.params.email;
+        const {actId, actNotes}= req.body.data;
+        console.log(logPrefix);
+        console.info({ message: 'Incoming request to update notes for activity', timestamp: new Date().toISOString(), method: req.method, path: req.originalUrl, queryParams: req.query, params: req.params, userAgent: req.headers['user-agent']});
+        try {
+            await db.query(
+                "UPDATE daily_activities SET activity_notes = $1 WHERE activity_uuid = $2 AND user_email = $3", 
+                [actNotes, actId, email]
+            );
+            console.info({ message: `Successfully updated the notes for activity with ID: ${actId}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`, email});
+            console.log(logSuffix);
+            return res.status(200).json({ message: `Successfully updated the notes for activity with ID: ${actId}` });
+        } catch (error) {
+            console.error({message: `Failed to updated the notes for activity with ID: ${actId}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
+            console.log(logSuffix);
+            return res.status(500).json({ message: `Unsuccessful in updating the notes for activity with ID: ${actId}: ${error.message}` });
+        };
+    } catch (error) {
+        console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
+        console.log(logSuffix);
+        return res.status(400).json({ message: 'Bad Request' });
+    }
+});
+
 app.patch("/edit-activity/:email", verifyToken, async (req, res) => {
     const startTimeRequest = Date.now();
     try {

@@ -9,9 +9,12 @@ export default function Activityframe(props) {
   const [error, setError] = useState("Nothing to view. Upload files to view");
   const [notesFlag, changeFlag] = useState(false);
   const [notesContent, setNotesContent] = useState('');
+  const [editStatus, changeEditStatus] = useState(false);
   const intervalRef = useRef(null);
   const skipRef = useRef(null);
   const completeRef = useRef(null);
+  const previewRef = useRef(null);
+  const fileRef = useRef(null);
   var minDiff = Infinity;
   var minIndex = null;
 
@@ -103,7 +106,7 @@ export default function Activityframe(props) {
             } else {
                 const { action, value } = JSON.parse(prevState);
                 if (action === actionType && value === true) {
-                    alertMessage("Status Updated Already");
+                    alertMessage("Status updated already");
                 };
             };
         } catch (error) {
@@ -136,6 +139,26 @@ export default function Activityframe(props) {
         const mail = state.emailId? state.emailId : sessionMail
         const url = type === "c" ? `/delete-current-activity/${mail}?id=${id}` : `/delete-activity/${mail}?id=${id}`
         await apiUrl.delete(url);
+        const request = indexedDB.open("WorkspaceFileDb", 1);
+        request.onsuccess = (event) => {
+          const db = event.target.result;
+          const transaction = db.transaction("MediaFiles", "readwrite");
+          const store = transaction.objectStore("MediaFiles");
+          const delRequest = store.delete(id);
+          delRequest.onsuccess = () => {
+            setFile(null);
+            setPreview(null);
+            previewRef.current = null;
+            fileRef.current = null;
+            setError("Nothing to view. Upload files to view.");
+          };
+          delRequest.onerror = (e) => {
+            setError("Error deleting the file.");
+          };
+        };
+        request.onerror = (event) => {
+          setError("Error accessing the database.");
+        };
         alertMessage("Successfully deleted the activity");
         takeAction({ type: "changeActivityState", payload: false});
       } catch (error) {
@@ -155,48 +178,149 @@ export default function Activityframe(props) {
             fileType.startsWith("audio/") || 
             fileType === "application/pdf"
         ) {
+            saveFileToIndexedDB(uploadedFile, props.id);
             setFile(uploadedFile);
+            fileRef.current = uploadedFile;
             setPreview(URL.createObjectURL(uploadedFile));
+            previewRef.current = URL.createObjectURL(uploadedFile)
+            alertMessage("Successfully uploaded the File");
             setError(null); 
         } else {
             setError("Please upload a valid media file (image, video, audio, or PDF).");
+            alertMessage("File upload failed");
             setFile(null);
+            fileRef.current = null;
             setPreview(null);
+            previewRef.current = null;
         }
     }
   };
 
-  const handleRemoveFile = async(e) => {
+  const handleRemoveFile = async (e) => {
     e.preventDefault();
     document.body.style.overflow = "hidden";
-    takeAction({ type: "changeCurrentAction", payload: "remove the uploaded file"});
+    takeAction({ type: "changeCurrentAction", payload: "remove the uploaded file" });
     const userResponse = await new Promise((resolve) => {
       takeAction({ type: "changeDisclaimerState", payload: true });
       takeAction({ type: "changeDisclaimerButtons" });
       takeAction({ type: "setResolve", payload: resolve });
     });
     document.body.style.overflow = "auto";
-    if(userResponse){
-      setFile(null);
-      setPreview(null);
-      setError("Nothing to view. Upload files to view");
+    if (userResponse) {
+      const request = indexedDB.open("WorkspaceFileDb", 1);
+      request.onsuccess = (event) => {
+        const db = event.target.result;
+        const transaction = db.transaction("MediaFiles", "readwrite");
+        const store = transaction.objectStore("MediaFiles");
+        const delRequest = store.delete(props.id);
+        delRequest.onsuccess = () => {
+          setFile(null);
+          setPreview(null);
+          previewRef.current = null;
+          fileRef.current = null;
+          alertMessage("Successfully deleted the file");
+          setError("Nothing to view. Upload files to view.");
+        };
+        delRequest.onerror = (e) => {
+          setError("Error deleting the file.");
+        };
+      };
+      request.onerror = (event) => {
+        setError("Error accessing the database.");
+      };
+    }
+  };
+
+  function saveFileToIndexedDB(file, actId) {
+    const request = indexedDB.open("WorkspaceFileDb", 1);
+    request.onerror = (event) => {
+      setError("Error accessing database.");
+    };
+    request.onupgradeneeded = (event) => {
+        const db = request.result;
+        const store = db.createObjectStore("MediaFiles", { keyPath: "id" });
+    };
+    request.onsuccess = (event) => {
+        const db = request.result;
+        const transaction = db.transaction("MediaFiles", "readwrite");
+        const store = transaction.objectStore("MediaFiles");
+        const fileEntry = {
+          id: actId,
+          file: file, 
+        };
+        store.put(fileEntry);
     };
   };
 
+  function getFileFromIndexedDB(id, setPreview, setFile, setError) {
+    const request = indexedDB.open("WorkspaceFileDb", 1); 
+    request.onerror = (event) => {
+        setError("Error accessing database.");
+    };
+    request.onupgradeneeded = (event) => {
+        const db = request.result;
+        const store = db.createObjectStore("MediaFiles", { keyPath: "id" });
+    };
+    request.onsuccess = (event) => {
+        const db = request.result;
+        const transaction = db.transaction("MediaFiles", "readonly");
+        const store = transaction.objectStore("MediaFiles");
+        const fileRequest = store.get(id);
+        fileRequest.onsuccess = (e) => {
+            const result = fileRequest.result;
+            if (result) {
+                const fileBlob = result.file;
+                setFile(fileBlob);
+                fileRef.current = fileBlob;
+                setPreview(URL.createObjectURL(fileBlob));
+                previewRef.current = URL.createObjectURL(fileBlob)
+                setError(null);
+            } else {
+                setError("Nothing to view. Upload files to view.");
+                setFile(null);
+                setPreview(null);
+                previewRef.current = null;
+                fileRef.current = null;
+            }
+        };
+        fileRequest.onerror = (e) => {
+            setError("Error retrieving file.");
+        };
+    };
+  }
+
+  const reassignPreview = () => {
+    setPreview(previewRef.current);
+    setFile(fileRef.current);
+    changeFlag(false);
+  }
+
   function setNotesMode(){
-    changeFlag(!notesFlag);
-    if(error || preview){
-      setError(null);
-      setFile(null);
-      setPreview(null);
-    } else {
-      setError("Nothing to view. Upload files to view");
+    if(!notesFlag){
+      changeFlag(true);
+        if(error || preview){
+        setError(null);
+        setFile(null);
+        setPreview(null);} 
     }
   }
 
   const handleNotesChange = (event) => {
-    const updatedContent = event.target.innerText;
+    const updatedContent = event.target.innerText.trim()? event.target.innerText.trim() : null;
     setNotesContent(updatedContent);
+  };
+
+  const handleNotesEdit = async() => {
+    if(editStatus){
+      const data = {
+        actId: props.id, 
+        actNotes: notesContent && notesContent.trim()? notesContent.trim() : null
+      }
+      const sessionMail = sessionStorage.getItem('email');
+      const mail = state.emailId? state.emailId : sessionMail
+      await apiUrl.post(`/update-notes/${mail}`, {data})
+    }
+    changeEditStatus(!editStatus)
   };
 
   useEffect(() => {
@@ -208,12 +332,22 @@ export default function Activityframe(props) {
     };
   }, [(props.flag? state.activeTab : state.qsActiveTab), (props.flag? state.combinedActivityData: state.qsCombinedSubActivityData)]);
 
+  useEffect(() => {
+    const indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+    if (!indexedDB) {
+      alertMessage("Uploaded files may not be accessible throughout the session");
+    } else {
+      getFileFromIndexedDB(props.id, setPreview, setFile, setError);
+    };
+  }, [props.id]);
+
   return (<> 
       <div className={`activityFrame ${state.darkMode? "scheduleDark" :"scheduleNormal"}`} id={props.id}>
           <div className={`activityTitle  ${state.darkMode? "activityFrameDark" : "activityFrameNormal"}`} style={{borderTop:"0"}}>{(props.flag? state.csActivityIndex : state.qsActivityIndex)+1}. {props.activity}</div>
           <div className="csButtonsFrame">
-            <div className="viewContent" style={{display:error && "flex", justifyContent:error && "center", alignItems:error && "center", border: notesFlag && "1px solid orange", boxShadow: notesFlag && "0 0 3px orange", borderRadius:"10px"}}>
-              {notesFlag && <p contentEditable={true} style={{width:"100%", height:"100%", overflow:"scroll", fontSize: "15px", fontFamily: "Cambria, Cochin, Georgia, 'Times New Roman', serif", color: state.darkMode? 'white' : "black", textAlign:"justify", padding:"10px"}} onInput={handleNotesChange}></p>}
+            <div className="viewContent" style={{display:error && "flex", justifyContent:error && "center", alignItems:error && "center" || notesFlag && "center", border: notesFlag && editStatus ? "1px solid orange" : state.darkMode? "1px solid white" : "1px solid black", boxShadow: notesFlag && editStatus && "0 0 3px orange", borderRadius:"10px"}}>
+              {notesFlag && <p contentEditable={editStatus? true : false} style={{width:"100%", height:"100%", overflow:"scroll", fontSize: "15px", fontFamily: "Cambria, Cochin, Georgia, 'Times New Roman', serif", color: state.darkMode? 'white' : "black", textAlign:"justify", padding:"10px", outline: "none"}} onInput={handleNotesChange}>{props.writtenNotes}</p>}
+              {notesFlag && <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"} noteseditButton`} style={{backgroundColor: editStatus? "green" :  "orange", width:"98%", marginBottom:"10px"}} onClick={handleNotesEdit}>{editStatus? "Save" : props.writtenNotes || notesContent ? "Edit" : "Write"}</button>}
             {error && <p style={{ color: "orangered", fontSize: "15px", fontFamily: "Cambria, Cochin, Georgia, 'Times New Roman', serif" }}>{error}</p>}
             {preview && file && (
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px" }}>
@@ -234,7 +368,7 @@ export default function Activityframe(props) {
                     {file.type.startsWith("audio/") && (
                         <audio src={preview} controls style={{  maxWidth: "67vw", width:"fit-content", height: "auto", border: "1px solid black" }} />
                     )}
-                   {file.type === "application/pdf" && (
+                    {file.type === "application/pdf" && (
                         <embed
                             src={preview}
                             type="application/pdf"
@@ -268,15 +402,15 @@ export default function Activityframe(props) {
             <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"orange"}} onClick={(event)=>{deleteActivity(event, props.id, props.type)}}>Delete</button>
             <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"orange"}} onClick={()=>{setNotesMode()}}>Notes</button>
             <div className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`}>
-              <label htmlFor="file-upload" 
+              {(!notesFlag || preview || !previewRef.current) && <label htmlFor="file-upload" 
                 className={`csButtons ${state.darkMode ? "soloActivityBarDark" : "soloActivityBarNormal"}`} 
                 style={{backgroundColor: "teal", borderRadius: "10px", cursor: "pointer", textAlign: "center", padding: "4px 6px", fontWeight: "normal", marginBottom:"0"}}>
                 Upload
-              </label>
-              <input id="file-upload" type="file"accept="application/pdf, image/*, text/plain, application/vnd.openxmlformats-officedocument.wordprocessingml.document, video/mp4" style={{ display: "none" }} onChange={handleFileChange} 
-              />
+              </label>}
+             {(!notesFlag || preview || !previewRef.current) && <input id="file-upload" type="file"accept="application/pdf, image/*, text/plain, application/vnd.openxmlformats-officedocument.wordprocessingml.document, video/mp4" style={{ display: "none" }} onChange={handleFileChange} />}
+             {notesFlag && previewRef.current && <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor:"teal"}} onClick={reassignPreview}>{previewRef.current? "View File" : "Upload"}</button>}
             </div>
-            <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor: preview==null? "teal" :  "red"}} onClick={handleRemoveFile} disabled={preview==null}>Remove File</button>
+            <button className={`csButtons ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`} style={{backgroundColor: previewRef.current? "red" :  "teal"}} onClick={handleRemoveFile} disabled={preview==null}>Remove File</button>
             <div className={`activityDescription  ${state.darkMode? "soloActivityBarDark" : "soloActivityBarNormal"}`}>
               <div className={`activityDescrHeading`} style={{borderBottom: state.darkMode? "0.2px solid white": "0.2px solid black"}}>Description</div>
               <p className="notes">{props.notes}</p></div>

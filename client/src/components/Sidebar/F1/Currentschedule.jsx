@@ -89,6 +89,7 @@ export default function CurrentSchedule() {
                     notes={ state.csActivityIndex != null && state.combinedActivityData[state.csActivityIndex] ? state.combinedActivityData[state.csActivityIndex].activity_description : state.combinedActivityData[0]?.activity_description }
                     type={ state.csActivityIndex != null && state.combinedActivityData[state.csActivityIndex] ? state.combinedActivityData[state.csActivityIndex].activity_type : state.combinedActivityData[0]?.activity_type }
                     status={ state.csActivityIndex != null && state.combinedActivityData[state.csActivityIndex] ? state.combinedActivityData[state.csActivityIndex].activity_status : state.combinedActivityData[0]?.activity_status }
+                    writtenNotes = { state.csActivityIndex != null && state.combinedActivityData[state.csActivityIndex] ? state.combinedActivityData[state.csActivityIndex].activity_notes : state.combinedActivityData[0]?.activity_notes }
                     flag={true}
                 />
             )}

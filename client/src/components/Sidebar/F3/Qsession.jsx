@@ -45,6 +45,7 @@ export default function Qsession(){
                     notes={ state.qsActivityIndex != null && state.qsCombinedSubActivityData[state.qsActivityIndex] ? state.qsCombinedSubActivityData[state.qsActivityIndex].activity_description : state.qsCombinedSubActivityData[0]?.activity_description }
                     type={ state.qsActivityIndex != null && state.qsCombinedSubActivityData[state.qsActivityIndex] ? state.qsCombinedSubActivityData[state.qsActivityIndex].activity_type : state.qsCombinedSubActivityData[0]?.activity_type }
                     status={ state.qsActivityIndex != null && state.qsCombinedSubActivityData[state.qsActivityIndex] ? state.qsCombinedSubActivityData[state.qsActivityIndex].activity_status : state.qsCombinedSubActivityData[0]?.activity_status }
+                    writtenNotes = { state.csActivityIndex != null && state.combinedActivityData[state.csActivityIndex] ? state.combinedActivityData[state.csActivityIndex].activity_notes : state.combinedActivityData[0]?.activity_notes }
                     flag = {false}
                 />
             )}

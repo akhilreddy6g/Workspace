@@ -226,7 +226,6 @@ export default function App() {
         return{
           ...state,
           stdState: false,
-          schedulestate: false,
           activityTabButtRef: null,
           dailyactstate: false,
           addDailyActState: false,
@@ -240,7 +239,6 @@ export default function App() {
         return{
           ...state,
           stdState: false,
-          schedulestate: false,
           activityTabButtRef: null,
           dailyactstate: false,
           addDailyActState: false,
@@ -252,7 +250,6 @@ export default function App() {
       case "changeDsCombinedSubActivityData":
         return{
           ...state,
-          schedulestate: false,
           activityTabButtRef: null,
           dailyactstate: false,
           addDailyActState: false,
@@ -305,7 +302,6 @@ export default function App() {
       case "changeActivityState":
         return{
           ...state,
-          schedulestate: false,
           activityTabButtRef: null,
           dailyactstate: true,
           updateActivity: action.payload? action.payload : !state.updateActivity,
@@ -350,7 +346,6 @@ export default function App() {
         return{
           ...state,
           stdState: false,
-          schedulestate: false,
           addCurrentDayActivity: false,
           activityTabButtRef: null,
           dailyactstate: true,
@@ -379,7 +374,6 @@ export default function App() {
       case "changeDisclaimerState":
         return{
           ...state,
-          schedulestate: false,
           addCurrentDayActivity: false,
           disclaimerState: action.payload,
           filterButton : false
@@ -387,7 +381,6 @@ export default function App() {
       case "changeDisclaimerButtons":
         return {
           ...state,
-          schedulestate: false,
           addCurrentDayActivity: false,
           disclaimerButtons: !state.disclaimerButtons,
           filterButton : false
@@ -395,7 +388,6 @@ export default function App() {
       case "changeCurrentAction":
         return {
           ...state,
-          schedulestate: false,
           addCurrentDayActivity: false,
           filterButton : false,
           currentAction : action.payload,
@@ -409,7 +401,6 @@ export default function App() {
       case "setResolve":
         return {
           ...state,
-          schedulestate: false,
           addCurrentDayActivity: false,
           resolve: action.payload,
           filterButton : false
