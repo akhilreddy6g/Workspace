@@ -7,15 +7,15 @@ import Qsession from "./Qsession";
 export default function Quicksession(){
     const {state, takeAction} = useContext(featuresTabHook);
     const [loading, setLoading] = useState(false); 
-
     async function alterData(){
         try {
             const sessionMail = sessionStorage.getItem('email');
             const mail = state.emailId? state.emailId : sessionMail
             setLoading(true); 
             const response = await apiUrl.get(`/session-data/${mail}?sessionType=q`);
-            if(response.data && response.data.length>0){
-               takeAction({type:"changeQsCombinedSubActivityData", payload:response.data})
+            if(response.data){
+               takeAction({type:"changeQsCombinedSubActivityData", payload:response.data.activities});
+               takeAction({type:"changeQsession", payload:response.data.session});
             } 
         } catch (error) {
             //Request not processed
@@ -38,7 +38,11 @@ export default function Quicksession(){
      <p className="scheduleContext">No session yet. Setup a session and plan the next hour!</p>
     </div>}
 
-    {state.qsCombinedSubActivityData && state.qsCombinedSubActivityData.length>0 && <Qsession></Qsession>}
+    {state.qsCombinedSubActivityData && state.qsCombinedSubActivityData.length<1 && state.qsession && state.qsession[0] && state.qsession[0] !== null && <div className="scheduleDisclaimer">
+        <p className="scheduleContext">No activities scheduled in the session!</p>
+    </div>}
+
+    {((state.qsCombinedSubActivityData && state.qsCombinedSubActivityData.length>0) || (state.qsession && state.qsession[0] && state.qsession[0] !== null)) && <Qsession></Qsession>}
         
     {state.qastate?
     <div className="overLay">
@@ -50,7 +54,7 @@ export default function Quicksession(){
         <Quicksessionsetup></Quicksessionsetup>
     </div>
     </div>: 
-    <div className="currentActivities">
+    <div className="currentActivities" style={{top:"93.3vh"}}>
     <button className="addCurrentActivityButton" onClick={()=>{takeAction({type: "changeQuickSessState"})}}>Setup Session</button> </div>}
     </>
 }

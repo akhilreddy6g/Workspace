@@ -1066,7 +1066,7 @@ app.get("/session-data/:email", verifyToken, async (req, res) => {
             );
             console.info({ message: "Successfully retrieved quick session data", email, activityCount: data.rowCount, duration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            return res.status(200).json(data.rows);
+            return res.status(200).json({activities: data.rows, session: session.rows});
         } catch (error) {
             console.error({ message: "Error retrieving quick session data", email, error: error.message, stack: error.stack, statusCode: 500, duration: `${Date.now() - startTimeRequest}ms`, });
             console.log(logSuffix);

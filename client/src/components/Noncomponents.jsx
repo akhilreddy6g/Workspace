@@ -69,6 +69,12 @@ export function minutesToHours(minutes) {
   return `${hours} hr ${remainingMinutes} min`;
 }
 
+export function minutesTo24hr(minutes) {
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return `${hours}:${remainingMinutes}`;
+}
+
 export const apiUrl = axios.create({
   baseURL: import.meta.env.VITE_SERVER_API || "http://localhost:3000",
   withCredentials: true,
@@ -78,6 +84,12 @@ export function formatTime(date) {
   const hours = date.getHours().toString().padStart(2, '0');
   const minutes = date.getMinutes().toString().padStart(2, '0');
   return `${hours}:${minutes}`;
+}
+
+export function convertMinutesToHours(minutes) {
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return `${hours}h ${remainingMinutes}m`;
 }
 
 export function isValidSessionStartTime(start, end, breakTime, totalSessions) {

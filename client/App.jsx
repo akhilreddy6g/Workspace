@@ -434,6 +434,16 @@ export default function App() {
           ...state,
           emailId : action.payload,
         }
+      case "changeQsession":
+        return {
+          ...state,
+          qsession : action.payload
+        }
+      case "changeStdsession":
+        return {
+          ...state,
+          stdsession : action.payload
+        }
       default:
         return state;
     };
@@ -477,6 +487,8 @@ export default function App() {
     trend: 0, 
     initialComponentState: false,
     emailId: null,
+    qsession: null,
+    stdsession: null,
   });
 
   function clearSessionStorageDaily() {

@@ -2,6 +2,7 @@ import {useContext, useState, useEffect, useRef} from "react";
 import featuresTabHook from "../../Noncomponents";
 import { timeToMinutes } from "../../Noncomponents";
 import { apiUrl } from "../../Noncomponents";
+import { convertMinutesToHours } from "../../Noncomponents";
 
 export default function Activitytab(props){
     const {state, takeAction} = useContext(featuresTabHook);
@@ -47,12 +48,6 @@ export default function Activitytab(props){
         }
         return "";
       }
-
-    function convertMinutesToHours(minutes) {
-        const hours = Math.floor(minutes / 60);
-        const remainingMinutes = minutes % 60;
-        return `${hours}h ${remainingMinutes}m`;
-    }
 
     async function updateProgress() {
         const now = new Date();

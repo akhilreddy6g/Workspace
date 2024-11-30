@@ -78,8 +78,9 @@ export default function Setyourday(){
             const mail = state.emailId? state.emailId : sessionMail
             setLoading(true); 
             const combinedAct = await apiUrl.get(`/session-data/${mail}?sessionType=d`);
-            takeAction({ type: "changeDsCombinedSubActivityData", payload: combinedAct.data});
-            tempActivities.current = combinedAct.data;
+            takeAction({type: "changeDsCombinedSubActivityData", payload: combinedAct.data.activities});
+            takeAction({type:"changeStdsession", payload: combinedAct.data.session});
+            tempActivities.current = combinedAct.data.activities;
         } catch (error) {
             //No data to fetch
         } finally {
@@ -93,6 +94,7 @@ export default function Setyourday(){
             const mail = state.emailId? state.emailId : sessionMail
             setLoading(true); 
             const response = await apiUrl.get(`/session-details/${mail}?sessionType=d`);
+
             if(response.data.length>0 && response.data[0].session_version=='n' && response.data[0].session_type=='d'){
                 const sessions = scheduleSessions(response.data[0].session_start_time, response.data[0].session_end_time, response.data[0].break_time, response.data[0].total_sessions);
                 changeSessions(sessions);

@@ -1107,6 +1107,7 @@ label{
         max-height: 175px !important;
         min-width: 500px !important;
      }
+
 }
 
 @media (max-width: 500px){
@@ -1184,6 +1185,10 @@ label{
      .streakContainer-2{
         min-width: 320px !important;
      }
+
+     #qsHide{
+        display: none !important;
+    }
 
 }
 
@@ -1550,6 +1555,74 @@ input[type=radio] {
 .setQuickSess1{
     background-color: rgb(48,48,48);
 }
+
+.qsessionInfo {
+    position: fixed;
+    top: 188px;
+    width: 80vw;
+    display: flex;
+    justify-content: space-evenly;
+    background-color: var(--background-color);
+}
+
+.qsessionBar {
+    height: 20px;
+    width: 50vw;
+    border-radius: 10px;
+    background-color: rgb(255, 255, 144);
+    border: 0.1px solid var(--border-color);
+    position: relative;
+}
+
+.qsessionTimeContainer {
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 12px;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+    width: 50vw;
+}
+
+.qsessTimeBar {
+    height: 19px;
+    background-color: green;
+    border-radius: 10px;
+}
+
+.qsessionBreakBar {
+    height: 20px;
+    width: 28vw;
+    background-color: rgb(255, 255, 144);
+    border-radius: 10px;
+    border: 0.1px solid var(--border-color);
+    position: relative;
+}
+
+.qsessionBreakTimeContainer {
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 12px;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+    width: 28vw;
+}
+
+.qsessBreakTimeBar {
+    height: 19px;
+    background-color: green;
+    border-radius: 10px;
+}
+
+.qsessTcElement,.qsessBTcElement {
+    margin: 0 !important;
+}
+
 
 /* Quick Session end */
 

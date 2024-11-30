@@ -26,12 +26,13 @@ export default function Quicksessionsetup(){
         };
         if(data.breakTime>1 )
         if(isValidSessionStartTime(data.startTime, data.endTime, data.breakTime, data.totalSessions)){
+            takeAction({type:"changeQsession", payload: data})
             takeAction({ type: "changeActivityState"});
             try {
                 const sessionMail = sessionStorage.getItem('email');
                 const mail = state.emailId? state.emailId : sessionMail
                 const currActivities = await apiUrl.post(`/setup-sessions/${mail}`, {data});
-                if (currActivities && currActivities.data.length>0){
+                if (currActivities && currActivities.data.length>0 && !currActivities.data[0].message){
                     takeAction({type:"changeQsCombinedSubActivityData", payload:currActivities.data});
                 }
                 alertMessage("Session setup successful");
@@ -39,7 +40,7 @@ export default function Quicksessionsetup(){
                 alertMessage(`Error while setting up the session`);
             };
         } else {
-            alertMessage(`Invalid session start time. Session must be atleast 2 minutes and Start time and end time must be in the future and before 11:59 pm EST.`);
+            alertMessage(`Invalid session start time / Session must be atleast 2 minutes and Start time and end time must be in the future and before 11:59 pm EST.`);
         }
       
         takeAction({type: "changeQuickSessState", payload:false})
@@ -59,6 +60,7 @@ export default function Quicksessionsetup(){
                 const sessionMail = sessionStorage.getItem('email');
                 const mail = state.emailId? state.emailId : sessionMail
                 const response = await apiUrl.patch(`/recover-last-session/${mail}?sessionType=q`)
+                takeAction({type:"changeQsession", payload: response.data});
                 takeAction({ type: "changeActivityState", payload: false });
                 alertMessage(response.data.message)
             } catch (error) {
@@ -77,8 +79,8 @@ export default function Quicksessionsetup(){
         <input className="sessionFormInput" required type="time" name="endTime" id="sessEnd" /><br/>
         <label className="sessionFormLabel" id="breakTime" htmlFor="breakTime">Break Time</label>
         <input className="sessionFormInput" required type="number" min={2} name="breakTime" id="sessBreakTime" placeholder="min"/><br/>
-        <button type="submit" id="submitSessionButton" style={{marginLeft: state.qsCombinedSubActivityData.length>0 && "90px"}}>Submit</button>
-        {state.qsCombinedSubActivityData.length==0 && <button type="button" id="submitSessionButton" onClick={(e)=>{restoreLastVersion(e)}}>Recover</button>}
+        <button type="submit" id="submitSessionButton" style={{marginLeft: state.qsCombinedSubActivityData.length>0 || state.qsession && "90px"}}>Submit</button>
+        {state.qsCombinedSubActivityData.length==0 && !state.qsession && <button type="button" id="submitSessionButton" onClick={(e)=>{restoreLastVersion(e)}}>Recover</button>}
         </form>
     </div>
 }

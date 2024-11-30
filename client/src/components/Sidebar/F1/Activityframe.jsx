@@ -342,7 +342,7 @@ export default function Activityframe(props) {
   }, [props.id]);
 
   return (<> 
-      <div className={`activityFrame ${state.darkMode? "scheduleDark" :"scheduleNormal"}`} id={props.id}>
+      <div className={`activityFrame ${state.darkMode? "scheduleDark" :"scheduleNormal"}`} style={{top: props.top!=null && props.top}} id={props.id}>
           <div className={`activityTitle  ${state.darkMode? "activityFrameDark" : "activityFrameNormal"}`} style={{borderTop:"0"}}>{(props.flag? state.csActivityIndex : state.qsActivityIndex)+1}. {props.activity}</div>
           <div className="csButtonsFrame">
             <div className="viewContent" style={{display:error && "flex", justifyContent:error && "center", alignItems:error && "center" || notesFlag && "center", border: notesFlag && editStatus ? "1px solid orange" : state.darkMode? "1px solid white" : "1px solid black", boxShadow: notesFlag && editStatus && "0 0 3px orange", borderRadius:"10px"}}>
