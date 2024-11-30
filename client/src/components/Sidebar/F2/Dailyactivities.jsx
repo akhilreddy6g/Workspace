@@ -21,7 +21,7 @@ export default function Dailyactivities(){
           const res = await apiUrl.get(`/activities/${mail}`);
           takeAction({type:"changeActivityData", payload: res.data})
         } catch (error) {
-          alertMessage("Error while fetching the activities")
+          // Cannot fetch Activities
         } finally {
             setLoading(false); 
         }

@@ -22,8 +22,8 @@ export default function Disclaimer(props){
         <div className="disclaimerTitle"><p id="staticDisclaimer">Disclaimer</p></div>
         <div className="disclaimerAction"><p className="disclaimerContent">{props.message}</p> 
         <div className={`criticalOps ${state.disclaimerButtons? "criticalOps1" : "criticalOps2"}`}>
-            <button className="criticalButton yesButton" onClick={(event) => {deleteActivity(event)}}>yes</button>
-            <button className="criticalButton noButton" onClick={(event) => {preventDeleteActivity(event)}}>no</button>
+            <button className="criticalButton yesButton" onClick={(event) => {deleteActivity(event)}}>Yes</button>
+            <button className="criticalButton noButton" onClick={(event) => {preventDeleteActivity(event)}}>No</button>
         </div>
         </div>
         </div>

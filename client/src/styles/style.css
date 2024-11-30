@@ -492,13 +492,17 @@ label{
 .yesButton{
     background-color: green !important;
     border: 0;
-    border-radius: 5px;
+    border-radius: 2px;
+    padding: 5px;
 }
 
 .noButton{
     background-color: red !important;
     border: 0;
-    border-radius: 5px;
+    border-radius: 2px;
+    padding: 5px;
+    padding-left: 7px;
+    padding-right: 7px;
 }
 
 #staticDisclaimer{
