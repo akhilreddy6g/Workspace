@@ -59,8 +59,12 @@ export default function Activitytab(props){
         if (currentTimeMinutes >= endTimeMinutes) {
             if(props.status==null && JSON.parse(sessionStorage.getItem(props.id))==null){
                 const url = props.type === "c" ? `/update-ca-status/${mail}?id=${props.id}&status=${0}` : `/update-da-status/${mail}?id=${props.id}&status=${0}`;
-                await apiUrl.post(url);
-                sessionStorage.setItem(props.id, JSON.stringify({ action: "skip", value: true }));
+                try {
+                    await apiUrl.post(url);
+                    sessionStorage.setItem(props.id, JSON.stringify({ action: "skip", value: true }));
+                } catch (error) {
+                    //Request not processed
+                }
             };
             setProgress(100);
             setRemTime('0h 0m');

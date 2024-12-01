@@ -1,5 +1,37 @@
 # Workspace
-Key Features
+
+## 🛠️ Prerequisites
+Before you begin, make sure you have the following installed on your system
+1. Node.js (v16 or above)
+2. npm (comes with Node.js)
+3. <a href="https://www.pgadmin.org/">pgadmin4</a>
+
+## ⚡ Getting Started
+#### 1. Clone the Repository
+Clone the project to your local machine using the following command:
+```
+git clone https://github.com/akhilreddy6g/Workspace.git
+```
+#### 2. Navigate to the project folder
+```
+cd Workspace
+```
+#### 3. Install Dependencies
+Install both server and client dependencies using the following command:
+```
+npm install
+```
+#### 4. Install pgadmin
+Download and install <a href="https://www.pgadmin.org/download/">pgadmin</a>, a powerful tool to manage your PostgreSQL database. 
+Execute the SQL commands provided in <a href="queries.sql">queries.sql</a>, to set up the required tables and schema.
+
+#### 5. Run the Application
+Start the server and client simultaneously using the following command:
+```
+npm start
+```
+
+## 🔑 Key Features
 ### 1. Current Schedule
 Effortlessly manage your daily activities with Current Schedule by adding current, missed, or upcoming activities. This feature ensures precision, flexibility, and seamless activity handling.
 ##### 1.1. Dynamic Task Management:

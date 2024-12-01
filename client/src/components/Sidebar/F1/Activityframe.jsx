@@ -318,7 +318,11 @@ export default function Activityframe(props) {
       }
       const sessionMail = sessionStorage.getItem('email');
       const mail = state.emailId? state.emailId : sessionMail
-      await apiUrl.post(`/update-notes/${mail}`, {data})
+      try {
+        await apiUrl.post(`/update-notes/${mail}`, {data})
+      } catch (error) {
+        //Request not processed
+      }
     }
     changeEditStatus(!editStatus)
   };
