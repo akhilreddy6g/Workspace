@@ -970,6 +970,10 @@ label{
         max-width: 450px !important;
      }
 
+     .filterContainer{
+        margin-left: 2.2vw !important;
+     }
+
 }
 
 @media (max-width : 780px){
@@ -1023,6 +1027,13 @@ label{
     .scheduleContext{
         font-size: 14px !important;
         height: fit-content !important;
+    }
+
+    .filterContainer{
+        font-size: 12px !important;
+        margin-left: 3.2vw !important;
+        height: 72px !important;
+        width: 90px !important;
     }
 
     .missedActivity{
@@ -1228,7 +1239,8 @@ label{
     width:5vw;  
     margin-left:3.2vw;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .filterContainer{
@@ -1237,11 +1249,11 @@ label{
     height: 80px;
     width: 100px;
     position: fixed;
-    top: 120px;
+    top: 125px;
     border-radius: 10px;
     border: 1px solid grey;
-    z-index: 10;
     transition: 150ms linear;
+    font-size: 15px;
 }
 
 .filterField{
@@ -2357,9 +2369,7 @@ table, th, td {
     .dateTimeDisplay{
         display: none;
     }
-}
 
-@media (max-width: 740px) {
     #titlelink{
         justify-content: center;
     }

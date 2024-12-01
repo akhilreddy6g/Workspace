@@ -27,7 +27,7 @@ export default function Filtercheckbox(){
         };
     };
     return ( state.filterButton &&
-        <div className={`filterContainer ${state.darkMode? "navdarkMode" : "featureNormal"} ${state.fthState? "filterContainer1" : "filterContainer2"}`}>
+        <div className={`filterContainer ${state.darkMode? "navdarkMode" : "featureNormal"}`}>
         <div>
             <input className="filterInput" type="radio" id="start" name="sortby" value="activity_start_time" onClick={alterFilter}/>
             <label className="filterLabel" htmlFor="startTime">Start</label>
