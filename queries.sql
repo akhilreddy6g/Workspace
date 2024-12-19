@@ -1,6 +1,17 @@
--- Table: public.current_day_activities
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
--- DROP TABLE IF EXISTS public.current_day_activities;
+-- Table: public.users
+
+CREATE TABLE IF NOT EXISTS public.users
+(
+    user_email character varying(150) COLLATE pg_catalog."default" NOT NULL,
+    user_password character varying(1000) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT users_pkey PRIMARY KEY (user_email)
+)
+
+––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+-- Table: public.current_day_activities
 
 CREATE TABLE IF NOT EXISTS public.current_day_activities
 (
@@ -27,14 +38,36 @@ CREATE TABLE IF NOT EXISTS public.current_day_activities
     CONSTRAINT current_day_activities_activity_status_check CHECK (activity_status = ANY (ARRAY[0, 1]))
 )
 
-TABLESPACE pg_default;
+-- Trigger: check_start_end_time_future
 
-ALTER TABLE IF EXISTS public.current_day_activities
-    OWNER to workspace_db_user;
+CREATE OR REPLACE FUNCTION public.check_start_end_time_future()
+RETURNS TRIGGER AS $$
+DECLARE
+    current_est_time TIME := (now() AT TIME ZONE 'America/New_York')::time;
+    end_of_day TIME := '23:59:59';
+BEGIN
+    IF (NEW.activity_start_time IS DISTINCT FROM OLD.activity_start_time) OR 
+       (NEW.activity_end_time IS DISTINCT FROM OLD.activity_end_time) THEN
+
+        IF NEW.activity_start_time <= current_est_time THEN
+            RAISE EXCEPTION 'activity_start_time must be in the future (EST)';
+        END IF;
+
+        IF NEW.activity_start_time > end_of_day THEN
+            RAISE EXCEPTION 'activity_start_time must be before 11:59 PM (EST)';
+        END IF;
+
+        IF NEW.activity_end_time <= NEW.activity_start_time THEN
+            RAISE EXCEPTION 'activity_end_time must be after activity_start_time';
+        END IF;
+
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
 -- Trigger: ensure_start_end_time_future
-
--- DROP TRIGGER IF EXISTS ensure_start_end_time_future ON public.current_day_activities;
 
 CREATE OR REPLACE TRIGGER ensure_start_end_time_future
     BEFORE INSERT OR UPDATE 
@@ -45,8 +78,6 @@ CREATE OR REPLACE TRIGGER ensure_start_end_time_future
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
 -- Table: public.daily_activities
-
--- DROP TABLE IF EXISTS public.daily_activities;
 
 CREATE TABLE IF NOT EXISTS public.daily_activities
 (
@@ -72,16 +103,9 @@ CREATE TABLE IF NOT EXISTS public.daily_activities
     CONSTRAINT chk_time CHECK (activity_start_time::text < activity_end_time::text)
 )
 
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.daily_activities
-    OWNER to workspace_db_user;
-
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
 -- Table: public.daily_activities_progress
-
--- DROP TABLE IF EXISTS public.daily_activities_progress;
 
 CREATE TABLE IF NOT EXISTS public.daily_activities_progress
 (
@@ -97,16 +121,9 @@ CREATE TABLE IF NOT EXISTS public.daily_activities_progress
         ON DELETE NO ACTION
 )
 
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.daily_activities_progress
-    OWNER to workspace_db_user;
-
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
 -- Table: public.global_activities
-
--- DROP TABLE IF EXISTS public.global_activities;
 
 CREATE TABLE IF NOT EXISTS public.global_activities
 (
@@ -122,16 +139,9 @@ CREATE TABLE IF NOT EXISTS public.global_activities
         ON DELETE NO ACTION
 )
 
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.global_activities
-    OWNER to workspace_db_user;
-
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
 -- Table: public.missed_activities
-
--- DROP TABLE IF EXISTS public.missed_activities;
 
 CREATE TABLE IF NOT EXISTS public.missed_activities
 (
@@ -155,16 +165,9 @@ CREATE TABLE IF NOT EXISTS public.missed_activities
     CONSTRAINT missed_activities_activity_start_time_check CHECK (activity_start_time::text <> ''::text)
 )
 
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.missed_activities
-    OWNER to workspace_db_user;
-
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
 -- Table: public.upcoming_activities
-
--- DROP TABLE IF EXISTS public.upcoming_activities;
 
 CREATE TABLE IF NOT EXISTS public.upcoming_activities
 (
@@ -187,16 +190,9 @@ CREATE TABLE IF NOT EXISTS public.upcoming_activities
     CONSTRAINT upcoming_activities_activity_start_time_check CHECK (activity_start_time::text <> ''::text)
 )
 
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.upcoming_activities
-    OWNER to workspace_db_user;
-
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
 -- Table: public.user_session
-
--- DROP TABLE IF EXISTS public.user_session;
 
 CREATE TABLE IF NOT EXISTS public.user_session
 (
@@ -218,16 +214,9 @@ CREATE TABLE IF NOT EXISTS public.user_session
     CONSTRAINT user_session_session_version_check CHECK (session_version::text = ANY (ARRAY['o'::character varying::text, 'n'::character varying::text]))
 )
 
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.user_session
-    OWNER to workspace_db_user;
-
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
 -- Table: public.user_statistics
-
--- DROP TABLE IF EXISTS public.user_statistics;
 
 CREATE TABLE IF NOT EXISTS public.user_statistics
 (
@@ -243,27 +232,5 @@ CREATE TABLE IF NOT EXISTS public.user_statistics
         ON DELETE NO ACTION
 )
 
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.user_statistics
-    OWNER to workspace_db_user;
-
 ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 
--- Table: public.users
-
--- DROP TABLE IF EXISTS public.users;
-
-CREATE TABLE IF NOT EXISTS public.users
-(
-    user_email character varying(150) COLLATE pg_catalog."default" NOT NULL,
-    user_password character varying(1000) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT users_pkey PRIMARY KEY (user_email)
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.users
-    OWNER to workspace_db_user;
-
-––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––

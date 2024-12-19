@@ -20,7 +20,7 @@ const db = new pg.Client({
     host: process.env.DB_HOST_NAME || 'localhost',
     password: process.env.DB_PW || '1234',
     database: process.env.DB_NAME || 'workspace',
-    port: '5432',
+    port: '23672' || '5432',
     ssl: {
         rejectUnauthorized: false
     }
