@@ -2,7 +2,6 @@ import express from "express";
 import pg from "pg";
 import bodyParser from "body-parser";
 import cors from "cors";
-import cron from 'node-cron';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import cookieParser from "cookie-parser";
@@ -20,7 +19,7 @@ const db = new pg.Client({
     host: process.env.DB_HOST_NAME || 'localhost',
     password: process.env.DB_PW || '1234',
     database: process.env.DB_NAME || 'workspace',
-    port: '23672' || '5432',
+    port: process.env.DB_PORT || '5432',
     ssl: {
         rejectUnauthorized: false
     }

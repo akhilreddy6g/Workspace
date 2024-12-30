@@ -1,0 +1,25 @@
+services:
+
+  client:
+    build:
+      context: ./client
+    depends_on:
+      - server
+    ports:
+      - "5173:5173"
+
+  server:
+    build:
+      context: ./server
+    environment:
+      - ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET}
+      - REFRESH_TOKEN_SECRET=${REFRESH_TOKEN_SECRET}
+      - DB_HOST_NAME=${DB_HOST_NAME}
+      - DB_NAME=${DB_NAME}
+      - DB_PW=${DB_PW}
+      - DB_UNAME=${DB_UNAME}
+      - CRON_JOB_API_KEY=${CRON_JOB_API_KEY}
+      - DEMO_PASS=${DEMO_PASS}
+      - DB_PORT=${DB_PORT}
+    ports:
+      - "3000:3000"

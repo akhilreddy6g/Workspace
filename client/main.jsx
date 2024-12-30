@@ -4,7 +4,7 @@ import App from './App.jsx';
 import AuthProvider from 'react-auth-kit';
 import createStore from 'react-auth-kit/createStore'; 
 import { BrowserRouter as Router} from 'react-router-dom';
-import "../client/src/styles/style.css";
+import "./src/styles/style.css";
 
 const store = createStore({authType:'cookie', authName:'_auth', cookieDomain:window.location.hostname, cookieSecure: window.location.protocol === "https:"});
 
