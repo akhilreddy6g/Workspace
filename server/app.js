@@ -29,7 +29,7 @@ const logSuffix = "<––––––––––––––––Request End�
 db.connect();
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://workspace-eikp.onrender.com'], 
+    origin: ['http://localhost:5173', 'https://workspace-eikp.onrender.com', 'https://akhil-reddy-gaddam.onrender.com'], 
     credentials: true                
   }));
 app.use(bodyParser.urlencoded({extended:true}));
@@ -1282,6 +1282,79 @@ app.post("/cron-job", async (req, res)=>{
         return res.status(500);
     }
 })
+
+app.get('/view-count/:site', async (req, res) => {
+    const startTimeRequest = Date.now();
+    console.log(logPrefix);
+    try {
+        const ws = req.params.site;
+        console.info({ message: "Incoming request to view the count of: ", ws, timestamp: new Date().toISOString()});
+        if (ws && (ws == 'portfolio_count' || ws == 'workspace_count')){
+            try {
+                const result = await db.query(`SELECT ${ws} FROM views WHERE id = 1`);
+                console.info({ message: `Successfully retrieved the count of: ${ws}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms` });
+                console.log(logSuffix);
+                return res.status(200).json({ views: result.rows[0]});
+            } catch (error) {
+                console.error({ message: `Failed to retrieve website count of: ${ws}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
+                console.log(logSuffix);
+                return res.status(500);
+            }
+        } else {
+            console.error({ message: `Wrong Request: ${ws}`, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
+            console.log(logSuffix);
+            return res.status(400).json({ message: 'Wrong Request'}); 
+        }
+    } catch (error) {
+        console.error({ message: `Bad Request`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
+        console.log(logSuffix);
+        return res.status(400).json({ message: 'Bad Request'}); 
+    }
+});
+
+app.post('/increment-count/:site', async (req, res) => {
+    const startTimeRequest = Date.now();
+    const date = new Date();
+    console.log(logPrefix);
+    try {
+        const ws = req.params.site;
+        console.info({ message: "Incoming request to increment the count of: ",ws, timestamp: new Date().toISOString()});
+        if (ws && (ws == 'portfolio_count' ||  ws == 'workspace_count')){
+            try {
+                const dateFormatter = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+                const formattedDate = dateFormatter.format(date);
+                const timeFormatter = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, timeZone: 'UTC'});
+                const formattedTime = timeFormatter.format(date);
+                const record = await db.query(`SELECT ${ws} FROM views WHERE id = 1`);
+                let count;
+                const table = ws == 'portfolio_count' ? 'portfolio_views' : 'workspace_views' 
+                if(ws == 'portfolio_count'){
+                    count = record.rows[0].portfolio_count
+                }else{
+                    count = record.rows[0].workspace_count
+                }
+                const result = await db.query(`UPDATE views SET ${ws} = ${count} + 1 WHERE id = 1 RETURNING *`);
+                const time = await db.query(`INSERT INTO ${table} (date, time) VALUES ($1, $2)`, [formattedDate, formattedTime]);
+                console.info({ message: `Successfully incremented the count of: ${ws}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms` });
+                console.log(logSuffix);
+                return res.status(200).json({views: result.rows[0]})
+            } catch (error) {
+                console.error({ message: `Failed to increment the count of: ${ws}`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
+                console.log(logSuffix);
+                return res.status(500);
+            }
+        }
+        else{
+            console.error({ message: `Wrong Request: ${ws}`, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
+            console.log(logSuffix);
+            return res.status(400).json({ message: 'Wrong Request'}); 
+        }
+    } catch (error) {
+        console.error({ message: `Bad Request`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
+        console.log(logSuffix);
+        return res.status(400).json({ message: 'Bad Request'}); 
+    }
+});
 
 app.listen(port, () => {
     console.log(`Listening at port ${port}`);

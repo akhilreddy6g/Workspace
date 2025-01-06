@@ -1,4 +1,4 @@
-import {useReducer, useLayoutEffect} from 'react';
+import {useReducer, useLayoutEffect, useEffect} from 'react';
 import Header from './src/components/Header/Header';
 import Features from './src/components/Sidebar/Features';
 import featuresTabHook,{dayStatus} from './src/components/Noncomponents';
@@ -444,6 +444,11 @@ export default function App() {
           ...state,
           stdsession : action.payload
         }
+      case "changeSessionCount":
+        return {
+          ...state,
+          sessionCount: false
+        }
       default:
         return state;
     };
@@ -489,6 +494,7 @@ export default function App() {
     emailId: null,
     qsession: null,
     stdsession: null,
+    sessionCount: true
   });
 
   function clearSessionStorageDaily() {
@@ -572,6 +578,16 @@ export default function App() {
       apiUrl.interceptors.response.eject(responseInterceptor);
     };
   }, []);
+
+  useEffect(() => {
+    if(state.sessionCount){
+      async function alterCount(){
+        await apiUrl.post("/increment-count/workspace_count")
+      }
+      alterCount();
+      takeAction({type:"changeSessionCount"});
+    }
+  })
   
   return (
     <featuresTabHook.Provider value={{state, takeAction}}>
