@@ -2,9 +2,14 @@
 
 ## 🛠️ Prerequisites
 Before you begin, make sure you have the following installed on your system
-1. Node.js (v16 or above)
+1. <a href="https://nodejs.org/en/download">Node.js</a> (v16 or above)
 2. npm (comes with Node.js)
 3. <a href="https://www.pgadmin.org/">pgadmin4</a>
+
+## 💻 Tech Stack
+1. NodeJS, and ExpressJS (Javascript) - Backend
+2. React (Javascript), Material UI, and CSS - Frontend
+3. PostgreSQL - Data Storage
 
 ## ⚡ Getting Started
 #### 1. Clone the Repository
