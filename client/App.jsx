@@ -580,13 +580,24 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if(typeof window !== 'undefined' && state.sessionCount && state.emailId!=import.meta.env.VITE_NO_COUNT_EMAIL){
-      async function alterCount(){
-        await apiUrl.post("/increment-count/workspace_count")
+    const emailExists = new Promise((resolve, reject) => {
+      if (state.emailId !== null) {
+        resolve(state.emailId);
+      } else {
+        reject("Email not found");
       }
-      alterCount();
-      takeAction({type:"changeSessionCount"});
-    }
+    })
+    emailExists.then((email) => {
+      if(state.sessionCount && email!=import.meta.env.VITE_NO_COUNT_EMAIL){
+        async function alterCount(){
+          await apiUrl.post("/increment-count/workspace_count")
+        }
+        alterCount();
+        takeAction({type:"changeSessionCount"});
+      }
+    }).catch((error) => {
+      // console.log(error);
+    });
   })
   
   return (
