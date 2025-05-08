@@ -580,7 +580,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if(state.sessionCount){
+    if(typeof window !== 'undefined' && state.sessionCount && state.emailId!=import.meta.env.VITE_NO_COUNT_EMAIL){
       async function alterCount(){
         await apiUrl.post("/increment-count/workspace_count")
       }
