@@ -47,10 +47,10 @@ function localDate(value){
 const verifyToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    if (token==null) return res.status(401).json({ message: 'Access token missing' });
+    if (token==null) return res.status(401).json({ message: 'Access token missing', authenticated: false });
     jwt.verify(token, JWT_SECRET, (err, user) => {
       if (err) {
-        return res.status(403).json({ message: 'Token expired or invalid' });
+        return res.status(403).json({ message: 'Token expired or invalid', authenticated: false });
       }
       req.user = user;
       next();
@@ -83,7 +83,7 @@ app.post("/authenticate/:email", async (req, res) => {
             }
             const refreshToken = jwt.sign({ email: user.rows[0].user_email }, REFRESH_SECRET, { expiresIn: '30d' });
             const accessToken = jwt.sign({ email: user.rows[0].user_email }, JWT_SECRET, { expiresIn: '15m' });
-            res.cookie('_auth', refreshToken, { httpOnly: true, secure: true, sameSite: 'Strict', maxAge: 1000 * 60 * 60 * 24 * 30});
+            res.cookie('_auth', refreshToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 1000 * 60 * 60 * 24 * 30});
             console.info({ message: "Authentication successful", email: email, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms` });
             console.log(logSuffix);
             return res.status(200).json({ isAuthenticated: true, token: accessToken});

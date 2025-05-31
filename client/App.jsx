@@ -547,36 +547,30 @@ export default function App() {
   
   useLayoutEffect(() => {
     const responseInterceptor = apiUrl.interceptors.response.use(
-      function (response){
-        return response;
-      },
-      async function(error){
+      response => response,
+      async error => {
         const originalRequest = error.config;
-        if (error.response!=null && ((error.response.status === 403 && error.response.data.message === 'Token expired or invalid') || (error.response.status === 401 && error.response.data.message === 'Access token missing')) && (originalRequest._retry === undefined)) {
+        if (
+          error.response &&
+          [401, 403].includes(error.response.status) &&
+          !originalRequest._retry
+        ) {
           originalRequest._retry = true;
           try {
-            const data = await apiUrl.post('/refresh-token');
-            sessionStorage.setItem('token', data.data.token); 
-            apiUrl.defaults.headers.common['Authorization'] = `Bearer ${data.data.token}`;
-            originalRequest.headers['Authorization'] = `Bearer ${data.data.token}`;
+            const { data } = await apiUrl.post('/refresh-token');
+            sessionStorage.setItem('token', data.token);
+            apiUrl.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+            originalRequest.headers['Authorization'] = `Bearer ${data.token}`;
             return apiUrl(originalRequest);
-          } catch (refreshError) {
+          } catch (err) {
             navigate('/login');
-            return Promise.reject(refreshError);
+            return Promise.reject(err);
           }
-        } if (error.response!=null && error.response.status === 500) {
-          //Request not processed
-        } else if (error.response!=null && error.response.status === 404) {
-          //Request not processed
-        } else {
-          navigate('/login');
         }
         return Promise.reject(error);
       }
     );
-    return () => {
-      apiUrl.interceptors.response.eject(responseInterceptor);
-    };
+    return () => apiUrl.interceptors.response.eject(responseInterceptor);
   }, []);
 
   useEffect(() => {

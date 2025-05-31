@@ -78,6 +78,9 @@ export function minutesTo24hr(minutes) {
 export const apiUrl = axios.create({
   baseURL: import.meta.env.VITE_SERVER_API || "http://localhost:3000",
   withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 export function formatTime(date) {
