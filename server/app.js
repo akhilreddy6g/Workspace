@@ -347,6 +347,11 @@ app.patch("/edit-activity/:email", verifyToken, async (req, res) => {
         console.log(logPrefix);
         console.info({ message: 'Incoming request to edit activity', timestamp: new Date().toISOString(), method: req.method, path: req.originalUrl, params: req.params, requestBody: req.body.data, userAgent: req.headers['user-agent']});
         try {
+            await db.query(
+                "UPDATE daily_activities SET activity_name = $1, activity_priority = $2, activity_start_time = $3, activity_end_time = $4 WHERE activity_uuid = $5 AND user_email = $6", 
+                [actName, actPriority, actStart, actEnd, id, email]
+            );
+            console.info({ message: `Successfully updated activity with ID: ${id}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`, email, updatedFields: { actName, actStart, actEnd, actPriority }});
             try {
                 await db.query(
                     "UPDATE global_activities SET activity_name = $1 WHERE activity_uuid = $2 AND user_email = $3", 
@@ -356,11 +361,6 @@ app.patch("/edit-activity/:email", verifyToken, async (req, res) => {
             } catch (error) {
                 console.error({message: `Failed to update activity with ID: ${id} in global activities`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`,});
             }
-            await db.query(
-                "UPDATE daily_activities SET activity_name = $1, activity_priority = $2, activity_start_time = $3, activity_end_time = $4 WHERE activity_uuid = $5 AND user_email = $6", 
-                [actName, actPriority, actStart, actEnd, id, email]
-            );
-            console.info({ message: `Successfully updated activity with ID: ${id}`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`, email, updatedFields: { actName, actStart, actEnd, actPriority }});
             console.log(logSuffix);
             return res.status(200).json({ message: `Successfully updated the daily activity with ID: ${id}` });
         } catch (error) {
@@ -461,17 +461,27 @@ app.post("/add-current-day-activity/:email", verifyToken, async (req, res) => {
         console.log(logPrefix);
         console.info({message: 'Incoming request to add current day activity', timestamp: new Date().toISOString(), method: req.method, path: req.originalUrl, params: req.params, requestBody: req.body.data, userAgent: req.headers['user-agent']});
         try {
-            await db.query(
-                "INSERT INTO current_day_activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time, user_email) VALUES ($1, $2, $3, $4, $5, $6)", 
+            const record = (await db.query(
+                "INSERT INTO current_day_activities (activity_name, activity_description, activity_priority, activity_start_time, activity_end_time, user_email) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *", 
                 [actName, actDescr, priority, startTime, endTime, email]
-            );
-            console.info({message: `Successfully added activity "${actName}" to current day schedule`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`, activityDetails: { actName, actDescr, priority, startTime, endTime, email }});
+            )).rows[0].activity_uuid;
+            try {
+                await db.query(
+                    "INSERT INTO global_activities (activity_name, activity_uuid, user_email) VALUES ($1, $2, $3)",
+                    [actName, record, email]
+                );
+                console.info({ message: `Successfully added the current activity with name: ${actName} to global activity db`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`,email});
+            } catch (error) {
+                console.error({ message: `Failed to add the current activity with name: ${actName} to global activity db`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
+                return res.status(500).json({ message: `Failed to add the current activity with name: ${actName} to global activity db`, flag:false });
+            }
+            console.info({message: `Successfully added the current activity "${actName}" to current day schedule`, statusCode: 200, requestDuration: `${Date.now() - startTimeRequest}ms`, activityDetails: { actName, actDescr, priority, startTime, endTime, email }});
             console.log(logSuffix);
-            return res.status(200).json({ message: `Successfully added the activity "${actName}" to today's schedule`, flag: true });
+            return res.status(200).json({ message: `Successfully added the current activity "${actName}" to today's schedule`, flag: true });
         } catch (error) {
-            console.error({ message: `Failed to add activity "${actName}" to current day schedule`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
+            console.error({ message: `Failed to add the current activity "${actName}" to current day schedule`, error: error.message, stack: error.stack, statusCode: 500, requestDuration: `${Date.now() - startTimeRequest}ms`});
             console.log(logSuffix);
-            return res.status(500).json({ message: `Unsuccessful in adding the activity "${actName}" to today's schedule: ${error.message}`, flag: false });
+            return res.status(500).json({ message: `Unsuccessful in adding the current activity "${actName}" to today's schedule: ${error.message}`, flag: false });
         };
     } catch (error) {
         console.error({ message: "Bad Request", statusCode: 400, error: error.message, stack: error.stack, requestDuration: `${Date.now() - startTimeRequest}ms` });
@@ -1230,14 +1240,14 @@ app.post("/cron-job", async (req, res)=>{
                         }
                     }
                     console.log("Successfully added today's missed activities to `missed_activities`.");
-                    try {
-                        await db.query("DELETE FROM current_day_activities");
-                        console.info({ message: "Successfully deleted current day activities", statusCode: 200, });
-                    } catch (deleteError) {
-                        console.error({ message: "Failed to delete current day activities", error: deleteError.message, });
-                    }
                 } else {
                     console.info({ message: "No missing activities to process", statusCode: 204, });
+                }
+                try {
+                    await db.query("DELETE FROM current_day_activities");
+                    console.info({ message: "Successfully deleted current day activities", statusCode: 200, });
+                } catch (deleteError) {
+                    console.error({ message: "Failed to delete current day activities", error: deleteError.message, });
                 }
                 try {
                     const now1 = new Date();

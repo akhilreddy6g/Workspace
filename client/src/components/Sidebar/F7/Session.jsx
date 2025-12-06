@@ -99,7 +99,7 @@ export default function Session(props){
 
     function activityTab(element, idx){
         return (
-            <div key={`actName-${idx}`} className="sessionActNames" style={{textAlign:"center", border:"0.1px solid black", backgroundColor:element[1], color:"white", fontSize:"12px"}}>{element[0]}</div>
+            <div key={`actName-${idx}`} className="sessionActNames" style={{textAlign:"center", border:"0.1px solid black", backgroundColor:element[1], textDecoration:element[1]=="green" && "line-through", color:"white", fontSize:"12px"}}>{element[0]}</div>
         )
     }
 
