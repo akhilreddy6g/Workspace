@@ -1,16 +1,15 @@
 services:
-
-  client:
+  web:
     build:
-      context: ./client
+      context: ./web
     depends_on:
-      - server
+      - backend
     ports:
       - "5173:5173"
 
-  server:
+  backend:
     build:
-      context: ./server
+      context: ./backend
     environment:
       - ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET}
       - REFRESH_TOKEN_SECRET=${REFRESH_TOKEN_SECRET}

@@ -1,0 +1,66 @@
+name: Render Deployment
+
+on:
+  workflow_call:
+    inputs:
+      sha:
+        required: true
+        type: string
+      deploy_web:
+        required: true
+        type: boolean
+      deploy_backend:
+        required: true
+        type: boolean
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: GHCR image tag (normally a Git commit SHA)
+        required: true
+        type: string
+      deploy_web:
+        description: Deploy the web service
+        required: true
+        default: true
+        type: boolean
+      deploy_backend:
+        description: Deploy the backend service
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Normalize GHCR image names
+        id: image
+        shell: bash
+        run: |
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          repository="${GITHUB_REPOSITORY#*/}"
+          repository="${repository,,}"
+          echo "web=ghcr.io/${owner}/${repository}-web" >> "$GITHUB_OUTPUT"
+          echo "backend=ghcr.io/${owner}/${repository}-backend" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy web image
+        if: inputs.deploy_web
+        env:
+          HOOK: ${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK }}
+          IMAGE: ${{ steps.image.outputs.web }}:${{ inputs.sha }}
+        run: |
+          test -n "$HOOK" || { echo "RENDER_FRONTEND_DEPLOY_HOOK is not configured."; exit 1; }
+          curl --fail --silent --show-error --get "$HOOK" --data-urlencode "imgURL=$IMAGE"
+
+      - name: Deploy backend image
+        if: inputs.deploy_backend
+        env:
+          HOOK: ${{ secrets.RENDER_BACKEND_DEPLOY_HOOK }}
+          IMAGE: ${{ steps.image.outputs.backend }}:${{ inputs.sha }}
+        run: |
+          test -n "$HOOK" || { echo "RENDER_BACKEND_DEPLOY_HOOK is not configured."; exit 1; }
+          curl --fail --silent --show-error --get "$HOOK" --data-urlencode "imgURL=$IMAGE"

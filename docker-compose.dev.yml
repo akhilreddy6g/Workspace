@@ -1,0 +1,38 @@
+name: workspace-dev
+
+services:
+  web:
+    build:
+      context: ./web
+      target: build
+    working_dir: /app
+    command: npm run dev -- --host 0.0.0.0
+    environment:
+      VITE_SERVER_API: http://localhost:3000
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./web:/app
+      - web-node-modules:/app/node_modules
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+    working_dir: /app
+    command: node --watch app.js
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - backend-node-modules:/app/node_modules
+
+volumes:
+  web-node-modules:
+  backend-node-modules:

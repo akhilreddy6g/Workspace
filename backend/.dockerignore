@@ -1,0 +1,17 @@
+```dockerignore
+# Dependencies
+node_modules/
+
+# Build output
+build/
+
+# Environment variables
+.env
+.env.*
+
+# Logs
+npm-debug.log*
+
+# Git metadata
+.git/
+```

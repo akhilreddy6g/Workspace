@@ -1,0 +1,121 @@
+name: Docker Publish and Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "web/**"
+      - "backend/**"
+      - "docker-compose.yml"
+      - ".github/workflows/docker-publish.yml"
+      - ".github/workflows/deploy-render.yml"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      web: ${{ steps.filter.outputs.web }}
+      backend: ${{ steps.filter.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            web:
+              - "web/**"
+              - ".github/workflows/docker-publish.yml"
+
+            backend:
+              - "backend/**"
+              - ".github/workflows/docker-publish.yml"
+
+  web:
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify production API URL
+        env:
+          VITE_SERVER_API: ${{ vars.VITE_SERVER_API }}
+        run: |
+          test -n "$VITE_SERVER_API" || {
+            echo "Set the repository variable VITE_SERVER_API to the public Render backend URL.";
+            exit 1;
+          }
+      - name: Normalize GHCR image names
+        id: image
+        shell: bash
+        run: |
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          repository="${GITHUB_REPOSITORY#*/}"
+          repository="${repository,,}"
+          echo "web=ghcr.io/${owner}/${repository}-web" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./web
+          file: ./web/Dockerfile
+          platforms: linux/amd64
+          push: true
+          build-args: |
+            VITE_SERVER_API=${{ vars.VITE_SERVER_API }}
+          tags: |
+            ${{ steps.image.outputs.web }}:main
+            ${{ steps.image.outputs.web }}:${{ github.sha }}
+
+  backend:
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Normalize GHCR image names
+        id: image
+        shell: bash
+        run: |
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          repository="${GITHUB_REPOSITORY#*/}"
+          repository="${repository,,}"
+          echo "backend=ghcr.io/${owner}/${repository}-backend" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ steps.image.outputs.backend }}:main
+            ${{ steps.image.outputs.backend }}:${{ github.sha }}
+
+  deploy:
+    needs: [changes, web, backend]
+    if: |
+      always() &&
+      needs.changes.result == 'success' &&
+      (needs.web.result == 'success' || needs.web.result == 'skipped') &&
+      (needs.backend.result == 'success' || needs.backend.result == 'skipped') &&
+      (needs.changes.outputs.web == 'true' || needs.changes.outputs.backend == 'true')
+    uses: ./.github/workflows/deploy-render.yml
+    with:
+      sha: ${{ github.sha }}
+      # deploy_web: ${{ needs.changes.outputs.web == 'true' }}
+      deploy_web: false
+      deploy_backend: ${{ needs.changes.outputs.backend == 'true' }}
+    secrets: inherit
